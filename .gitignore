@@ -1,0 +1,6 @@
+certificats
+node_modules
+*.pem
+*.p12
+.idea
+.DS_Store
