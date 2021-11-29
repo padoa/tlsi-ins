@@ -1,6 +1,10 @@
-certificats
 node_modules
 *.pem
-*.p12
 .idea
 .DS_Store
+
+# Upload p12 file onlly if in certificats folder
+*.p12
+!certificats/*.p12
+
+certificats/passphrase.js
