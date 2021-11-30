@@ -50,3 +50,5 @@ export const extractCertsFromP12 = (p12Path: string) => {
     certAsPem,
   };
 }
+
+export const caCertificate = fs.readFileSync('certificates/ca/ACI-EL-ORG-TEST.cer');
