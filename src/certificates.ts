@@ -5,10 +5,13 @@ import { config } from 'dotenv';
 // Loads variables from the .env file
 config()
 
-export const extractCertsFromP12 = (p12Path: string) => {
-  const { TLSI_INS_CERTIFICATE_PASSPHRASE } = process.env;
+export const { TLSI_INS_CERTIFICATE_PASSPHRASE } = process.env;
 
-  if (!TLSI_INS_CERTIFICATE_PASSPHRASE) throw new Error('Please provide a TLSI_INS_CERTIFICATE_PASSPHRASE env variable');
+if (!TLSI_INS_CERTIFICATE_PASSPHRASE) throw new Error('Please provide a TLSI_INS_CERTIFICATE_PASSPHRASE env variable');
+
+export const PASSPHRASE = TLSI_INS_CERTIFICATE_PASSPHRASE;
+
+export const extractCertsFromP12 = (p12Path: string) => {
 
   const keyFile = fs.readFileSync(p12Path, 'binary');
   const p12Asn1 = forge.asn1.fromDer(keyFile);
