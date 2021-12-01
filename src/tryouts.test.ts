@@ -1,6 +1,6 @@
 import fs from 'fs';
 import https from 'https';
-import { caCertificate, extractCertsFromP12, PASSPHRASE } from './certificates';
+import { caCertificates, extractCertsFromP12, PASSPHRASE } from './certificates';
 
 describe('Using the p12 directly', () => {
   const pfx = fs.readFileSync('certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12');
@@ -29,12 +29,44 @@ describe('Using the p12 directly', () => {
     });
   });
 
-  test('validating the certificate with the provided CA ACI-EL-ORG-TEST.cer file', (done) => {
+  /**
+   * - Pour vérifier le serveur du serveur, vous devez utiliser les AC « AC IGC-SANTE ELEMENTAIRE ORGANISATIONS » et AC RACINE IGC-SANTE ELEMENTAIRE
+   * - Ces 2 fichier d'AC sont disponibles à cette adresse : http://igc-sante.esante.gouv.fr/PC/
+   */
+  test('validating the certificate with the downloaded CA certificates', (done) => {
     const agentOptions: https.AgentOptions = {
-      rejectUnauthorized: false,
       pfx,
       passphrase: PASSPHRASE,
-      ca: caCertificate,
+      ca: [
+        fs.readFileSync('certificates/ca/ACI-EL-ORG.cer'),
+        fs.readFileSync('certificates/ca/ACR-EL.cer'),
+      ],
+      // enableTrace: true,
+    };
+    const agent = new https.Agent(agentOptions);
+    const reqOptions: https.RequestOptions = {
+      agent,
+      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
+      path: '/lps',
+      method: 'POST',
+    };
+
+    https.request(reqOptions, (res) => {
+
+      console.log(res);
+
+      expect(res.statusCode).toBe(200);
+      done()
+    });
+  });
+
+  test('validating the certificate with the chain of CA certificates', (done) => {
+    const agentOptions: https.AgentOptions = {
+      pfx,
+      passphrase: PASSPHRASE,
+      ca: [
+        fs.readFileSync('certificates/ca/Chaine_de_certification-IGC-Sante.p7b'),
+      ],
       // enableTrace: true,
     };
     const agent = new https.Agent(agentOptions);
@@ -55,7 +87,7 @@ describe('Using the p12 directly', () => {
   })
 });
 
-describe('Using certs extracted with node-forge', () => {
+describe.skip('Using certs extracted with node-forge', () => {
 
   test('not verifiying facing certificate', (done) => {
     const certificates = extractCertsFromP12('certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12');
@@ -90,7 +122,7 @@ describe('Using certs extracted with node-forge', () => {
       key: certificates.privateKeyAsPem,
       // enableTrace: true,
       cert: certificates.certAsPem,
-      ca: caCertificate
+      ca: caCertificates
     };
     const agent = new https.Agent(agentOptions);
     const reqOptions: https.RequestOptions = {
