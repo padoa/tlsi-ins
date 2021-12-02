@@ -7,7 +7,7 @@ const { TLSI_INS_CERTIFICATE_PASSPHRASE } = process.env;
 
 if (!TLSI_INS_CERTIFICATE_PASSPHRASE) throw new Error('Please provide a TLSI_INS_CERTIFICATE_PASSPHRASE env variable');
 
-const keyFile = fs.readFileSync("../certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12", 'binary');
+const keyFile = fs.readFileSync("../certificates/INSI-AUTO/INSI-AUTO.p12", 'binary');
 const p12Asn1 = forge.asn1.fromDer(keyFile);
 const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, TLSI_INS_CERTIFICATE_PASSPHRASE);
 
@@ -27,8 +27,8 @@ console.log({
 });
 
 /*
-openssl pkcs12 -in ./certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12 -out file.key.pem -nocerts -nodes
-openssl pkcs12 -in ./certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12 -out file.crt.pem -clcerts -nokeys
+openssl pkcs12 -in ./certificates/INSI-AUTO/AUTO-certificate.p12 -out file.key.pem -nocerts -nodes
+openssl pkcs12 -in ./certificates/INSI-AUTO/AUTO-certificate.p12 -out file.crt.pem -clcerts -nokeys
 Ts
 */
 

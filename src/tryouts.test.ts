@@ -3,7 +3,7 @@ import https from 'https';
 import { caCertificates, extractCertsFromP12, PASSPHRASE } from './certificates';
 
 describe('Using the p12 directly', () => {
-  const pfx = fs.readFileSync('certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12');
+  const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
 
   test('not validating facing certificate', (done) => {
     const agentOptions: https.AgentOptions = {
@@ -112,11 +112,11 @@ describe('Using the p12 directly', () => {
       done()
     });
   });
+});
 
 describe.skip('Using certs extracted with node-forge', () => {
-
   test('not verifiying facing certificate', (done) => {
-    const certificates = extractCertsFromP12('certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12');
+    const certificates = extractCertsFromP12('certificates/INSI-AUTO/AUTO-certificate.p12');
 
     const agentOptions: https.AgentOptions = {
       rejectUnauthorized: false,
@@ -142,7 +142,7 @@ describe.skip('Using certs extracted with node-forge', () => {
   });
 
   test('validating the certificate with the provided CA ACI-EL-ORG-TEST.cer file', (done) => {
-    const certificates = extractCertsFromP12('certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12');
+    const certificates = extractCertsFromP12('certificates/INSI-AUTO/AUTO-certificate.p12');
 
     const agentOptions: https.AgentOptions = {
       key: certificates.privateKeyAsPem,

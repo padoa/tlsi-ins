@@ -10,9 +10,8 @@ Add the certificates certificates folder:
 ```
 tlsi-ins
 |-certificates
-  |-asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-1035506.p12
-  |-asip-p12-EL-TEST-ORG-CONF-20211115-120501.p12
-  |-asip-p12-EL-TEST-ORG-SIGN-20211115-110125.p12
+  |-INSI-AUTO/AUTO-certificate.p12
+  |-INSI-MANU/MANU-certificate.p12
 ```
 
 You will need to provide the TLSI_INS_CERTIFICATE_PASSPHRASE env variable.
@@ -27,7 +26,7 @@ echo TLSI_INS_CERTIFICATE_PASSPHRASE="The$ecretP@ssphrase" > .env
 To show certificate info you can use:
 
 ```sh
-openssl pkcs12 -info -in certificates/asip-p12-EL-TEST-ORG-AUTH_CLI-20211115-103506.p12
+openssl pkcs12 -info -in certificates/INSI-AUTO/AUTO-certificate.p12
 # Make sure to have the CN of your first certificate be INSI-MANU or INSI-AUTO or you might run into DESIR_560
 # subject=/C=FR/ST=Rh\xC3\xB4ne (69)/O=CENTRE DE SANTE RPPS15287/OU=10B0152872/CN=Padoa
 ```
