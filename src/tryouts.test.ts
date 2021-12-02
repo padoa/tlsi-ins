@@ -1,5 +1,6 @@
 import fs from 'fs';
 import https from 'https';
+import axios from 'axios';
 import { caCertificates, extractCertsFromP12, PASSPHRASE } from './certificates';
 
 describe('Using the p12 directly', () => {
@@ -83,6 +84,26 @@ describe('Using the p12 directly', () => {
       expect(res.statusCode).toBe(200);
       done()
     });
+  });
+
+  test('validating the certificate with the downloaded CA certificates with axios', (done) => {
+    const agentOptions: https.AgentOptions = {
+      pfx,
+      passphrase: PASSPHRASE,
+      ca: [
+        fs.readFileSync('certificates/ca/ACI-EL-ORG.cer'),
+        fs.readFileSync('certificates/ca/ACR-EL.cer'),
+      ],
+      // enableTrace: true,
+    };
+    const agent = new https.Agent(agentOptions);
+
+    axios.post('https://qualiflps-services-ps-tlsm.ameli.fr:443/lps', {}, { httpsAgent: agent })
+      .then((res) => {
+        console.log(res);
+
+        done();
+      });
   });
 
   test('validating the certificate with the chain of CA certificates', (done) => {
