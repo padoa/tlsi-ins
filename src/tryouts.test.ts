@@ -60,6 +60,31 @@ describe('Using the p12 directly', () => {
     });
   });
 
+  test('validating the certificate with the downloaded CA certificates with no agent', (done) => {
+    const reqOptions: https.RequestOptions = {
+      agent: false,
+      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
+      path: '/lps',
+      port: 443,
+      protocol: 'https:',
+      method: 'POST',
+      pfx,
+      passphrase: PASSPHRASE,
+      ca: [
+        fs.readFileSync('certificates/ca/ACI-EL-ORG.cer'),
+        fs.readFileSync('certificates/ca/ACR-EL.cer'),
+      ],
+    };
+
+    https.request(reqOptions, (res) => {
+
+      console.log(res);
+
+      expect(res.statusCode).toBe(200);
+      done()
+    });
+  });
+
   test('validating the certificate with the chain of CA certificates', (done) => {
     const agentOptions: https.AgentOptions = {
       pfx,
