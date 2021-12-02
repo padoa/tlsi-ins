@@ -84,8 +84,34 @@ describe('Using the p12 directly', () => {
       expect(res.statusCode).toBe(200);
       done()
     });
-  })
-});
+  });
+
+  test('validating the certificate with the downloaded CA TEST certificates', (done) => {
+    const agentOptions: https.AgentOptions = {
+      pfx,
+      passphrase: PASSPHRASE,
+      ca: [
+        fs.readFileSync('certificates/ca/ACI-EL-ORG-TEST.cer'),
+        fs.readFileSync('certificates/ca/ACR-EL-TEST.cer'),
+      ],
+      // enableTrace: true,
+    };
+    const agent = new https.Agent(agentOptions);
+    const reqOptions: https.RequestOptions = {
+      agent,
+      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
+      path: '/lps',
+      method: 'POST',
+    };
+
+    https.request(reqOptions, (res) => {
+
+      console.log(res);
+
+      expect(res.statusCode).toBe(200);
+      done()
+    });
+  });
 
 describe.skip('Using certs extracted with node-forge', () => {
 
