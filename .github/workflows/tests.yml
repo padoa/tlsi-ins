@@ -1,0 +1,17 @@
+name: Run Tests
+on: [push]
+env:
+  TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
+jobs:
+  tests:
+    environment: development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+      - run: npm install
+      - run: npm test
