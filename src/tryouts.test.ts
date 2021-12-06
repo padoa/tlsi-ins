@@ -26,8 +26,8 @@ describe('Convert CA cert to PEM', () => {
     ].join('');
     expect(certChain).toEqual(expected);
   });
+});
 
-})
 describe('Using the p12 directly', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
 
