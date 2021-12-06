@@ -32,28 +32,28 @@ describe('Using the p12 directly', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
 
   test('should error out when the software authorization number is unknown', (done) => {
-    const agentOptions: https.AgentOptions = {
+    const httpsAgent = new https.Agent({
       pfx,
       passphrase: PASSPHRASE,
       ca: combineCACertAsPem([
         'certificates/ca/ACR-EL.cer',
         'certificates/ca/ACI-EL-ORG.cer',
       ]),
-    };
+    });
 
     axios.post('https://qualiflps-services-ps-tlsm.ameli.fr:443/lps', FAKE_PAYLOAD, {
+      httpsAgent,
       headers: {
         'Content-Type': 'application/soap+xml;charset=utf-8',
       },
-      httpsAgent: new https.Agent(agentOptions),
     })
       .then((res) => {
-        console.log(res);
+        console.log('[We should not end up here]', res);
         done();
       })
       .catch((e: AxiosError<any>) => {
         const xmlAsString = e.response?.data;
-        console.log(xmlAsString);
+        console.log('RESPONSE CONTENT\n\n', xmlAsString);
         expect(e.response?.status).toBe(500);
         expect(xmlAsString).toContain(`Numéro d'autorisation du logiciel inconnu.`);
         done();
