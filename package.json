@@ -18,8 +18,12 @@
     "auth",
     "lps"
   ],
-  "author": "",
-  "license": "ISC",
+  "authors": [
+    "Sylvain Ripoche <sylvain.r@padoa-group.com>",
+    "C-A de Salaberry <ca.s@padoa-group.com>",
+    "Team Previsit <previsit@padoa-group.com>"
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/padoa/tlsi-ins/issues"
   },
@@ -33,8 +37,8 @@
   "devDependencies": {
     "@types/jest": "^27.0.3",
     "@types/node-forge": "^0.10.10",
-    "jest": "^27.4.0",
-    "ts-jest": "^27.0.7",
+    "jest": "^27.4.3",
+    "ts-jest": "^27.1.0",
     "typescript": "^4.5.2"
   }
 }
