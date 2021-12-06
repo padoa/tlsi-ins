@@ -1,8 +1,44 @@
 import fs from 'fs';
 import https from 'https';
 import forge from 'node-forge';
-import axios from 'axios';
+import axios, { Axios, AxiosError } from 'axios';
 import { caCertificates, combineCACertAsPem, extractCertsFromP12, PASSPHRASE, readCACertAsPem } from './certificates';
+
+const FAKE_PAYLOAD = `<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:urn="urn:siram:bam:ctxbam" xmlns:add="http://www.w3.org/2005/08/addressing" xmlns:urn1="urn:siram:lps:ctxlps" xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:urn2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ins="http://www.cnamts.fr/INSiRecSans">
+<soap:Header>
+    <urn:ContexteBAM Version="01_02">
+        <urn:Id>c1a2ff23-fc05-4bd1-b500-1ec7d3178f1c</urn:Id>
+        <urn:Temps>2021-07-05T13:58:27.452Z</urn:Temps>
+        <urn:Emetteur>10B0152872</urn:Emetteur>
+        <urn:COUVERTURE/>
+    </urn:ContexteBAM>
+    <add:MessageID>1f7425e2-b913-415c-adaa-785ee1076a70</add:MessageID>
+    <add:Action>urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecTraitsIdentite</add:Action>
+    <urn1:ContexteLPS Nature="CTXLPS" Version="01_00">
+        <urn1:Id>01f21998-e842-46e9-b4ea-99c15de82e65</urn1:Id>
+        <urn1:Temps>2021-07-05T13:58:27.452Z</urn1:Temps>
+        <urn1:Emetteur>10B0152872</urn1:Emetteur>
+        <urn1:LPS>
+            <urn1:IDAM R="4">NumAutorisation</urn1:IDAM>
+            <urn1:Version>2022</urn1:Version>
+            <urn1:Instance>b3549edd-4ae9-472a-b26f-fd2fb4ef397f</urn1:Instance>
+            <urn1:Nom>padoa</urn1:Nom>
+        </urn1:LPS>
+    </urn1:ContexteLPS>
+    <oas:Security>
+        <!--Empty-->
+
+    </oas:Security>
+</soap:Header>
+<soap:Body>
+    <ins:RECSANSVITALE>
+        <ins:NomNaissance>ADRDEUX</ins:NomNaissance>
+        <ins:Prenom>LAURENT</ins:Prenom>
+        <ins:Sexe>M</ins:Sexe>
+        <ins:DateNaissance>1981-01-01</ins:DateNaissance>
+    </ins:RECSANSVITALE>
+</soap:Body>
+</soap:Envelope>`;
 
 const ACI_EL_ORG_PEM_CERTIFICATE = [
   '-----BEGIN CERTIFICATE-----',
@@ -46,7 +82,7 @@ const ACI_EL_ORG_PEM_CERTIFICATE = [
   'a7pcoiK+h9hT0e5RPhWttgtVoOKJ0TWWK7JahaPRlI4IX/YxURsz3tsJnEi/i0gG',
   'a0OcI0DJWSyIc6wGQYaIZCatZQZhTj+OsMrWP0vZJmI=',
   '-----END CERTIFICATE-----\r\n',
-].join('');
+].join('\r\n');
 
 const ACR_EL_PEM_CERTIFICATE = [
   '-----BEGIN CERTIFICATE-----',
@@ -100,7 +136,7 @@ describe('Convert CA cert to PEM', () => {
     const expected = [
       ACI_EL_ORG_PEM_CERTIFICATE,
       ACR_EL_PEM_CERTIFICATE,
-    ].join('\r\n');
+    ].join('');
     expect(certChain).toEqual(expected);
   });
 
@@ -108,88 +144,11 @@ describe('Convert CA cert to PEM', () => {
 describe('Using the p12 directly', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
 
-  test('not validating facing certificate', (done) => {
-    const agentOptions: https.AgentOptions = {
-      rejectUnauthorized: false,
-      pfx,
-      passphrase: PASSPHRASE,
-      // enableTrace: true,
-    };
-    const agent = new https.Agent(agentOptions);
-    const reqOptions: https.RequestOptions = {
-      agent,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      method: 'POST',
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
-  });
-
   /**
    * - Pour vérifier le serveur du serveur, vous devez utiliser les AC « AC IGC-SANTE ELEMENTAIRE ORGANISATIONS » et AC RACINE IGC-SANTE ELEMENTAIRE
    * - Ces 2 fichier d'AC sont disponibles à cette adresse : http://igc-sante.esante.gouv.fr/PC/
    */
-  test('validating the certificate with the downloaded CA certificates', (done) => {
-    const agentOptions: https.AgentOptions = {
-      pfx,
-      passphrase: PASSPHRASE,
-      ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
-      ]),
-      // enableTrace: true,
-    };
-    const agent = new https.Agent(agentOptions);
-    const reqOptions: https.RequestOptions = {
-      agent,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      method: 'POST',
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
-  });
-
-  test('validating the certificate with the downloaded CA certificates with no agent', (done) => {
-    const reqOptions: https.RequestOptions = {
-      agent: false,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      port: 443,
-      protocol: 'https:',
-      method: 'POST',
-      pfx,
-      passphrase: PASSPHRASE,
-      ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
-      ]),
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
-  });
-
-  test.only('validating the certificate with the downloaded CA certificates with axios', (done) => {
-    jest.setTimeout(10000);
+  test('should error out when the software autorization number is unknown', (done) => {
     const agentOptions: https.AgentOptions = {
       pfx,
       passphrase: PASSPHRASE,
@@ -201,120 +160,23 @@ describe('Using the p12 directly', () => {
     };
     const agent = new https.Agent(agentOptions);
 
-    axios.post('https://qualiflps-services-ps-tlsm.ameli.fr:443/lps', {}, { httpsAgent: agent })
+    axios.post('https://qualiflps-services-ps-tlsm.ameli.fr:443/lps', FAKE_PAYLOAD, {
+      headers: {
+        'Content-Type': 'application/soap+xml;charset=utf-8',
+      },
+      httpsAgent: agent
+    })
       .then((res) => {
         console.log(res);
-
         done();
       })
-      .catch(e => {
-        console.log(e);
-      });
-
-  });
-
-  test('validating the certificate with the chain of CA certificates', (done) => {
-    const agentOptions: https.AgentOptions = {
-      pfx,
-      passphrase: PASSPHRASE,
-      ca: fs.readFileSync('certificates/ca/Chaine_de_certification-IGC-Sante.p7b'),
-      // enableTrace: true,
-    };
-    const agent = new https.Agent(agentOptions);
-    const reqOptions: https.RequestOptions = {
-      agent,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      method: 'POST',
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
-  });
-
-  test('validating the certificate with the downloaded CA TEST certificates', (done) => {
-    const agentOptions: https.AgentOptions = {
-      pfx,
-      passphrase: PASSPHRASE,
-      ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
-      ]),
-      // enableTrace: true,
-    };
-    const agent = new https.Agent(agentOptions);
-    const reqOptions: https.RequestOptions = {
-      agent,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      method: 'POST',
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
-  });
-});
-
-describe.skip('Using certs extracted with node-forge', () => {
-  test('not verifiying facing certificate', (done) => {
-    const certificates = extractCertsFromP12('certificates/INSI-AUTO/AUTO-certificate.p12');
-
-    const agentOptions: https.AgentOptions = {
-      rejectUnauthorized: false,
-      key: certificates.privateKeyAsPem,
-      // enableTrace: true,
-      cert: certificates.certAsPem,
-    };
-    const agent = new https.Agent(agentOptions);
-    const reqOptions: https.RequestOptions = {
-      agent,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      method: 'POST',
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
-  });
-
-  test('validating the certificate with the provided CA ACI-EL-ORG-TEST.cer file', (done) => {
-    const certificates = extractCertsFromP12('certificates/INSI-AUTO/AUTO-certificate.p12');
-
-    const agentOptions: https.AgentOptions = {
-      key: certificates.privateKeyAsPem,
-      // enableTrace: true,
-      cert: certificates.certAsPem,
-      ca: caCertificates
-    };
-    const agent = new https.Agent(agentOptions);
-    const reqOptions: https.RequestOptions = {
-      agent,
-      hostname: 'qualiflps-services-ps-tlsm.ameli.fr',
-      path: '/lps',
-      method: 'POST',
-    };
-
-    https.request(reqOptions, (res) => {
-
-      console.log(res);
-
-      expect(res.statusCode).toBe(200);
-      done()
-    });
+      .catch((e: AxiosError<any>) => {
+        const xmlAsString = e.response?.data;
+        console.log(xmlAsString);
+        expect(e.response?.status).toBe(500);
+        expect(xmlAsString).toContain(`Numéro d'autorisation du logiciel inconnu.`);
+        done();
+      })
+      // .finally(() => done());
   });
 });
