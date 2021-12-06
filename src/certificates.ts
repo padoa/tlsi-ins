@@ -54,6 +54,19 @@ export const extractCertsFromP12 = (p12Path: string) => {
   };
 }
 
+export const combineCACertAsPem = (caCertPaths: string[]): string => {
+  return caCertPaths.map(readCACertAsPem).join('');
+}
+
+export const readCACertAsPem = (path: string): string => {
+  const certFile = fs.readFileSync(path, 'binary');
+
+  const asn1Cert = forge.asn1.fromDer(certFile);
+  const certificate = forge.pki.certificateFromAsn1(asn1Cert);
+  const pem = forge.pki.certificateToPem(certificate);
+  return pem;
+}
+
 export const caCertificates = [
   fs.readFileSync('certificates/ca/ACR-EL.cer'),
   fs.readFileSync('certificates/ca/ACI-EL-ORG.cer'),
