@@ -3,11 +3,11 @@ import {
   ClientSSLSecurityPFX,
   createClientAsync
 } from 'soap';
-import fs from 'fs';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { AxiosResponse } from 'axios';
 import { INSSoapClientHelper } from './ins-soap-client.helper';
+import { combineCACertAsPem } from './certificates';
 
 export interface SOAPINSConfig {
   softwareName: string;
@@ -16,7 +16,6 @@ export interface SOAPINSConfig {
   IDAMAutorisationNumber: string;
   pfx: Buffer;
   passphrase: string;
-  ca: string;
 }
 
 export interface INSIdentityTraits {
@@ -90,7 +89,10 @@ export class INSSoapClientService {
   private _setClientSSLSecurityPFX(): void {
     this._soapClient.setSecurity(new ClientSSLSecurityPFX(this._config.pfx, {
       passphrase: this._config.passphrase,
-      ca: this._config.ca,
+      ca: combineCACertAsPem([
+        'certificates/ca/ACR-EL.cer',
+        'certificates/ca/ACI-EL-ORG.cer',
+      ]),
     }))
   }
 

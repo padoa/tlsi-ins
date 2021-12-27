@@ -74,10 +74,6 @@ describe('Using the p12 directly with node-soap', () => {
       IDAMAutorisationNumber: 'NumAuthorization',
       pfx,
       passphrase: PASSPHRASE,
-      ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
-      ])
     })
     await soapClient.initialize();
   });
