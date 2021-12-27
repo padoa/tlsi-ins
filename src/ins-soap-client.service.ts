@@ -8,7 +8,7 @@ import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { AxiosResponse } from 'axios';
 import { combineCACertAsPem, PASSPHRASE } from './certificates';
-import { SoapClientHelper } from './soap-client.helper';
+import { INSSoapClientHelper } from './ins-soap-client.helper';
 
 export interface SOAPINSConfig {
   softwareName: string;
@@ -36,7 +36,7 @@ const SoapActions = {
   },
 }
 
-export class SoapINSClient {
+export class INSSoapClientService {
   private readonly _wsdlUrl: string = 'src/fixtures/WSDL/DESIR_ICIR_EXP_1.5.0.wsdl';
 
   private readonly _config: SOAPINSConfig;
@@ -99,12 +99,12 @@ export class SoapINSClient {
 
   private _setDefaultHeaders(): void {
     this._soapClient.addSoapHeader(
-      SoapClientHelper.getBAMContext(this._bamCtxId, this._config),
+      INSSoapClientHelper.getBAMContext(this._bamCtxId, this._config),
       'ContexteBAM',
       'ctxbam'
     );
     this._soapClient.addSoapHeader(
-      SoapClientHelper.getLPSContext(this._lpsCtxId, this._lpsCtxInstance, this._config),
+      INSSoapClientHelper.getLPSContext(this._lpsCtxId, this._lpsCtxInstance, this._config),
       'ContexteLPS',
       'ctxlps'
     );

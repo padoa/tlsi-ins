@@ -2,7 +2,7 @@ import fs from 'fs';
 import https from 'https';
 import axios, { AxiosError } from 'axios';
 import { combineCACertAsPem, PASSPHRASE, readCACertAsPem } from './certificates';
-import { SoapINSClient, INSIdentityTraits } from './soap-client.service';
+import { INSSoapClientService, INSIdentityTraits } from './ins-soap-client.service';
 
 describe('Convert CA cert to PEM', () => {
   // Make sure we are compatible with Windows line endings
@@ -62,10 +62,10 @@ describe('Using the p12 directly with axios', () => {
 });
 
 describe('Using the p12 directly with node-soap', () => {
-  let soapClient: SoapINSClient;
+  let soapClient: INSSoapClientService;
 
   test('should initialize the soap client', async () => {
-    soapClient = new SoapINSClient({
+    soapClient = new INSSoapClientService({
       softwareName: 'padoa',
       softwareVersion: '2022',
       emitter: '10B0152872',

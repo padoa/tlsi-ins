@@ -1,9 +1,9 @@
 import moment from 'moment';
-import { SOAPINSConfig } from './soap-client.service';
+import { SOAPINSConfig } from './ins-soap-client.service';
 
 const HEADER_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
-export class SoapClientHelper {
+export class INSSoapClientHelper {
   public static getBAMContext(bamCtxId: string, { emitter }: SOAPINSConfig): object {
     return {
       ContexteBAM: {
