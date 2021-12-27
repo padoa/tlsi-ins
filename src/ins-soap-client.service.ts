@@ -7,7 +7,6 @@ import fs from 'fs';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { AxiosResponse } from 'axios';
-import { combineCACertAsPem, PASSPHRASE } from './certificates';
 import { INSSoapClientHelper } from './ins-soap-client.helper';
 
 export interface SOAPINSConfig {
@@ -15,6 +14,9 @@ export interface SOAPINSConfig {
   softwareVersion: string;
   emitter: string;
   IDAMAutorisationNumber: string;
+  pfx: Buffer;
+  passphrase: string;
+  ca: string;
 }
 
 export interface INSIdentityTraits {
@@ -86,25 +88,21 @@ export class INSSoapClientService {
   }
 
   private _setClientSSLSecurityPFX(): void {
-    const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
-
-    this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
-      passphrase: PASSPHRASE,
-      ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
-      ])
+    this._soapClient.setSecurity(new ClientSSLSecurityPFX(this._config.pfx, {
+      passphrase: this._config.passphrase,
+      ca: this._config.ca,
     }))
   }
 
   private _setDefaultHeaders(): void {
+    const now = new Date();
     this._soapClient.addSoapHeader(
-      INSSoapClientHelper.getBAMContext(this._bamCtxId, this._config),
+      INSSoapClientHelper.getBAMContext(this._bamCtxId, this._config, now),
       'ContexteBAM',
       'ctxbam'
     );
     this._soapClient.addSoapHeader(
-      INSSoapClientHelper.getLPSContext(this._lpsCtxId, this._lpsCtxInstance, this._config),
+      INSSoapClientHelper.getLPSContext(this._lpsCtxId, this._lpsCtxInstance, this._config, now),
       'ContexteLPS',
       'ctxlps'
     );

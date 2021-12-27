@@ -28,9 +28,11 @@ describe('Convert CA cert to PEM', () => {
   });
 });
 
+
+const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
+
 describe('Using the p12 directly with axios', () => {
   test('should error out when the software authorization number is unknown', (done) => {
-    const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
     const fakePayload = fs.readFileSync('src/fixtures/fake_payload.xml', 'utf-8');
     const httpsAgent = new https.Agent({
       pfx,
@@ -69,7 +71,13 @@ describe('Using the p12 directly with node-soap', () => {
       softwareName: 'padoa',
       softwareVersion: '2022',
       emitter: '10B0152872',
-      IDAMAutorisationNumber: 'NumAuthorization'
+      IDAMAutorisationNumber: 'NumAuthorization',
+      pfx,
+      passphrase: PASSPHRASE,
+      ca: combineCACertAsPem([
+        'certificates/ca/ACR-EL.cer',
+        'certificates/ca/ACI-EL-ORG.cer',
+      ])
     })
     await soapClient.initialize();
   });

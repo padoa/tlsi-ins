@@ -4,21 +4,21 @@ import { SOAPINSConfig } from './ins-soap-client.service';
 const HEADER_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
 export class INSSoapClientHelper {
-  public static getBAMContext(bamCtxId: string, { emitter }: SOAPINSConfig): object {
+  public static getBAMContext(bamCtxId: string, { emitter }: SOAPINSConfig, now: Date): object {
     return {
       ContexteBAM: {
         attributes: {
           Version: '01_02',
         },
         Id: bamCtxId,
-        Temps: moment().format(HEADER_DATE_FORMAT),
+        Temps: moment(now).format(HEADER_DATE_FORMAT),
         Emetteur: emitter,
         COUVERTURE: {},
       },
     };
   }
 
-  public static getLPSContext(lpsCtxId: string, lpsCtxInstance: string, config: SOAPINSConfig): object {
+  public static getLPSContext(lpsCtxId: string, lpsCtxInstance: string, config: SOAPINSConfig, now: Date): object {
     return {
       ContexteLPS: {
         attributes: {
@@ -26,7 +26,7 @@ export class INSSoapClientHelper {
           Version: '01_00',
         },
         Id: lpsCtxId,
-        Temps: moment().format(HEADER_DATE_FORMAT),
+        Temps: moment(now).format(HEADER_DATE_FORMAT),
         Emetteur: config.emitter,
         LPS: {
           IDAM: {
