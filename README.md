@@ -15,7 +15,7 @@ tlsi-ins
 ```
 
 You will need to provide the TLSI_INS_CERTIFICATE_PASSPHRASE env variable.
-You can use the dotenv file:
+You can use a dotenv file next to the package.json file (in the root folder):
 
 ```sh
 echo TLSI_INS_CERTIFICATE_PASSPHRASE="The$ecretP@ssphrase" > .env
