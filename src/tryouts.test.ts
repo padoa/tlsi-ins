@@ -1,8 +1,14 @@
 import fs from 'fs';
 import https from 'https';
 import axios, { AxiosError } from 'axios';
-import { combineCACertAsPem, PASSPHRASE, readCACertAsPem } from './certificates';
-import { INSSoapClientService, INSIdentityTraits } from './ins-soap-client.service';
+import { combineCACertAsPem, readCACertAsPem } from './utils/certificates';
+import { INSIdentityTraits, INSSoapClientService } from './ins-soap-client.service';
+import { IDAM, PASSPHRASE } from './models/env';
+import { INSiClient } from './insi-client.service';
+import { LPS } from './class/lps.class';
+import { LpsContext } from './class/lps-context.class';
+import { BamContext } from './class/bam-context.class';
+import { Gender, INSiPerson } from './class/insi-person.class';
 
 describe('Convert CA cert to PEM', () => {
   // Make sure we are compatible with Windows line endings
@@ -27,7 +33,6 @@ describe('Convert CA cert to PEM', () => {
     expect(certChain).toEqual(expected);
   });
 });
-
 
 const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
 
@@ -90,5 +95,72 @@ describe('Using the p12 directly with node-soap', () => {
       console.log('RESPONSE CONTENT\n\n', res.result.data);
       expect(res.result.status).toBe(500);
       expect(res.result.data).toContain(`Numéro d'autorisation du logiciel inconnu.`);
+  });
+});
+
+describe.only('INSi client', () => {
+  let insiClient: INSiClient;
+
+  test('should be able to create a new INSi client', async () => {
+    const lps = new LPS({
+      idam: IDAM as string,
+      version: '2022',
+      name: 'padoa',
+    });
+
+    const lpsContext = new LpsContext({
+      emitter: 'ca.s@padoa-group.com',
+      lps,
+    });
+
+    const bamContext = new BamContext({
+      emitter: 'ca.s@padoa-group.com',
+    });
+
+    insiClient = new INSiClient({
+      lpsContext,
+      bamContext,
+      passphrase: PASSPHRASE,
+      pfx,
+    });
+
+    await insiClient.initialize();
+  }, 10000);
+
+  test('should be able to call fetchIdentity', async () => {
+    const person = new INSiPerson({
+      lastName: 'ADRTROIS',
+      firstName: 'DOMINIQUE',
+      gender: Gender.Female,
+      dateOfBirth: new Date('1997-02-26'),
+    });
+
+    const { requestId, result } = await insiClient.fetchIdentity(person);
+
+    console.log('Request Id :', result);
+
+    expect(result[0]).toEqual({
+      CR: {
+        CodeCR: '00',
+        LibelleCR: 'OK'
+      },
+      INDIVIDU: {
+        INSACTIF: {
+          IdIndividu: {
+            NumIdentifiant: '297022A020778',
+            Cle: '78'
+          },
+          OID: '1.2.250.1.213.1.4.8'
+        },
+        TIQ: {
+          NomNaissance: 'ADRTROIS',
+          Prenom: 'DOMINIQUE',
+          ListePrenom: 'DOMINIQUE',
+          Sexe: 'F',
+          DateNaissance: '1997-02-26',
+          LieuNaissance: '20020'
+        }
+      }
+    });
   });
 });

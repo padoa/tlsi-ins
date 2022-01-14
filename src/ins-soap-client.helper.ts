@@ -18,7 +18,7 @@ export class INSSoapClientHelper {
     };
   }
 
-  public static getLPSContext(lpsCtxId: string, lpsCtxInstance: string, config: SOAPINSConfig, now: Date): object {
+  public static getLpsContext(lpsCtxId: string, lpsCtxInstance: string, config: SOAPINSConfig, now: Date): object {
     return {
       ContexteLPS: {
         attributes: {

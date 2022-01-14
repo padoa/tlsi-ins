@@ -7,7 +7,7 @@ import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 import { AxiosResponse } from 'axios';
 import { INSSoapClientHelper } from './ins-soap-client.helper';
-import { combineCACertAsPem } from './certificates';
+import { combineCACertAsPem } from './utils/certificates';
 
 export interface SOAPINSConfig {
   softwareName: string;
@@ -104,7 +104,7 @@ export class INSSoapClientService {
       'ctxbam'
     );
     this._soapClient.addSoapHeader(
-      INSSoapClientHelper.getLPSContext(this._lpsCtxId, this._lpsCtxInstance, this._config, now),
+      INSSoapClientHelper.getLpsContext(this._lpsCtxId, this._lpsCtxInstance, this._config, now),
       'ContexteLPS',
       'ctxlps'
     );
