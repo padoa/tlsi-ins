@@ -4,17 +4,17 @@ export enum Gender {
 }
 
 export interface IINSiPersonData {
-  lastName: string,
-  firstName: string,
-  gender: Gender,
-  dateOfBirth: string,
-  birthPlaceCode?: string,
+  lastName: string;
+  firstName: string;
+  gender: Gender;
+  dateOfBirth: string;
+  birthPlaceCode?: string;
 }
 
 export interface IINSiPersonSoapData {
   NomNaissance: string;
   Prenom: string;
-  Sexe: Gender
+  Sexe: Gender;
   DateNaissance: string; // YYYY-MM-DD
   LieuNaissance?: string; // COG
 }

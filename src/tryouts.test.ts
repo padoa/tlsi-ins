@@ -38,9 +38,9 @@ describe('INSi client', () => {
 
   test('should be able to create a new INSi client', async () => {
     const lps = new LPS({
-      idam: IDAM as string,
-      version: SOFTWARE_VERSION as string,
-      name: SOFTWARE_NAME as string,
+      idam: IDAM,
+      version: SOFTWARE_VERSION,
+      name: SOFTWARE_NAME,
     });
 
     const lpsContext = new LpsContext({
@@ -60,7 +60,7 @@ describe('INSi client', () => {
     });
 
     await insiClient.initialize();
-  }, 10000);
+  });
 
   test('should be able to call fetchIdentity', async () => {
     const person = new INSiPerson({

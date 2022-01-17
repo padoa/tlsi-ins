@@ -14,14 +14,14 @@ export interface ILpsContextOptions {
 export interface ILpsContextSoapHeader {
   ContexteLPS: {
     attributes: {
-      Nature: string,
-      Version: string,
-    },
-    Id: string,
-    Temps: string,
-    Emetteur: string,
-    LPS: ILpsSoapHeader,
-  }
+      Nature: string;
+      Version: string;
+    };
+    Id: string;
+    Temps: string;
+    Emetteur: string;
+    LPS: ILpsSoapHeader;
+  };
 }
 
 export class LpsContext {
