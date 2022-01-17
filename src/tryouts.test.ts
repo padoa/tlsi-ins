@@ -1,6 +1,4 @@
 import fs from 'fs';
-import https from 'https';
-import axios, { AxiosError } from 'axios';
 import { combineCACertAsPem, readCACertAsPem } from './utils/certificates';
 import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import { INSiClient } from './insi-client.service';
@@ -35,39 +33,7 @@ describe('Convert CA cert to PEM', () => {
 
 const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
 
-describe('Using the p12 directly with axios', () => {
-  test('should error out when the software authorization number is unknown', (done) => {
-    const fakePayload = fs.readFileSync('src/fixtures/fake_payload.xml', 'utf-8');
-    const httpsAgent = new https.Agent({
-      pfx,
-      passphrase: PASSPHRASE,
-      ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
-      ]),
-    });
-
-    axios.post('https://qualiflps-services-ps-tlsm.ameli.fr:443/lps', fakePayload, {
-      httpsAgent,
-      headers: {
-        'Content-Type': 'application/soap+xml;charset=utf-8',
-      },
-    })
-      .then((res) => {
-        console.log('[We should not end up here]', res);
-        done();
-      })
-      .catch((e: AxiosError<any>) => {
-        const xmlAsString = e.response?.data;
-        console.log('RESPONSE CONTENT\n\n', xmlAsString);
-        expect(e.response?.status).toBe(500);
-        expect(xmlAsString).toContain(`Numéro d'autorisation du logiciel inconnu.`);
-        done();
-      });
-  });
-});
-
-describe.only('INSi client', () => {
+describe('INSi client', () => {
   let insiClient: INSiClient;
 
   test('should be able to create a new INSi client', async () => {
