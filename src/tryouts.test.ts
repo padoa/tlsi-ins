@@ -104,11 +104,9 @@ describe.only('INSi client', () => {
       dateOfBirth: '1997-02-26',
     });
 
-    const { requestId, result } = await insiClient.fetchIdentity(person);
+    const { requestId, responseAsJson } = await insiClient.fetchIdentity(person);
 
-    console.log('Request Id :', result);
-
-    expect(result[0]).toEqual({
+    expect(responseAsJson).toEqual({
       CR: {
         CodeCR: '00',
         LibelleCR: 'OK'

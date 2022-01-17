@@ -2,7 +2,9 @@ import { Gender } from '../class/insi-person.class';
 
 export interface INSiSearchFromIdentityTraits {
   requestId: string;
-  result: any;
+  responseAsJson: IFetchIdentityResponse;
+  responseAsXMl: string;
+  requestAsXML: string;
 }
 
 // Trait d'identification
@@ -23,7 +25,7 @@ export interface INSACTIF {
   OID: string;
 }
 
-export interface INSiSearchFromIdentityTraitsResponse {
+export interface IFetchIdentityResponse {
   CR: {
     CodeCR: '00',
     LibelleCR: 'OK'

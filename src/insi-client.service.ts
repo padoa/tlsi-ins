@@ -53,15 +53,23 @@ export class INSiClient {
     this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
     this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
 
-    let result;
+    let rawSoapResponse;
     try {
-      result = await this._soapClient[`${method}Async`](person.getSoapDataAsJson());
-    } catch (e: any) {
-      console.log('ERROR', e);
-      result = e.response;
+      rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapDataAsJson());
     }
-    this._soapClient.clearSoapHeaders();
-    return { requestId, result };
+    catch (e: any) {
+      throw {
+        name: 'INS-i Call Error',
+        message: 'an error occurred when calling the INS-i service',
+        requestId: requestId,
+        error: e,
+      }
+    }
+    finally {
+      this._soapClient.clearSoapHeaders();
+    }
+    const [responseAsJson, responseAsXMl, , requestAsXML] = rawSoapResponse;
+    return { requestId, responseAsJson, responseAsXMl, requestAsXML };
   }
 
   private _setClientSSLSecurityPFX(): void {
