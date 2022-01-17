@@ -3,7 +3,7 @@ import https from 'https';
 import axios, { AxiosError } from 'axios';
 import { combineCACertAsPem, readCACertAsPem } from './utils/certificates';
 import { INSIdentityTraits, INSSoapClientService } from './ins-soap-client.service';
-import { IDAM, PASSPHRASE } from './models/env';
+import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import { INSiClient } from './insi-client.service';
 import { LPS } from './class/lps.class';
 import { LpsContext } from './class/lps-context.class';
@@ -104,8 +104,8 @@ describe.only('INSi client', () => {
   test('should be able to create a new INSi client', async () => {
     const lps = new LPS({
       idam: IDAM as string,
-      version: '2022',
-      name: 'padoa',
+      version: SOFTWARE_VERSION as string,
+      name: SOFTWARE_NAME as string,
     });
 
     const lpsContext = new LpsContext({
