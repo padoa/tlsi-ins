@@ -6,6 +6,10 @@ export interface ILPSData {
   name: string;
 }
 
+export interface ILPSOptions {
+  id?: string;
+}
+
 export interface ILpsSoapHeader {
   IDAM: {
     attributes: { R: 4 };
@@ -20,23 +24,35 @@ export class LPS {
   public idam: string;
   public softwareVersion: string;
   public softwareName: string;
-  public instance: string; // UUID
+  public id: string; // UUID
 
-  constructor({ idam, version, name }: ILPSData) {
+  constructor(
+    { idam, version, name }: ILPSData,
+    { id }: ILPSOptions = {},
+  ) {
+    if (!idam) {
+      throw new Error('Fail to create a LPS, you must provide an idam');
+    }
     this.idam = idam;
+    if (!version) {
+      throw new Error('Fail to create a LPS, you must provide a version');
+    }
     this.softwareVersion = version;
+    if (!name) {
+      throw new Error('Fail to create a LPS, you must provide a name');
+    }
     this.softwareName = name;
-    this.instance = uuidv4();
+    this.id = id || uuidv4();
   }
 
-  public getSoapHeader(): ILpsSoapHeader {
+  public getSoapHeaderAsJson(): ILpsSoapHeader {
     return {
       IDAM: {
         attributes: { R: 4 },
         $value: this.idam,
       },
       Version: this.softwareVersion,
-      Instance: this.instance,
+      Instance: this.id,
       Nom: this.softwareName,
     };
   }

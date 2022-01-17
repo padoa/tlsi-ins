@@ -1,47 +1,60 @@
-import moment from 'moment';
-
 export enum Gender {
   Male = 'M',
   Female = 'F',
 }
 
 export interface IINSiPersonData {
-  lastName?: string,
-  firstName?: string,
-  gender?: Gender,
-  dateOfBirth?: Date,
+  lastName: string,
+  firstName: string,
+  gender: Gender,
+  dateOfBirth: string,
   birthPlaceCode?: string,
 }
 
 export interface IINSiPersonSoapData {
-  NomNaissance?: string;
-  Prenom?: string;
-  Sexe?: string; // Code sexe
-  DateNaissance?: string; // YYYY-MM-DD
+  NomNaissance: string;
+  Prenom: string;
+  Sexe: Gender
+  DateNaissance: string; // YYYY-MM-DD
   LieuNaissance?: string; // COG
 }
 
 export class INSiPerson {
-  lastName: string | undefined;
-  firstName: string | undefined;
-  gender: Gender | undefined;
-  dateOfBirth: Date | undefined;
+  lastName: string;
+  firstName: string;
+  gender: Gender;
+  dateOfBirth: string;
   birthPlaceCode: string | undefined;
 
   constructor({ lastName, firstName, gender, dateOfBirth, birthPlaceCode }: IINSiPersonData) {
+    if (!lastName) {
+      throw new Error('Fail to create an INSiPerson, you must provide a lastName');
+    }
     this.lastName = lastName;
+
+    if (!firstName) {
+      throw new Error('Fail to create an INSiPerson, you must provide a firstName');
+    }
     this.firstName = firstName;
+
+    if (!gender) {
+      throw new Error('Fail to create an INSiPerson, you must provide a gender');
+    }
     this.gender = gender;
+
+    if (!dateOfBirth) {
+      throw new Error('Fail to create an INSiPerson, you must provide a dateOfBirth');
+    }
     this.dateOfBirth = dateOfBirth;
     this.birthPlaceCode = birthPlaceCode;
   }
 
-  public getSoapData(): IINSiPersonSoapData {
+  public getSoapDataAsJson(): IINSiPersonSoapData {
     return {
       NomNaissance: this.lastName,
       Prenom: this.firstName,
       Sexe: this.gender,
-      DateNaissance: moment(this.dateOfBirth).format('YYYY-MM-DD'),
+      DateNaissance: this.dateOfBirth,
       LieuNaissance: this.birthPlaceCode,
     };
   }

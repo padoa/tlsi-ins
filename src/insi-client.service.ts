@@ -47,7 +47,7 @@ export class INSiClient {
 
     let result;
     try {
-      result = await this._soapClient[`${method}Async`](person.getSoapData());
+      result = await this._soapClient[`${method}Async`](person.getSoapDataAsJson());
     } catch (e: any) {
       console.log('ERROR', e);
       result = e.response;
@@ -67,9 +67,9 @@ export class INSiClient {
   }
 
   private _setDefaultHeaders(): void {
-    const bamSoapHeader = this._bamContext.getSoapHeader();
+    const bamSoapHeader = this._bamContext.getSoapHeaderAsJson();
     this._soapClient.addSoapHeader(bamSoapHeader, 'ContexteBAM', 'ctxbam');
-    const lpsSoapHeader = this._lpsContext.getSoapHeader()
+    const lpsSoapHeader = this._lpsContext.getSoapHeaderAsJson()
     this._soapClient.addSoapHeader(lpsSoapHeader, 'ContexteLPS', 'ctxlps');
   }
 }

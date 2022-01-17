@@ -1,30 +1,39 @@
 import { v4 as uuidv4 } from 'uuid';
-import moment from 'moment';
-import { HEADER_DATE_FORMAT } from '../models/insi-format.models';
 
-interface IBamContextData {
+export interface IBamContextData {
   emitter: string;
 }
 
+export interface IBamContextOptions {
+  id?: string; // UUID
+  dateTime?: string;
+}
+
 export class BamContext {
-  id: string;
-  dateTime: Date;
+  id: string; // UUID
+  dateTime: string;
   emitter: string;
 
-  constructor({ emitter }: IBamContextData) {
+  constructor(
+    { emitter }: IBamContextData,
+    { id, dateTime }: IBamContextOptions = {},
+  ) {
+    if (!emitter) {
+      throw new Error('Fail to create a BamContext, you must provide an emitter');
+    }
     this.emitter = emitter;
-    this.id = uuidv4();
-    this.dateTime = new Date();
+    this.id = id || uuidv4();
+    this.dateTime = dateTime || new Date().toISOString();
   }
 
-  public getSoapHeader() {
+  public getSoapHeaderAsJson() {
     return {
       ContexteBAM: {
         attributes: {
           Version: '01_02',
         },
         Id: this.id,
-        Temps: moment(this.dateTime).format(HEADER_DATE_FORMAT),
+        Temps: this.dateTime,
         Emetteur: this.emitter,
         COUVERTURE: {},
       },

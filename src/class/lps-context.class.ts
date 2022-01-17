@@ -8,6 +8,11 @@ export interface ILpsContextData {
   lps: LPS;
 }
 
+export interface ILpsContextOptions {
+  id?: string;
+  dateTime?: string;
+}
+
 export interface ILpsContextSoapHeader {
   ContexteLPS: {
     attributes: {
@@ -23,18 +28,27 @@ export interface ILpsContextSoapHeader {
 
 export class LpsContext {
   id: string;
-  dateTime: Date;
+  dateTime: string;
   emitter: string;
   lps: LPS;
 
-  constructor({ emitter, lps }: ILpsContextData) {
+  constructor(
+    { emitter, lps }: ILpsContextData,
+    { id, dateTime }: ILpsContextOptions = {},
+  ) {
+    if (!emitter) {
+      throw new Error('Fail to create a LpsContext, you must provide an emitter');
+    }
     this.emitter = emitter;
+    if (!lps) {
+      throw new Error('Fail to create a LpsContext, you must provide a lps');
+    }
     this.lps = lps;
-    this.id = uuidv4();
-    this.dateTime = new Date();
+    this.id = id || uuidv4();
+    this.dateTime = dateTime || new Date().toISOString();
   }
 
-  public getSoapHeader(): ILpsContextSoapHeader {
+  public getSoapHeaderAsJson(): ILpsContextSoapHeader {
     return {
       ContexteLPS: {
         attributes: {
@@ -42,9 +56,9 @@ export class LpsContext {
           Version: '01_00',
         },
         Id: this.id,
-        Temps: moment(this.dateTime).format(HEADER_DATE_FORMAT),
+        Temps: this.dateTime,
         Emetteur: this.emitter,
-        LPS: this.lps.getSoapHeader(),
+        LPS: this.lps.getSoapHeaderAsJson(),
       }
     };
   }
