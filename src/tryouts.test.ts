@@ -2,7 +2,6 @@ import fs from 'fs';
 import https from 'https';
 import axios, { AxiosError } from 'axios';
 import { combineCACertAsPem, readCACertAsPem } from './utils/certificates';
-import { INSIdentityTraits, INSSoapClientService } from './ins-soap-client.service';
 import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import { INSiClient } from './insi-client.service';
 import { LPS } from './class/lps.class';
@@ -68,36 +67,6 @@ describe('Using the p12 directly with axios', () => {
   });
 });
 
-describe('Using the p12 directly with node-soap', () => {
-  let soapClient: INSSoapClientService;
-
-  test('should initialize the soap client', async () => {
-    soapClient = new INSSoapClientService({
-      softwareName: 'padoa',
-      softwareVersion: '2022',
-      emitter: '10B0152872',
-      IDAMAutorisationNumber: 'NumAuthorization',
-      pfx,
-      passphrase: PASSPHRASE,
-    })
-    await soapClient.initialize();
-  });
-
-  test('should error out when the software authorization number is unknown', async () => {
-    const fakePayload: INSIdentityTraits = {
-      lastName: 'ADRDEUX',
-      firstName: 'LAURENT',
-      gender: 'M',
-      birthdate: new Date('1981-11-01'),
-    };
-
-      const res = await soapClient.INSSearchFromIdentityTraits(fakePayload);
-      console.log('RESPONSE CONTENT\n\n', res.result.data);
-      expect(res.result.status).toBe(500);
-      expect(res.result.data).toContain(`Numéro d'autorisation du logiciel inconnu.`);
-  });
-});
-
 describe.only('INSi client', () => {
   let insiClient: INSiClient;
 
@@ -109,12 +78,12 @@ describe.only('INSi client', () => {
     });
 
     const lpsContext = new LpsContext({
-      emitter: 'ca.s@padoa-group.com',
+      emitter: 'medecin@yopmail.com',
       lps,
     });
 
     const bamContext = new BamContext({
-      emitter: 'ca.s@padoa-group.com',
+      emitter: 'medecin@yopmail.com',
     });
 
     insiClient = new INSiClient({
@@ -132,7 +101,7 @@ describe.only('INSi client', () => {
       lastName: 'ADRTROIS',
       firstName: 'DOMINIQUE',
       gender: Gender.Female,
-      dateOfBirth: new Date('1997-02-26'),
+      dateOfBirth: '1997-02-26',
     });
 
     const { requestId, result } = await insiClient.fetchIdentity(person);

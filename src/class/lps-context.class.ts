@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ILpsSoapHeader, LPS } from './lps.class';
-import moment from 'moment';
-import { HEADER_DATE_FORMAT } from '../models/insi-format.models';
 
 export interface ILpsContextData {
   emitter: string;

@@ -1,7 +1,5 @@
 import { Gender } from '../class/insi-person.class';
 
-export const HEADER_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
-
 export interface INSiSearchFromIdentityTraits {
   requestId: string;
   result: any;

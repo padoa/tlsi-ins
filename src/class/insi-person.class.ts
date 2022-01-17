@@ -55,7 +55,7 @@ export class INSiPerson {
       Prenom: this.firstName,
       Sexe: this.gender,
       DateNaissance: this.dateOfBirth,
-      LieuNaissance: this.birthPlaceCode,
+      ...(this.birthPlaceCode ? { LieuNaissance: this.birthPlaceCode } : {}),
     };
   }
 }

@@ -10,8 +10,8 @@ import { INSiSearchFromIdentityTraits } from './models/insi-format.models';
 interface IINSiClientData {
   lpsContext: LpsContext,
   bamContext: BamContext,
-  passphrase: string;
   pfx: Buffer;
+  passphrase?: string;
 }
 
 export class INSiClient {
@@ -23,11 +23,20 @@ export class INSiClient {
 
   private _soapClient: Client;
 
-  constructor({ lpsContext, bamContext, passphrase, pfx }: IINSiClientData) {
+  constructor({ lpsContext, bamContext, pfx, passphrase }: IINSiClientData) {
+    if (!lpsContext) {
+      throw new Error('Fail to create the INSiClient, you must provide an lpsContext');
+    }
     this._lpsContext = lpsContext;
+    if (!bamContext) {
+      throw new Error('Fail to create the INSiClient, you must provide an bamContext');
+    }
     this._bamContext = bamContext;
-    this._passphrase = passphrase;
+    if (!pfx) {
+      throw new Error('Fail to create the INSiClient, you must provide an pfx');
+    }
     this._pfx = pfx;
+    this._passphrase = passphrase || '';
   }
 
   public async initialize(): Promise<void> {
@@ -37,9 +46,8 @@ export class INSiClient {
     this._setClientSSLSecurityPFX();
   }
 
-  public async fetchIdentity(person: INSiPerson): Promise<INSiSearchFromIdentityTraits> {
+  public async fetchIdentity(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiSearchFromIdentityTraits> {
     const { header, method } = INSiSoapActions.searchFromIdentityTraits;
-    const requestId = uuidv4();
 
     this._setDefaultHeaders();
     this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
