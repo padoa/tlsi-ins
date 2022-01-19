@@ -1,5 +1,5 @@
 {
-  "name": "tlsi-ins",
+  "name": "@padoa/tlsi-ins",
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
   "version": "0.0.1",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/padoa/tlsi-ins.git"
+    "url": "git+https://github.com/padoa/tlsi-ins.git"
   },
   "keywords": [
     "tlsi",
@@ -29,11 +29,8 @@
   },
   "homepage": "https://github.com/padoa/tlsi-ins",
   "dependencies": {
-    "axios": "^0.24.0",
     "dotenv": "^10.0.0",
-    "moment": "^2.29.1",
-    "node-fetch": "^3.1.0",
-    "node-forge": "^0.10.0",
+    "node-forge": "^1.2.0",
     "soap": "^0.43.0",
     "uuid": "^8.3.2"
   },
@@ -44,5 +41,6 @@
     "jest": "^27.4.3",
     "ts-jest": "^27.1.0",
     "typescript": "^4.5.2"
-  }
+  },
+  "main": "index.ts"
 }

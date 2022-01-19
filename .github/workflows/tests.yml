@@ -2,6 +2,9 @@ name: Run Tests
 on: [push]
 env:
   TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
+  TLSI_INS_IDAM: ${{ secrets.TLSI_INS_IDAM }}
+  TLSI_INS_SOFTWARE_NAME: ${{ secrets.TLSI_INS_SOFTWARE_NAME }}
+  TLSI_INS_SOFTWARE_VERSION: ${{ secrets.TLSI_INS_SOFTWARE_VERSION }}
 jobs:
   tests:
     environment: development
