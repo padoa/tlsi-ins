@@ -18,7 +18,7 @@ export interface IBamContextSoapHeader {
       Id: string, // UUID
       Temps: string, // YYYY-MM-DDTHH:mm:ss.sssZ
       Emetteur: string,
-      COUVERTURE: {},
+      COUVERTURE: {}, // The balise should be included be still but empty since we don't use the "Carte Vitale"
     },
   };
   name: string;
