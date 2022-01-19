@@ -1,5 +1,5 @@
 {
-  "name": "tlsi-ins",
+  "name": "@padoa/tlsi-ins",
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
   "version": "0.0.1",
   "scripts": {
