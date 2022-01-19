@@ -10,43 +10,31 @@ import { INSiSearchFromIdentityTraits } from './models/insi-format.models';
 interface IINSiClientData {
   lpsContext: LpsContext,
   bamContext: BamContext,
-  pfx: Buffer;
-  passphrase?: string;
 }
 
 export class INSiClient {
   private readonly _wsdlUrl: string = 'src/fixtures/WSDL/DESIR_ICIR_EXP_1.5.0.wsdl';
-  private readonly _passphrase: string;
-  private readonly _pfx: Buffer;
   private readonly _lpsContext: LpsContext;
   private readonly _bamContext: BamContext;
 
   private _soapClient: Client;
 
-  constructor({ lpsContext, bamContext, pfx, passphrase }: IINSiClientData) {
-    if (!lpsContext) {
-      throw new Error('Fail to create the INSiClient, you must provide an lpsContext');
-    }
+  constructor({ lpsContext, bamContext }: IINSiClientData) {
     this._lpsContext = lpsContext;
-    if (!bamContext) {
-      throw new Error('Fail to create the INSiClient, you must provide an bamContext');
-    }
     this._bamContext = bamContext;
-    if (!pfx) {
-      throw new Error('Fail to create the INSiClient, you must provide an pfx');
-    }
-    this._pfx = pfx;
-    this._passphrase = passphrase || '';
   }
 
-  public async initialize(): Promise<void> {
+  public async initClient(pfx: Buffer, passphrase: string = ''): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
     });
-    this._setClientSSLSecurityPFX();
+    this._setClientSSLSecurityPFX(pfx, passphrase);
   }
 
   public async fetchIdentity(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiSearchFromIdentityTraits> {
+    if (!this._soapClient) {
+      throw 'fetchIdentity ERROR: you must initialized first';
+    }
     const { header, method } = INSiSoapActions.searchFromIdentityTraits;
 
     this._setDefaultHeaders();
@@ -59,8 +47,8 @@ export class INSiClient {
     }
     catch (e: any) {
       throw {
-        name: 'INS-i Call Error',
-        message: 'an error occurred when calling the INS-i service',
+        name: 'INSi Error : rechercherInsAvecTraitsIdentite',
+        message: 'an error occurred when calling the INSi service',
         requestId: requestId,
         error: e,
       }
@@ -72,9 +60,9 @@ export class INSiClient {
     return { requestId, responseAsJson, responseAsXMl, requestAsXML };
   }
 
-  private _setClientSSLSecurityPFX(): void {
-    this._soapClient.setSecurity(new ClientSSLSecurityPFX(this._pfx, {
-      passphrase: this._passphrase,
+  private _setClientSSLSecurityPFX(pfx: Buffer, passphrase?: string): void {
+    this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
+      passphrase,
       ca: combineCACertAsPem([
         'certificates/ca/ACR-EL.cer',
         'certificates/ca/ACI-EL-ORG.cer',

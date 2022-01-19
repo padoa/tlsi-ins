@@ -42,10 +42,11 @@ export class INSiPerson {
     }
     this.gender = gender;
 
-    if (!dateOfBirth) {
-      throw new Error('Fail to create an INSiPerson, you must provide a dateOfBirth');
+    if (!this._isValidBirthDate(dateOfBirth)) {
+      throw new Error('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
     }
     this.dateOfBirth = dateOfBirth;
+
     this.birthPlaceCode = birthPlaceCode;
   }
 
@@ -57,5 +58,10 @@ export class INSiPerson {
       DateNaissance: this.dateOfBirth,
       ...(this.birthPlaceCode ? { LieuNaissance: this.birthPlaceCode } : {}),
     };
+  }
+
+  public _isValidBirthDate(birthDate: string) {
+    if (!/\d{4}-\d{2}-\d{2}/.test(birthDate)) return false;
+    return new Date(birthDate).toString() !== 'Invalid Date';
   }
 }
