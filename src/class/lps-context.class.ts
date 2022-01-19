@@ -7,8 +7,8 @@ export interface ILpsContextData {
 }
 
 export interface ILpsContextOptions {
-  id?: string;
-  dateTime?: string;
+  id?: string; // UUID
+  dateTime?: string; // YYYY-MM-DDTHH:mm:ss.sssZ
 }
 
 export interface ILpsContextSoapHeader {
@@ -18,8 +18,8 @@ export interface ILpsContextSoapHeader {
         Nature: string;
         Version: string;
       };
-      Id: string;
-      Temps: string;
+      Id: string; // UUID
+      Temps: string; // YYYY-MM-DDTHH:mm:ss.sssZ
       Emetteur: string;
       LPS: ILpsSoapHeader;
     };
@@ -30,8 +30,8 @@ export interface ILpsContextSoapHeader {
 
 
 export class LpsContext {
-  id: string;
-  dateTime: string;
+  id: string; // UUID
+  dateTime: string; // YYYY-MM-DDTHH:mm:ss.sssZ
   emitter: string;
   lps: LPS;
 

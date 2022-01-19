@@ -6,7 +6,7 @@ export interface IBamContextData {
 
 export interface IBamContextOptions {
   id?: string; // UUID
-  dateTime?: string;
+  dateTime?: string; // YYYY-MM-DDTHH:mm:ss.sssZ
 }
 
 export interface IBamContextSoapHeader {
@@ -15,8 +15,8 @@ export interface IBamContextSoapHeader {
       attributes: {
         Version: string,
       },
-      Id: string,
-      Temps: string,
+      Id: string, // UUID
+      Temps: string, // YYYY-MM-DDTHH:mm:ss.sssZ
       Emetteur: string,
       COUVERTURE: {},
     },
@@ -27,7 +27,7 @@ export interface IBamContextSoapHeader {
 
 export class BamContext {
   id: string; // UUID
-  dateTime: string;
+  dateTime: string; // YYYY-MM-DDTHH:mm:ss.sssZ
   emitter: string;
 
   constructor(

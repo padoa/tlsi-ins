@@ -13,7 +13,7 @@ export interface TIQ {
   Prenom: string;
   ListePrenom: string;
   Sexe: Gender;
-  DateNaissance: string;
+  DateNaissance: string; // YYYY-MM-DD
   LieuNaissance: string;
 }
 

@@ -7,7 +7,7 @@ export interface ILPSData {
 }
 
 export interface ILPSOptions {
-  id?: string;
+  id?: string; // UUID
 }
 
 export interface ILpsSoapHeader {
@@ -16,7 +16,7 @@ export interface ILpsSoapHeader {
     $value: string;
   },
   Version: string;
-  Instance: string;
+  Instance: string; // UUID
   Nom: string;
 }
 
