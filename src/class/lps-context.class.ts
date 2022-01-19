@@ -12,17 +12,22 @@ export interface ILpsContextOptions {
 }
 
 export interface ILpsContextSoapHeader {
-  ContexteLPS: {
-    attributes: {
-      Nature: string;
-      Version: string;
+  soapHeader: {
+    ContexteLPS: {
+      attributes: {
+        Nature: string;
+        Version: string;
+      };
+      Id: string;
+      Temps: string;
+      Emetteur: string;
+      LPS: ILpsSoapHeader;
     };
-    Id: string;
-    Temps: string;
-    Emetteur: string;
-    LPS: ILpsSoapHeader;
   };
+  name: string;
+  namespace: string;
 }
+
 
 export class LpsContext {
   id: string;
@@ -47,7 +52,7 @@ export class LpsContext {
   }
 
   public getSoapHeaderAsJson(): ILpsContextSoapHeader {
-    return {
+    const soapHeader = {
       ContexteLPS: {
         attributes: {
           Nature: 'CTXLPS',
@@ -59,5 +64,8 @@ export class LpsContext {
         LPS: this.lps.getSoapHeaderAsJson(),
       }
     };
+    const name = 'ContexteLPS';
+    const namespace = 'ctxlps';
+    return { soapHeader, name, namespace };
   }
 }

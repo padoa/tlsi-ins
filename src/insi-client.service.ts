@@ -6,6 +6,7 @@ import { INSiPerson } from './class/insi-person.class';
 import { combineCACertAsPem } from './utils/certificates';
 import { INSiSoapActions } from './models/insi-soap-action.models';
 import { INSiSearchFromIdentityTraits } from './models/insi-format.models';
+import { InsiError } from './utils/insi-error';
 
 interface IINSiClientData {
   lpsContext: LpsContext,
@@ -33,7 +34,7 @@ export class INSiClient {
 
   public async fetchIdentity(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiSearchFromIdentityTraits> {
     if (!this._soapClient) {
-      throw 'fetchIdentity ERROR: you must initialized first';
+      throw new Error('fetchIdentity ERROR: you must init client first');
     }
     const { header, method } = INSiSoapActions.searchFromIdentityTraits;
 
@@ -46,12 +47,8 @@ export class INSiClient {
       rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapDataAsJson());
     }
     catch (e: any) {
-      throw {
-        name: 'INSi Error : rechercherInsAvecTraitsIdentite',
-        message: 'an error occurred when calling the INSi service',
-        requestId: requestId,
-        error: e,
-      }
+      // TODO: Better error management
+      throw new InsiError({ requestId: requestId, originalError: e });
     }
     finally {
       this._soapClient.clearSoapHeaders();
@@ -71,9 +68,9 @@ export class INSiClient {
   }
 
   private _setDefaultHeaders(): void {
-    const bamSoapHeader = this._bamContext.getSoapHeaderAsJson();
-    this._soapClient.addSoapHeader(bamSoapHeader, 'ContexteBAM', 'ctxbam');
-    const lpsSoapHeader = this._lpsContext.getSoapHeaderAsJson()
-    this._soapClient.addSoapHeader(lpsSoapHeader, 'ContexteLPS', 'ctxlps');
+    const { soapHeader: bamSoapHeader, name: bamName, namespace: bamNamespace } = this._bamContext.getSoapHeaderAsJson();
+    this._soapClient.addSoapHeader(bamSoapHeader, bamName, bamNamespace);
+    const { soapHeader: lpsSoapHeader, name: lpsName, namespace: lpsNamespace } = this._lpsContext.getSoapHeaderAsJson()
+    this._soapClient.addSoapHeader(lpsSoapHeader, lpsName, lpsNamespace);
   }
 }

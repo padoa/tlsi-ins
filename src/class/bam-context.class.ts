@@ -9,6 +9,22 @@ export interface IBamContextOptions {
   dateTime?: string;
 }
 
+export interface IBamContextSoapHeader {
+  soapHeader: {
+    ContexteBAM: {
+      attributes: {
+        Version: string,
+      },
+      Id: string,
+      Temps: string,
+      Emetteur: string,
+      COUVERTURE: {},
+    },
+  };
+  name: string;
+  namespace: string;
+}
+
 export class BamContext {
   id: string; // UUID
   dateTime: string;
@@ -26,8 +42,8 @@ export class BamContext {
     this.dateTime = dateTime || new Date().toISOString();
   }
 
-  public getSoapHeaderAsJson() {
-    return {
+  public getSoapHeaderAsJson(): IBamContextSoapHeader {
+    const soapHeader = {
       ContexteBAM: {
         attributes: {
           Version: '01_02',
@@ -38,5 +54,8 @@ export class BamContext {
         COUVERTURE: {},
       },
     };
+    const name = 'ContexteBAM';
+    const namespace = 'ctxbam';
+    return { soapHeader, name, namespace };
   }
 }
