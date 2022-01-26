@@ -3,10 +3,10 @@ export declare enum Gender {
     Female = "F"
 }
 export interface IINSiPersonData {
-    lastName: string;
+    formerName: string;
     firstName: string;
     gender: Gender;
-    dateOfBirth: string;
+    birthDate: string;
     birthPlaceCode?: string;
 }
 export interface IINSiPersonSoapData {
@@ -17,12 +17,12 @@ export interface IINSiPersonSoapData {
     LieuNaissance?: string;
 }
 export declare class INSiPerson {
-    lastName: string;
+    formerName: string;
     firstName: string;
     gender: Gender;
-    dateOfBirth: string;
+    birthDate: string;
     birthPlaceCode: string | undefined;
-    constructor({ lastName, firstName, gender, dateOfBirth, birthPlaceCode }: IINSiPersonData);
+    constructor({ formerName, firstName, gender, birthDate, birthPlaceCode }: IINSiPersonData);
     getSoapDataAsJson(): IINSiPersonSoapData;
     _isValidBirthDate(birthDate: string): boolean;
 }

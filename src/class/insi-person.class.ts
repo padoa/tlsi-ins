@@ -4,10 +4,10 @@ export enum Gender {
 }
 
 export interface IINSiPersonData {
-  lastName: string;
+  formerName: string;
   firstName: string;
   gender: Gender;
-  dateOfBirth: string;
+  birthDate: string;
   birthPlaceCode?: string;
 }
 
@@ -20,17 +20,17 @@ export interface IINSiPersonSoapData {
 }
 
 export class INSiPerson {
-  lastName: string;
+  formerName: string;
   firstName: string;
   gender: Gender;
-  dateOfBirth: string;
+  birthDate: string;
   birthPlaceCode: string | undefined;
 
-  constructor({ lastName, firstName, gender, dateOfBirth, birthPlaceCode }: IINSiPersonData) {
-    if (!lastName) {
-      throw new Error('Fail to create an INSiPerson, you must provide a lastName');
+  constructor({ formerName, firstName, gender, birthDate, birthPlaceCode }: IINSiPersonData) {
+    if (!formerName) {
+      throw new Error('Fail to create an INSiPerson, you must provide a formerName');
     }
-    this.lastName = lastName;
+    this.formerName = formerName;
 
     if (!firstName) {
       throw new Error('Fail to create an INSiPerson, you must provide a firstName');
@@ -42,20 +42,20 @@ export class INSiPerson {
     }
     this.gender = gender;
 
-    if (!this._isValidBirthDate(dateOfBirth)) {
-      throw new Error('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
+    if (!this._isValidBirthDate(birthDate)) {
+      throw new Error('Fail to create an INSiPerson, you must provide a valid birthDate');
     }
-    this.dateOfBirth = dateOfBirth;
+    this.birthDate = birthDate;
 
     this.birthPlaceCode = birthPlaceCode;
   }
 
   public getSoapDataAsJson(): IINSiPersonSoapData {
     return {
-      NomNaissance: this.lastName,
+      NomNaissance: this.formerName,
       Prenom: this.firstName,
       Sexe: this.gender,
-      DateNaissance: this.dateOfBirth,
+      DateNaissance: this.birthDate,
       ...(this.birthPlaceCode ? { LieuNaissance: this.birthPlaceCode } : {}),
     };
   }
