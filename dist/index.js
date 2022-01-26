@@ -14,7 +14,7 @@ __exportStar(require("./class/bam-context.class"), exports);
 __exportStar(require("./class/insi-person.class"), exports);
 __exportStar(require("./class/lps-context.class"), exports);
 __exportStar(require("./class/lps.class"), exports);
-__exportStar(require("./models/insi-format.models"), exports);
+__exportStar(require("./models/insi-fetch-ins.models"), exports);
 __exportStar(require("./models/insi-soap-action.models"), exports);
 __exportStar(require("./utils/insi-error"), exports);
 __exportStar(require("./utils/certificates"), exports);

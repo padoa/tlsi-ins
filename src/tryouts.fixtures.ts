@@ -1,5 +1,5 @@
-import { IFetchIdentityResponse } from './models/insi-format.models';
 import { Gender } from './class/insi-person.class';
+import { IFetchInsFormattedData, IFetchInsRawData } from './models/insi-fetch-ins.models';
 
 export const getAdrtroisDominiqueXmlResponse = ():string => {
   return [
@@ -71,28 +71,37 @@ export const getAdrtroisDominiqueXmlResquest = (
   ].join('');
 }
 
-export const getAdrtroisDominiqueJsonResponse = (): IFetchIdentityResponse => {
-  return {
-    CR: {
-      CodeCR: '00',
-      LibelleCR: 'OK'
-    },
-    INDIVIDU: {
-      INSACTIF: {
-        IdIndividu: {
-          NumIdentifiant: '297022A020778',
-          Cle: '78'
-        },
-        OID: '1.2.250.1.213.1.4.8'
+export const getAdrtroisDominiqueRawResponse = (): IFetchInsRawData => ({
+  CR: {
+    CodeCR: '00',
+    LibelleCR: 'OK'
+  },
+  INDIVIDU: {
+    INSACTIF: {
+      IdIndividu: {
+        NumIdentifiant: '297022A020778',
+        Cle: '78'
       },
-      TIQ: {
-        NomNaissance: 'ADRTROIS',
-        Prenom: 'DOMINIQUE',
-        ListePrenom: 'DOMINIQUE',
-        Sexe: Gender.Female,
-        DateNaissance: '1997-02-26',
-        LieuNaissance: '20020'
-      }
+      OID: '1.2.250.1.213.1.4.8'
+    },
+    TIQ: {
+      NomNaissance: 'ADRTROIS',
+      Prenom: 'DOMINIQUE',
+      ListePrenom: 'DOMINIQUE',
+      Sexe: Gender.Female,
+      DateNaissance: '1997-02-26',
+      LieuNaissance: '20020'
     }
-  };
-}
+  }
+});
+
+export const getAdrtroisDominiqueFormattedResponse = (): IFetchInsFormattedData => ({
+  formerName: 'ADRTROIS',
+  firstName: 'DOMINIQUE',
+  firstNameList: 'DOMINIQUE',
+  gender: Gender.Female,
+  birthName: '1997-02-26',
+  birthPlaceCode: '20020',
+  socialSecurityNumber: '297022A02077878',
+  oid: '1.2.250.1.213.1.4.8',
+});

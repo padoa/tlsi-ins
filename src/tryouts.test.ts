@@ -8,7 +8,8 @@ import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { Gender, INSiPerson } from './class/insi-person.class';
 import {
-  getAdrtroisDominiqueJsonResponse,
+  getAdrtroisDominiqueFormattedResponse,
+  getAdrtroisDominiqueRawResponse,
   getAdrtroisDominiqueXmlResponse,
   getAdrtroisDominiqueXmlResquest,
 } from './tryouts.fixtures';
@@ -322,15 +323,14 @@ describe('INSi client', () => {
         gender: Gender.Female,
         birthDate: '1997-02-26',
       });
-      await expect(async () => insiClient.fetchIdentity(person))
-        .rejects.toThrow('fetchIdentity ERROR: you must init client first');
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('fetchIns ERROR: you must init client first');
     });
 
     test('should be able to initClient without throwing error', async () => {
       await insiClient.initClient(pfx, PASSPHRASE);
     });
 
-    test('should be able to call fetchIdentity', async () => {
+    test('should be able to call fetchIns', async () => {
       const person = new INSiPerson({
         formerName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
@@ -338,12 +338,19 @@ describe('INSi client', () => {
         birthDate: '1997-02-26',
       });
 
-      const { requestId, responseAsJson, responseAsXMl, requestAsXML } = await insiClient.fetchIdentity(person, {
+      const {
+        requestId,
+        formattedResponse,
+        rawResponseAsJson,
+        responseAsXMl,
+        requestAsXML,
+      } = await insiClient.fetchIns(person, {
         requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
       });
 
       expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-      expect(responseAsJson).toEqual(getAdrtroisDominiqueJsonResponse());
+      expect(formattedResponse).toEqual(getAdrtroisDominiqueFormattedResponse());
+      expect(rawResponseAsJson).toEqual(getAdrtroisDominiqueRawResponse());
       expect(responseAsXMl).toEqual(getAdrtroisDominiqueXmlResponse());
       expect(requestAsXML).toEqual(getAdrtroisDominiqueXmlResquest({
         idam: IDAM,
@@ -369,7 +376,7 @@ describe('INSi client', () => {
         birthDate: '1997-02-26',
       });
 
-      await expect(async () => insiClient.fetchIdentity(person)).rejects.toThrow();
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow();
     });
   });
 });

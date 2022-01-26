@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAdrtroisDominiqueJsonResponse = exports.getAdrtroisDominiqueXmlResquest = exports.getAdrtroisDominiqueXmlResponse = void 0;
+exports.getAdrtroisDominiqueFormattedResponse = exports.getAdrtroisDominiqueRawResponse = exports.getAdrtroisDominiqueXmlResquest = exports.getAdrtroisDominiqueXmlResponse = void 0;
 const insi_person_class_1 = require("./class/insi-person.class");
 const getAdrtroisDominiqueXmlResponse = () => {
     return [
@@ -70,30 +70,39 @@ const getAdrtroisDominiqueXmlResquest = ({ idam, version, name }) => {
     ].join('');
 };
 exports.getAdrtroisDominiqueXmlResquest = getAdrtroisDominiqueXmlResquest;
-const getAdrtroisDominiqueJsonResponse = () => {
-    return {
-        CR: {
-            CodeCR: '00',
-            LibelleCR: 'OK'
-        },
-        INDIVIDU: {
-            INSACTIF: {
-                IdIndividu: {
-                    NumIdentifiant: '297022A020778',
-                    Cle: '78'
-                },
-                OID: '1.2.250.1.213.1.4.8'
+const getAdrtroisDominiqueRawResponse = () => ({
+    CR: {
+        CodeCR: '00',
+        LibelleCR: 'OK'
+    },
+    INDIVIDU: {
+        INSACTIF: {
+            IdIndividu: {
+                NumIdentifiant: '297022A020778',
+                Cle: '78'
             },
-            TIQ: {
-                NomNaissance: 'ADRTROIS',
-                Prenom: 'DOMINIQUE',
-                ListePrenom: 'DOMINIQUE',
-                Sexe: insi_person_class_1.Gender.Female,
-                DateNaissance: '1997-02-26',
-                LieuNaissance: '20020'
-            }
+            OID: '1.2.250.1.213.1.4.8'
+        },
+        TIQ: {
+            NomNaissance: 'ADRTROIS',
+            Prenom: 'DOMINIQUE',
+            ListePrenom: 'DOMINIQUE',
+            Sexe: insi_person_class_1.Gender.Female,
+            DateNaissance: '1997-02-26',
+            LieuNaissance: '20020'
         }
-    };
-};
-exports.getAdrtroisDominiqueJsonResponse = getAdrtroisDominiqueJsonResponse;
+    }
+});
+exports.getAdrtroisDominiqueRawResponse = getAdrtroisDominiqueRawResponse;
+const getAdrtroisDominiqueFormattedResponse = () => ({
+    formerName: 'ADRTROIS',
+    firstName: 'DOMINIQUE',
+    firstNameList: 'DOMINIQUE',
+    gender: insi_person_class_1.Gender.Female,
+    birthName: '1997-02-26',
+    birthPlaceCode: '20020',
+    socialSecurityNumber: '297022A02077878',
+    oid: '1.2.250.1.213.1.4.8',
+});
+exports.getAdrtroisDominiqueFormattedResponse = getAdrtroisDominiqueFormattedResponse;
 //# sourceMappingURL=tryouts.fixtures.js.map

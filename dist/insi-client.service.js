@@ -19,6 +19,7 @@ const uuid_1 = require("uuid");
 const certificates_1 = require("./utils/certificates");
 const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
 const insi_error_1 = require("./utils/insi-error");
+const insi_helper_1 = require("./utils/insi-helper");
 class INSiClient {
     constructor({ lpsContext, bamContext }) {
         this._wsdlUrl = path_1.default.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
@@ -33,12 +34,12 @@ class INSiClient {
             this._setClientSSLSecurityPFX(pfx, passphrase);
         });
     }
-    fetchIdentity(person, { requestId = (0, uuid_1.v4)() } = {}) {
+    fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._soapClient) {
-                throw new Error('fetchIdentity ERROR: you must init client first');
+                throw new Error('fetchIns ERROR: you must init client first');
             }
-            const { header, method } = insi_soap_action_models_1.INSiSoapActions.searchFromIdentityTraits;
+            const { header, method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
             this._setDefaultHeaders();
             this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
             this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
@@ -53,8 +54,14 @@ class INSiClient {
             finally {
                 this._soapClient.clearSoapHeaders();
             }
-            const [responseAsJson, responseAsXMl, , requestAsXML] = rawSoapResponse;
-            return { requestId, responseAsJson, responseAsXMl, requestAsXML };
+            const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
+            return {
+                requestId,
+                rawResponseAsJson: rawResponse,
+                formattedResponse: insi_helper_1.InsiHelper.formatFetchINSRawResponse(rawResponse),
+                responseAsXMl,
+                requestAsXML,
+            };
         });
     }
     _setClientSSLSecurityPFX(pfx, passphrase) {

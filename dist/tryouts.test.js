@@ -295,24 +295,24 @@ describe('INSi client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 birthDate: '1997-02-26',
             });
-            yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIdentity(person); }))
-                .rejects.toThrow('fetchIdentity ERROR: you must init client first');
+            yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow('fetchIns ERROR: you must init client first');
         }));
         test('should be able to initClient without throwing error', () => __awaiter(void 0, void 0, void 0, function* () {
             yield insiClient.initClient(pfx, env_1.PASSPHRASE);
         }));
-        test('should be able to call fetchIdentity', () => __awaiter(void 0, void 0, void 0, function* () {
+        test('should be able to call fetchIns', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
                 formerName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',
                 gender: insi_person_class_1.Gender.Female,
                 birthDate: '1997-02-26',
             });
-            const { requestId, responseAsJson, responseAsXMl, requestAsXML } = yield insiClient.fetchIdentity(person, {
+            const { requestId, formattedResponse, rawResponseAsJson, responseAsXMl, requestAsXML, } = yield insiClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
             expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-            expect(responseAsJson).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueJsonResponse)());
+            expect(formattedResponse).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueFormattedResponse)());
+            expect(rawResponseAsJson).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueRawResponse)());
             expect(responseAsXMl).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueXmlResponse)());
             expect(requestAsXML).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueXmlResquest)({
                 idam: env_1.IDAM,
@@ -336,7 +336,7 @@ describe('INSi client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 birthDate: '1997-02-26',
             });
-            yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIdentity(person); })).rejects.toThrow();
+            yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow();
         }));
     });
 });

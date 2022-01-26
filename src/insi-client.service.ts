@@ -5,9 +5,10 @@ import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCACertAsPem } from './utils/certificates';
-import { INSiSoapActions } from './models/insi-soap-action.models';
-import { INSiSearchFromIdentityTraits } from './models/insi-format.models';
+import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
+import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
+import { InsiHelper } from './utils/insi-helper';
 
 interface IINSiClientData {
   lpsContext: LpsContext,
@@ -33,12 +34,11 @@ export class INSiClient {
     this._setClientSSLSecurityPFX(pfx, passphrase);
   }
 
-  public async fetchIdentity(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiSearchFromIdentityTraits> {
+  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse> {
     if (!this._soapClient) {
-      throw new Error('fetchIdentity ERROR: you must init client first');
+      throw new Error('fetchIns ERROR: you must init client first');
     }
-    const { header, method } = INSiSoapActions.searchFromIdentityTraits;
-
+    const { header, method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     this._setDefaultHeaders();
     this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
     this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
@@ -54,8 +54,14 @@ export class INSiClient {
     finally {
       this._soapClient.clearSoapHeaders();
     }
-    const [responseAsJson, responseAsXMl, , requestAsXML] = rawSoapResponse;
-    return { requestId, responseAsJson, responseAsXMl, requestAsXML };
+    const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
+    return {
+      requestId,
+      rawResponseAsJson: rawResponse,
+      formattedResponse: InsiHelper.formatFetchINSRawResponse(rawResponse),
+      responseAsXMl,
+      requestAsXML,
+    };
   }
 
   private _setClientSSLSecurityPFX(pfx: Buffer, passphrase?: string): void {
