@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.INSiClient = void 0;
+const path_1 = __importDefault(require("path"));
 const soap_1 = require("soap");
 const uuid_1 = require("uuid");
 const certificates_1 = require("./utils/certificates");
@@ -17,7 +21,7 @@ const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
 const insi_error_1 = require("./utils/insi-error");
 class INSiClient {
     constructor({ lpsContext, bamContext }) {
-        this._wsdlUrl = 'src/fixtures/WSDL/DESIR_ICIR_EXP_1.5.0.wsdl';
+        this._wsdlUrl = path_1.default.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
         this._lpsContext = lpsContext;
         this._bamContext = bamContext;
     }
@@ -57,8 +61,8 @@ class INSiClient {
         this._soapClient.setSecurity(new soap_1.ClientSSLSecurityPFX(pfx, {
             passphrase,
             ca: (0, certificates_1.combineCACertAsPem)([
-                'certificates/ca/ACR-EL.cer',
-                'certificates/ca/ACI-EL-ORG.cer',
+                path_1.default.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+                path_1.default.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
             ]),
         }));
     }

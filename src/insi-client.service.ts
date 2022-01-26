@@ -1,3 +1,4 @@
+import path from 'path';
 import { Client, ClientSSLSecurityPFX, createClientAsync } from 'soap';
 import { v4 as uuidv4 } from 'uuid';
 import { LpsContext } from './class/lps-context.class';
@@ -14,7 +15,7 @@ interface IINSiClientData {
 }
 
 export class INSiClient {
-  private readonly _wsdlUrl: string = 'src/fixtures/WSDL/DESIR_ICIR_EXP_1.5.0.wsdl';
+  private readonly _wsdlUrl: string = path.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
   private readonly _lpsContext: LpsContext;
   private readonly _bamContext: BamContext;
 
@@ -61,8 +62,8 @@ export class INSiClient {
     this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
       passphrase,
       ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
+        path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+        path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
       ]),
     }))
   }
