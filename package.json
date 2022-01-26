@@ -1,9 +1,12 @@
 {
   "name": "@padoa/tlsi-ins",
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc",
+    "clean": "tsc --build --clean",
     "test": "jest"
   },
   "repository": {
@@ -41,6 +44,5 @@
     "jest": "^27.4.3",
     "ts-jest": "^27.1.0",
     "typescript": "^4.5.2"
-  },
-  "main": "index.ts"
+  }
 }
