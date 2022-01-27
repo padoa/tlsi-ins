@@ -38,7 +38,7 @@ export interface IFetchInsFormattedData {
   firstNameList: string;
   gender: Gender;
   birthName: string;
-  birthPlaceCode: string;
+  birthPlaceInseeCode: string;
   socialSecurityNumber: string;
   oid: string;
 }

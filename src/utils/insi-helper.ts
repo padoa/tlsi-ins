@@ -9,7 +9,7 @@ export class InsiHelper {
       firstNameList: rawResponse.INDIVIDU.TIQ.ListePrenom,
       gender: rawResponse.INDIVIDU.TIQ.Sexe,
       birthName: rawResponse.INDIVIDU.TIQ.DateNaissance,
-      birthPlaceCode: rawResponse.INDIVIDU.TIQ.LieuNaissance,
+      birthPlaceInseeCode: rawResponse.INDIVIDU.TIQ.LieuNaissance,
       socialSecurityNumber: `${NumIdentifiant}${Cle}`,
       oid: rawResponse.INDIVIDU.INSACTIF.OID,
     }

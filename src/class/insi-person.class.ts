@@ -8,7 +8,7 @@ export interface IINSiPersonData {
   firstName: string;
   gender: Gender;
   birthDate: string;
-  birthPlaceCode?: string;
+  birthPlaceInseeCode?: string;
 }
 
 export interface IINSiPersonSoapData {
@@ -24,9 +24,9 @@ export class INSiPerson {
   firstName: string;
   gender: Gender;
   birthDate: string;
-  birthPlaceCode: string | undefined;
+  birthPlaceInseeCode: string | undefined;
 
-  constructor({ formerName, firstName, gender, birthDate, birthPlaceCode }: IINSiPersonData) {
+  constructor({ formerName, firstName, gender, birthDate, birthPlaceInseeCode }: IINSiPersonData) {
     if (!formerName) {
       throw new Error('Fail to create an INSiPerson, you must provide a formerName');
     }
@@ -47,7 +47,7 @@ export class INSiPerson {
     }
     this.birthDate = birthDate;
 
-    this.birthPlaceCode = birthPlaceCode;
+    this.birthPlaceInseeCode = birthPlaceInseeCode;
   }
 
   public getSoapDataAsJson(): IINSiPersonSoapData {
@@ -56,7 +56,7 @@ export class INSiPerson {
       Prenom: this.firstName,
       Sexe: this.gender,
       DateNaissance: this.birthDate,
-      ...(this.birthPlaceCode ? { LieuNaissance: this.birthPlaceCode } : {}),
+      ...(this.birthPlaceInseeCode ? { LieuNaissance: this.birthPlaceInseeCode } : {}),
     };
   }
 

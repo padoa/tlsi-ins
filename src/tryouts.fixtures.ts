@@ -101,7 +101,7 @@ export const getAdrtroisDominiqueFormattedResponse = (): IFetchInsFormattedData 
   firstNameList: 'DOMINIQUE',
   gender: Gender.Female,
   birthName: '1997-02-26',
-  birthPlaceCode: '20020',
+  birthPlaceInseeCode: '20020',
   socialSecurityNumber: '297022A02077878',
   oid: '1.2.250.1.213.1.4.8',
 });

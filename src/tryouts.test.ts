@@ -208,7 +208,7 @@ describe('INSi client', () => {
         firstName: 'Eric',
         gender: Gender.Male,
         birthDate: '1990-01-01',
-        birthPlaceCode: '20020',
+        birthPlaceInseeCode: '20020',
       });
 
       expect(insiPerson.getSoapDataAsJson()).toEqual({
@@ -220,7 +220,7 @@ describe('INSi client', () => {
       });
     });
 
-    test('should be able to create an INSi Person without birthPlaceCode and get his data as json', () => {
+    test('should be able to create an INSi Person without birthPlaceInseeCode and get his data as json', () => {
       const insiPerson = new INSiPerson({
         formerName: 'Dampierre',
         firstName: 'Eric',
@@ -243,7 +243,7 @@ describe('INSi client', () => {
           firstName: 'Eric',
           gender: Gender.Male,
           birthDate: '1990-01-01',
-          birthPlaceCode: '20020',
+          birthPlaceInseeCode: '20020',
         });
       }).toThrow('Fail to create an INSiPerson, you must provide a formerName');
     });
@@ -255,7 +255,7 @@ describe('INSi client', () => {
           firstName: '',
           gender: Gender.Male,
           birthDate: '1990-01-01',
-          birthPlaceCode: '20020',
+          birthPlaceInseeCode: '20020',
         });
       }).toThrow('Fail to create an INSiPerson, you must provide a firstName');
     });
@@ -267,7 +267,7 @@ describe('INSi client', () => {
           firstName: 'Eric',
           gender: Gender.Male,
           birthDate: '',
-          birthPlaceCode: '20020',
+          birthPlaceInseeCode: '20020',
         });
       }).toThrow('Fail to create an INSiPerson, you must provide a valid birthDate');
     });
@@ -279,7 +279,7 @@ describe('INSi client', () => {
           firstName: 'Eric',
           gender: Gender.Male,
           birthDate: '2021-56-12',
-          birthPlaceCode: '20020',
+          birthPlaceInseeCode: '20020',
         });
       }).toThrow('Fail to create an INSiPerson, you must provide a valid birthDate');
     });
