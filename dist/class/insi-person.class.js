@@ -7,32 +7,29 @@ var Gender;
     Gender["Female"] = "F";
 })(Gender = exports.Gender || (exports.Gender = {}));
 class INSiPerson {
-    constructor({ formerName, firstName, gender, birthDate, birthPlaceCode }) {
-        if (!formerName) {
-            throw new Error('Fail to create an INSiPerson, you must provide a formerName');
+    constructor(personArgs) {
+        if (!personArgs.birthName) {
+            throw new Error('Fail to create an INSiPerson, you must provide a birthName');
         }
-        this.formerName = formerName;
-        if (!firstName) {
+        if (!personArgs.firstName) {
             throw new Error('Fail to create an INSiPerson, you must provide a firstName');
         }
-        this.firstName = firstName;
-        if (!gender) {
+        if (!personArgs.gender) {
             throw new Error('Fail to create an INSiPerson, you must provide a gender');
         }
-        this.gender = gender;
-        if (!this._isValidBirthDate(birthDate)) {
-            throw new Error('Fail to create an INSiPerson, you must provide a valid birthDate');
+        if (!this._isValidBirthDate(personArgs.dateOfBirth)) {
+            throw new Error('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
         }
-        this.birthDate = birthDate;
-        this.birthPlaceCode = birthPlaceCode;
+        this._person = personArgs;
     }
-    getSoapDataAsJson() {
-        return Object.assign({ NomNaissance: this.formerName, Prenom: this.firstName, Sexe: this.gender, DateNaissance: this.birthDate }, (this.birthPlaceCode ? { LieuNaissance: this.birthPlaceCode } : {}));
+    getSoapBodyAsJson() {
+        const { birthName, firstName, gender, dateOfBirth, placeOfBirthCode } = this._person;
+        return Object.assign({ NomNaissance: birthName, Prenom: firstName, Sexe: gender, DateNaissance: dateOfBirth }, (placeOfBirthCode ? { LieuNaissance: placeOfBirthCode } : {}));
     }
-    _isValidBirthDate(birthDate) {
-        if (!/\d{4}-\d{2}-\d{2}/.test(birthDate))
+    _isValidBirthDate(dateOfBirth) {
+        if (!/\d{4}-\d{2}-\d{2}/.test(dateOfBirth))
             return false;
-        return new Date(birthDate).toString() !== 'Invalid Date';
+        return new Date(dateOfBirth).toString() !== 'Invalid Date';
     }
 }
 exports.INSiPerson = INSiPerson;

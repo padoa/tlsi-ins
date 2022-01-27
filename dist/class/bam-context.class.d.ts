@@ -1,11 +1,11 @@
-export interface IBamContextData {
+export interface BamContextArgs {
     emitter: string;
 }
-export interface IBamContextOptions {
+export interface BamContextOptions {
     id?: string;
     dateTime?: string;
 }
-export interface IBamContextSoapHeader {
+export interface BamContextSoapHeader {
     soapHeader: {
         ContexteBAM: {
             attributes: {
@@ -24,6 +24,6 @@ export declare class BamContext {
     id: string;
     dateTime: string;
     emitter: string;
-    constructor({ emitter }: IBamContextData, { id, dateTime }?: IBamContextOptions);
-    getSoapHeaderAsJson(): IBamContextSoapHeader;
+    constructor({ emitter }: BamContextArgs, { id, dateTime }?: BamContextOptions);
+    getSoapHeaderAsJson(): BamContextSoapHeader;
 }

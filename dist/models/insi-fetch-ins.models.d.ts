@@ -1,12 +1,12 @@
 import { Gender } from '../class/insi-person.class';
 export interface INSiFetchInsResponse {
     requestId: string;
-    formattedResponse: IFetchInsFormattedData;
-    rawResponseAsJson: IFetchInsRawData;
-    responseAsXMl: string;
-    requestAsXML: string;
+    body: FetchInsBody;
+    rawBody: FetchInsRawBody;
+    bodyAsXMl: string;
+    requestBodyAsXML: string;
 }
-export interface IFetchInsRawData {
+export interface FetchInsRawBody {
     CR: {
         CodeCR: '00';
         LibelleCR: 'OK';
@@ -29,13 +29,13 @@ export interface IFetchInsRawData {
         };
     };
 }
-export interface IFetchInsFormattedData {
-    formerName: string;
-    firstName: string;
-    firstNameList: string;
-    gender: Gender;
+export interface FetchInsBody {
     birthName: string;
-    birthPlaceCode: string;
+    firstName: string;
+    allFirstNames: string;
+    gender: Gender;
+    dateOfBirth: string;
+    placeOfBirthCode: string;
     socialSecurityNumber: string;
     oid: string;
 }

@@ -45,7 +45,7 @@ class INSiClient {
             this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
             let rawSoapResponse;
             try {
-                rawSoapResponse = yield this._soapClient[`${method}Async`](person.getSoapDataAsJson());
+                rawSoapResponse = yield this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
             }
             catch (e) {
                 // TODO: Better error management
@@ -57,10 +57,10 @@ class INSiClient {
             const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
             return {
                 requestId,
-                rawResponseAsJson: rawResponse,
-                formattedResponse: insi_helper_1.InsiHelper.formatFetchINSRawResponse(rawResponse),
-                responseAsXMl,
-                requestAsXML,
+                rawBody: rawResponse,
+                body: insi_helper_1.InsiHelper.formatFetchINSRawResponse(rawResponse),
+                bodyAsXMl: responseAsXMl,
+                requestBodyAsXML: requestAsXML,
             };
         });
     }

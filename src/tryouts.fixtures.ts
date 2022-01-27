@@ -1,5 +1,5 @@
 import { Gender } from './class/insi-person.class';
-import { IFetchInsFormattedData, IFetchInsRawData } from './models/insi-fetch-ins.models';
+import { FetchInsBody, FetchInsRawBody } from './models/insi-fetch-ins.models';
 
 export const getAdrtroisDominiqueXmlResponse = ():string => {
   return [
@@ -71,7 +71,7 @@ export const getAdrtroisDominiqueXmlResquest = (
   ].join('');
 }
 
-export const getAdrtroisDominiqueRawResponse = (): IFetchInsRawData => ({
+export const getAdrtroisDominiqueRawResponse = (): FetchInsRawBody => ({
   CR: {
     CodeCR: '00',
     LibelleCR: 'OK'
@@ -95,13 +95,13 @@ export const getAdrtroisDominiqueRawResponse = (): IFetchInsRawData => ({
   }
 });
 
-export const getAdrtroisDominiqueFormattedResponse = (): IFetchInsFormattedData => ({
-  formerName: 'ADRTROIS',
+export const getAdrtroisDominiqueFormattedResponse = (): FetchInsBody => ({
+  birthName: 'ADRTROIS',
   firstName: 'DOMINIQUE',
-  firstNameList: 'DOMINIQUE',
+  allFirstNames: 'DOMINIQUE',
   gender: Gender.Female,
-  birthName: '1997-02-26',
-  birthPlaceInseeCode: '20020',
+  dateOfBirth: '1997-02-26',
+  placeOfBirthCode: '20020',
   socialSecurityNumber: '297022A02077878',
   oid: '1.2.250.1.213.1.4.8',
 });

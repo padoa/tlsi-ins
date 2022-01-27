@@ -1,16 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export interface ILPSData {
+export interface LpsArgs {
   idam: string;
   version: string;
   name: string;
 }
 
-export interface ILPSOptions {
+export interface LpsOptions {
   id?: string; // UUID
 }
 
-export interface ILpsSoapHeader {
+export interface LpsSoapHeader {
   IDAM: {
     attributes: { R: 4 };
     $value: string;
@@ -27,8 +27,8 @@ export class LPS {
   public id: string; // UUID
 
   constructor(
-    { idam, version, name }: ILPSData,
-    { id }: ILPSOptions = {},
+    { idam, version, name }: LpsArgs,
+    { id }: LpsOptions = {},
   ) {
     if (!idam) {
       throw new Error('Fail to create a LPS, you must provide an idam');
@@ -45,7 +45,7 @@ export class LPS {
     this.id = id || uuidv4();
   }
 
-  public getSoapHeaderAsJson(): ILpsSoapHeader {
+  public getSoapHeaderAsJson(): LpsSoapHeader {
     return {
       IDAM: {
         attributes: { R: 4 },

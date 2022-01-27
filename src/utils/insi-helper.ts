@@ -1,15 +1,15 @@
-import { IFetchInsFormattedData, IFetchInsRawData } from '../models/insi-fetch-ins.models';
+import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
 
 export class InsiHelper {
-  public static formatFetchINSRawResponse(rawResponse: IFetchInsRawData): IFetchInsFormattedData {
+  public static formatFetchINSRawResponse(rawResponse: FetchInsRawBody): FetchInsBody {
     const { NumIdentifiant, Cle } = rawResponse.INDIVIDU.INSACTIF.IdIndividu;
     return {
-      formerName: rawResponse.INDIVIDU.TIQ.NomNaissance,
+      birthName: rawResponse.INDIVIDU.TIQ.NomNaissance,
       firstName: rawResponse.INDIVIDU.TIQ.Prenom,
-      firstNameList: rawResponse.INDIVIDU.TIQ.ListePrenom,
+      allFirstNames: rawResponse.INDIVIDU.TIQ.ListePrenom,
       gender: rawResponse.INDIVIDU.TIQ.Sexe,
-      birthName: rawResponse.INDIVIDU.TIQ.DateNaissance,
-      birthPlaceInseeCode: rawResponse.INDIVIDU.TIQ.LieuNaissance,
+      dateOfBirth: rawResponse.INDIVIDU.TIQ.DateNaissance,
+      placeOfBirthCode: rawResponse.INDIVIDU.TIQ.LieuNaissance,
       socialSecurityNumber: `${NumIdentifiant}${Cle}`,
       oid: rawResponse.INDIVIDU.INSACTIF.OID,
     }

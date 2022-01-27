@@ -95,12 +95,12 @@ const getAdrtroisDominiqueRawResponse = () => ({
 });
 exports.getAdrtroisDominiqueRawResponse = getAdrtroisDominiqueRawResponse;
 const getAdrtroisDominiqueFormattedResponse = () => ({
-    formerName: 'ADRTROIS',
+    birthName: 'ADRTROIS',
     firstName: 'DOMINIQUE',
-    firstNameList: 'DOMINIQUE',
+    allFirstNames: 'DOMINIQUE',
     gender: insi_person_class_1.Gender.Female,
-    birthName: '1997-02-26',
-    birthPlaceCode: '20020',
+    dateOfBirth: '1997-02-26',
+    placeOfBirthCode: '20020',
     socialSecurityNumber: '297022A02077878',
     oid: '1.2.250.1.213.1.4.8',
 });

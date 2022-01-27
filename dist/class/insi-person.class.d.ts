@@ -2,14 +2,14 @@ export declare enum Gender {
     Male = "M",
     Female = "F"
 }
-export interface IINSiPersonData {
-    formerName: string;
+export interface INSiPersonArgs {
+    birthName: string;
     firstName: string;
     gender: Gender;
-    birthDate: string;
-    birthPlaceCode?: string;
+    dateOfBirth: string;
+    placeOfBirthCode?: string;
 }
-export interface IINSiPersonSoapData {
+interface INSiPersonSoapBody {
     NomNaissance: string;
     Prenom: string;
     Sexe: Gender;
@@ -17,12 +17,9 @@ export interface IINSiPersonSoapData {
     LieuNaissance?: string;
 }
 export declare class INSiPerson {
-    formerName: string;
-    firstName: string;
-    gender: Gender;
-    birthDate: string;
-    birthPlaceCode: string | undefined;
-    constructor({ formerName, firstName, gender, birthDate, birthPlaceCode }: IINSiPersonData);
-    getSoapDataAsJson(): IINSiPersonSoapData;
-    _isValidBirthDate(birthDate: string): boolean;
+    private readonly _person;
+    constructor(personArgs: INSiPersonArgs);
+    getSoapBodyAsJson(): INSiPersonSoapBody;
+    _isValidBirthDate(dateOfBirth: string): boolean;
 }
+export {};

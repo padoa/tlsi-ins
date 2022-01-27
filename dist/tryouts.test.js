@@ -188,13 +188,13 @@ describe('INSi client', () => {
     describe('INSi Person', () => {
         test('should be able to create an INSi Person and get his data as json', () => {
             const insiPerson = new insi_person_class_1.INSiPerson({
-                formerName: 'Dampierre',
+                birthName: 'Dampierre',
                 firstName: 'Eric',
                 gender: insi_person_class_1.Gender.Male,
-                birthDate: '1990-01-01',
-                birthPlaceCode: '20020',
+                dateOfBirth: '1990-01-01',
+                placeOfBirthCode: '20020',
             });
-            expect(insiPerson.getSoapDataAsJson()).toEqual({
+            expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'Dampierre',
                 Prenom: 'Eric',
                 Sexe: insi_person_class_1.Gender.Male,
@@ -202,63 +202,63 @@ describe('INSi client', () => {
                 LieuNaissance: '20020',
             });
         });
-        test('should be able to create an INSi Person without birthPlaceCode and get his data as json', () => {
+        test('should be able to create an INSi Person without placeOfBirthCode and get his data as json', () => {
             const insiPerson = new insi_person_class_1.INSiPerson({
-                formerName: 'Dampierre',
+                birthName: 'Dampierre',
                 firstName: 'Eric',
                 gender: insi_person_class_1.Gender.Male,
-                birthDate: '1990-01-01',
+                dateOfBirth: '1990-01-01',
             });
-            expect(insiPerson.getSoapDataAsJson()).toEqual({
+            expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'Dampierre',
                 Prenom: 'Eric',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
         });
-        test('should not be able to create an INSi Person if empty formerName', () => {
+        test('should not be able to create an INSi Person if empty birthName', () => {
             expect(() => {
                 new insi_person_class_1.INSiPerson({
-                    formerName: '',
+                    birthName: '',
                     firstName: 'Eric',
                     gender: insi_person_class_1.Gender.Male,
-                    birthDate: '1990-01-01',
-                    birthPlaceCode: '20020',
+                    dateOfBirth: '1990-01-01',
+                    placeOfBirthCode: '20020',
                 });
-            }).toThrow('Fail to create an INSiPerson, you must provide a formerName');
+            }).toThrow('Fail to create an INSiPerson, you must provide a birthName');
         });
         test('should not be able to create an INSi Person if empty firstName', () => {
             expect(() => {
                 new insi_person_class_1.INSiPerson({
-                    formerName: 'Dampierre',
+                    birthName: 'Dampierre',
                     firstName: '',
                     gender: insi_person_class_1.Gender.Male,
-                    birthDate: '1990-01-01',
-                    birthPlaceCode: '20020',
+                    dateOfBirth: '1990-01-01',
+                    placeOfBirthCode: '20020',
                 });
             }).toThrow('Fail to create an INSiPerson, you must provide a firstName');
         });
-        test('should not be able to create an INSi Person if empty birthDate', () => {
+        test('should not be able to create an INSi Person if empty dateOfBirth', () => {
             expect(() => {
                 new insi_person_class_1.INSiPerson({
-                    formerName: 'Dampierre',
+                    birthName: 'Dampierre',
                     firstName: 'Eric',
                     gender: insi_person_class_1.Gender.Male,
-                    birthDate: '',
-                    birthPlaceCode: '20020',
+                    dateOfBirth: '',
+                    placeOfBirthCode: '20020',
                 });
-            }).toThrow('Fail to create an INSiPerson, you must provide a valid birthDate');
+            }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
         });
-        test('should not be able to create an INSi Person if birthDate is not valid', () => {
+        test('should not be able to create an INSi Person if dateOfBirth is not valid', () => {
             expect(() => {
                 new insi_person_class_1.INSiPerson({
-                    formerName: 'Dampierre',
+                    birthName: 'Dampierre',
                     firstName: 'Eric',
                     gender: insi_person_class_1.Gender.Male,
-                    birthDate: '2021-56-12',
-                    birthPlaceCode: '20020',
+                    dateOfBirth: '2021-56-12',
+                    placeOfBirthCode: '20020',
                 });
-            }).toThrow('Fail to create an INSiPerson, you must provide a valid birthDate');
+            }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
         });
     });
     describe('INSi Client', () => {
@@ -290,10 +290,10 @@ describe('INSi client', () => {
         });
         test('should throw an error if calling fetchInsi without initClient first', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
-                formerName: 'ADRTROIS',
+                birthName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',
                 gender: insi_person_class_1.Gender.Female,
-                birthDate: '1997-02-26',
+                dateOfBirth: '1997-02-26',
             });
             yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow('fetchIns ERROR: you must init client first');
         }));
@@ -302,19 +302,19 @@ describe('INSi client', () => {
         }));
         test('should be able to call fetchIns', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
-                formerName: 'ADRTROIS',
+                birthName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',
                 gender: insi_person_class_1.Gender.Female,
-                birthDate: '1997-02-26',
+                dateOfBirth: '1997-02-26',
             });
-            const { requestId, formattedResponse, rawResponseAsJson, responseAsXMl, requestAsXML, } = yield insiClient.fetchIns(person, {
+            const { requestId, body, rawBody, bodyAsXMl, requestBodyAsXML, } = yield insiClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
             expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-            expect(formattedResponse).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueFormattedResponse)());
-            expect(rawResponseAsJson).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueRawResponse)());
-            expect(responseAsXMl).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueXmlResponse)());
-            expect(requestAsXML).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueXmlResquest)({
+            expect(body).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueFormattedResponse)());
+            expect(rawBody).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueRawResponse)());
+            expect(bodyAsXMl).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueXmlResponse)());
+            expect(requestBodyAsXML).toEqual((0, tryouts_fixtures_1.getAdrtroisDominiqueXmlResquest)({
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
                 name: env_1.SOFTWARE_NAME,
@@ -331,10 +331,10 @@ describe('INSi client', () => {
             insiClient = new insi_client_service_1.INSiClient({ lpsContext, bamContext, });
             yield insiClient.initClient(pfx, env_1.PASSPHRASE);
             const person = new insi_person_class_1.INSiPerson({
-                formerName: 'ADRTROIS',
+                birthName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',
                 gender: insi_person_class_1.Gender.Female,
-                birthDate: '1997-02-26',
+                dateOfBirth: '1997-02-26',
             });
             yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow();
         }));

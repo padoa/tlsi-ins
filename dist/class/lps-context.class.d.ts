@@ -1,13 +1,13 @@
-import { ILpsSoapHeader, LPS } from './lps.class';
-export interface ILpsContextData {
+import { LpsSoapHeader, LPS } from './lps.class';
+export interface LpsContextArgs {
     emitter: string;
     lps: LPS;
 }
-export interface ILpsContextOptions {
+export interface LpsContextOptions {
     id?: string;
     dateTime?: string;
 }
-export interface ILpsContextSoapHeader {
+export interface LpsContextSoapHeader {
     soapHeader: {
         ContexteLPS: {
             attributes: {
@@ -17,7 +17,7 @@ export interface ILpsContextSoapHeader {
             Id: string;
             Temps: string;
             Emetteur: string;
-            LPS: ILpsSoapHeader;
+            LPS: LpsSoapHeader;
         };
     };
     name: string;
@@ -28,6 +28,6 @@ export declare class LpsContext {
     dateTime: string;
     emitter: string;
     lps: LPS;
-    constructor({ emitter, lps }: ILpsContextData, { id, dateTime }?: ILpsContextOptions);
-    getSoapHeaderAsJson(): ILpsContextSoapHeader;
+    constructor({ emitter, lps }: LpsContextArgs, { id, dateTime }?: LpsContextOptions);
+    getSoapHeaderAsJson(): LpsContextSoapHeader;
 }

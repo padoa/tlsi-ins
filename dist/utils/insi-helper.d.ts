@@ -1,4 +1,4 @@
-import { IFetchInsFormattedData, IFetchInsRawData } from '../models/insi-fetch-ins.models';
+import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
 export declare class InsiHelper {
-    static formatFetchINSRawResponse(rawResponse: IFetchInsRawData): IFetchInsFormattedData;
+    static formatFetchINSRawResponse(rawResponse: FetchInsRawBody): FetchInsBody;
 }

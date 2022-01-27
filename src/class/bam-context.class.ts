@@ -1,15 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export interface IBamContextData {
+export interface BamContextArgs {
   emitter: string;
 }
 
-export interface IBamContextOptions {
+export interface BamContextOptions {
   id?: string; // UUID
   dateTime?: string; // YYYY-MM-DDTHH:mm:ss.sssZ
 }
 
-export interface IBamContextSoapHeader {
+export interface BamContextSoapHeader {
   soapHeader: {
     ContexteBAM: {
       attributes: {
@@ -31,8 +31,8 @@ export class BamContext {
   emitter: string;
 
   constructor(
-    { emitter }: IBamContextData,
-    { id, dateTime }: IBamContextOptions = {},
+    { emitter }: BamContextArgs,
+    { id, dateTime }: BamContextOptions = {},
   ) {
     if (!emitter) {
       throw new Error('Fail to create a BamContext, you must provide an emitter');
@@ -42,7 +42,7 @@ export class BamContext {
     this.dateTime = dateTime || new Date().toISOString();
   }
 
-  public getSoapHeaderAsJson(): IBamContextSoapHeader {
+  public getSoapHeaderAsJson(): BamContextSoapHeader {
     const soapHeader = {
       ContexteBAM: {
         attributes: {

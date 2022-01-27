@@ -1,12 +1,12 @@
-export interface ILPSData {
+export interface LpsArgs {
     idam: string;
     version: string;
     name: string;
 }
-export interface ILPSOptions {
+export interface LpsOptions {
     id?: string;
 }
-export interface ILpsSoapHeader {
+export interface LpsSoapHeader {
     IDAM: {
         attributes: {
             R: 4;
@@ -22,6 +22,6 @@ export declare class LPS {
     softwareVersion: string;
     softwareName: string;
     id: string;
-    constructor({ idam, version, name }: ILPSData, { id }?: ILPSOptions);
-    getSoapHeaderAsJson(): ILpsSoapHeader;
+    constructor({ idam, version, name }: LpsArgs, { id }?: LpsOptions);
+    getSoapHeaderAsJson(): LpsSoapHeader;
 }

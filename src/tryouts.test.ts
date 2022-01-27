@@ -204,14 +204,14 @@ describe('INSi client', () => {
   describe('INSi Person', () => {
     test('should be able to create an INSi Person and get his data as json', () => {
       const insiPerson = new INSiPerson({
-        formerName: 'Dampierre',
+        birthName: 'Dampierre',
         firstName: 'Eric',
         gender: Gender.Male,
-        birthDate: '1990-01-01',
-        birthPlaceInseeCode: '20020',
+        dateOfBirth: '1990-01-01',
+        placeOfBirthCode: '20020',
       });
 
-      expect(insiPerson.getSoapDataAsJson()).toEqual({
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
         NomNaissance: 'Dampierre',
         Prenom: 'Eric',
         Sexe: Gender.Male,
@@ -220,15 +220,15 @@ describe('INSi client', () => {
       });
     });
 
-    test('should be able to create an INSi Person without birthPlaceInseeCode and get his data as json', () => {
+    test('should be able to create an INSi Person without placeOfBirthCode and get his data as json', () => {
       const insiPerson = new INSiPerson({
-        formerName: 'Dampierre',
+        birthName: 'Dampierre',
         firstName: 'Eric',
         gender: Gender.Male,
-        birthDate: '1990-01-01',
+        dateOfBirth: '1990-01-01',
       });
 
-      expect(insiPerson.getSoapDataAsJson()).toEqual({
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
         NomNaissance: 'Dampierre',
         Prenom: 'Eric',
         Sexe: Gender.Male,
@@ -236,52 +236,52 @@ describe('INSi client', () => {
       });
     });
 
-    test('should not be able to create an INSi Person if empty formerName', () => {
+    test('should not be able to create an INSi Person if empty birthName', () => {
       expect(() => {
         new INSiPerson({
-          formerName: '',
+          birthName: '',
           firstName: 'Eric',
           gender: Gender.Male,
-          birthDate: '1990-01-01',
-          birthPlaceInseeCode: '20020',
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
         });
-      }).toThrow('Fail to create an INSiPerson, you must provide a formerName');
+      }).toThrow('Fail to create an INSiPerson, you must provide a birthName');
     });
 
     test('should not be able to create an INSi Person if empty firstName', () => {
       expect(() => {
         new INSiPerson({
-          formerName: 'Dampierre',
+          birthName: 'Dampierre',
           firstName: '',
           gender: Gender.Male,
-          birthDate: '1990-01-01',
-          birthPlaceInseeCode: '20020',
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
         });
       }).toThrow('Fail to create an INSiPerson, you must provide a firstName');
     });
 
-    test('should not be able to create an INSi Person if empty birthDate', () => {
+    test('should not be able to create an INSi Person if empty dateOfBirth', () => {
       expect(() => {
         new INSiPerson({
-          formerName: 'Dampierre',
+          birthName: 'Dampierre',
           firstName: 'Eric',
           gender: Gender.Male,
-          birthDate: '',
-          birthPlaceInseeCode: '20020',
+          dateOfBirth: '',
+          placeOfBirthCode: '20020',
         });
-      }).toThrow('Fail to create an INSiPerson, you must provide a valid birthDate');
+      }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
     });
 
-    test('should not be able to create an INSi Person if birthDate is not valid', () => {
+    test('should not be able to create an INSi Person if dateOfBirth is not valid', () => {
       expect(() => {
         new INSiPerson({
-          formerName: 'Dampierre',
+          birthName: 'Dampierre',
           firstName: 'Eric',
           gender: Gender.Male,
-          birthDate: '2021-56-12',
-          birthPlaceInseeCode: '20020',
+          dateOfBirth: '2021-56-12',
+          placeOfBirthCode: '20020',
         });
-      }).toThrow('Fail to create an INSiPerson, you must provide a valid birthDate');
+      }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
     });
   });
 
@@ -318,10 +318,10 @@ describe('INSi client', () => {
 
     test('should throw an error if calling fetchInsi without initClient first', async () => {
       const person = new INSiPerson({
-        formerName: 'ADRTROIS',
+        birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
         gender: Gender.Female,
-        birthDate: '1997-02-26',
+        dateOfBirth: '1997-02-26',
       });
       await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('fetchIns ERROR: you must init client first');
     });
@@ -332,27 +332,27 @@ describe('INSi client', () => {
 
     test('should be able to call fetchIns', async () => {
       const person = new INSiPerson({
-        formerName: 'ADRTROIS',
+        birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
         gender: Gender.Female,
-        birthDate: '1997-02-26',
+        dateOfBirth: '1997-02-26',
       });
 
       const {
         requestId,
-        formattedResponse,
-        rawResponseAsJson,
-        responseAsXMl,
-        requestAsXML,
+        body,
+        rawBody,
+        bodyAsXMl,
+        requestBodyAsXML,
       } = await insiClient.fetchIns(person, {
         requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
       });
 
       expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-      expect(formattedResponse).toEqual(getAdrtroisDominiqueFormattedResponse());
-      expect(rawResponseAsJson).toEqual(getAdrtroisDominiqueRawResponse());
-      expect(responseAsXMl).toEqual(getAdrtroisDominiqueXmlResponse());
-      expect(requestAsXML).toEqual(getAdrtroisDominiqueXmlResquest({
+      expect(body).toEqual(getAdrtroisDominiqueFormattedResponse());
+      expect(rawBody).toEqual(getAdrtroisDominiqueRawResponse());
+      expect(bodyAsXMl).toEqual(getAdrtroisDominiqueXmlResponse());
+      expect(requestBodyAsXML).toEqual(getAdrtroisDominiqueXmlResquest({
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
@@ -370,10 +370,10 @@ describe('INSi client', () => {
       insiClient = new INSiClient({ lpsContext, bamContext, });
       await insiClient.initClient(pfx, PASSPHRASE);
       const person = new INSiPerson({
-        formerName: 'ADRTROIS',
+        birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
         gender: Gender.Female,
-        birthDate: '1997-02-26',
+        dateOfBirth: '1997-02-26',
       });
 
       await expect(async () => insiClient.fetchIns(person)).rejects.toThrow();

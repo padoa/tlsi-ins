@@ -10,7 +10,7 @@ import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 
-interface IINSiClientData {
+interface IINSiClientArgs {
   lpsContext: LpsContext,
   bamContext: BamContext,
 }
@@ -22,7 +22,7 @@ export class INSiClient {
 
   private _soapClient: Client;
 
-  constructor({ lpsContext, bamContext }: IINSiClientData) {
+  constructor({ lpsContext, bamContext }: IINSiClientArgs) {
     this._lpsContext = lpsContext;
     this._bamContext = bamContext;
   }
@@ -45,7 +45,7 @@ export class INSiClient {
 
     let rawSoapResponse;
     try {
-      rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapDataAsJson());
+      rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
     }
     catch (e: any) {
       // TODO: Better error management
@@ -57,10 +57,10 @@ export class INSiClient {
     const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
     return {
       requestId,
-      rawResponseAsJson: rawResponse,
-      formattedResponse: InsiHelper.formatFetchINSRawResponse(rawResponse),
-      responseAsXMl,
-      requestAsXML,
+      rawBody: rawResponse,
+      body: InsiHelper.formatFetchINSRawResponse(rawResponse),
+      bodyAsXMl: responseAsXMl,
+      requestBodyAsXML: requestAsXML,
     };
   }
 
