@@ -1,17 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ILpsSoapHeader, LPS } from './lps.class';
+import { LpsSoapHeader, LPS } from './lps.class';
 
-export interface ILpsContextData {
+export interface LpsContextArgs {
   emitter: string;
   lps: LPS;
 }
 
-export interface ILpsContextOptions {
+export interface LpsContextOptions {
   id?: string; // UUID
   dateTime?: string; // YYYY-MM-DDTHH:mm:ss.sssZ
 }
 
-export interface ILpsContextSoapHeader {
+export interface LpsContextSoapHeader {
   soapHeader: {
     ContexteLPS: {
       attributes: {
@@ -21,7 +21,7 @@ export interface ILpsContextSoapHeader {
       Id: string; // UUID
       Temps: string; // YYYY-MM-DDTHH:mm:ss.sssZ
       Emetteur: string;
-      LPS: ILpsSoapHeader;
+      LPS: LpsSoapHeader;
     };
   };
   name: string;
@@ -36,8 +36,8 @@ export class LpsContext {
   lps: LPS;
 
   constructor(
-    { emitter, lps }: ILpsContextData,
-    { id, dateTime }: ILpsContextOptions = {},
+    { emitter, lps }: LpsContextArgs,
+    { id, dateTime }: LpsContextOptions = {},
   ) {
     if (!emitter) {
       throw new Error('Fail to create a LpsContext, you must provide an emitter');
@@ -51,7 +51,7 @@ export class LpsContext {
     this.dateTime = dateTime || new Date().toISOString();
   }
 
-  public getSoapHeaderAsJson(): ILpsContextSoapHeader {
+  public getSoapHeaderAsJson(): LpsContextSoapHeader {
     const soapHeader = {
       ContexteLPS: {
         attributes: {

@@ -3,15 +3,15 @@ export enum Gender {
   Female = 'F',
 }
 
-export interface IINSiPersonData {
-  lastName: string;
+export interface INSiPersonArgs {
+  birthName: string;
   firstName: string;
   gender: Gender;
   dateOfBirth: string;
-  birthPlaceCode?: string;
+  placeOfBirthCode?: string;
 }
 
-export interface IINSiPersonSoapData {
+interface INSiPersonSoapBody {
   NomNaissance: string;
   Prenom: string;
   Sexe: Gender;
@@ -20,48 +20,37 @@ export interface IINSiPersonSoapData {
 }
 
 export class INSiPerson {
-  lastName: string;
-  firstName: string;
-  gender: Gender;
-  dateOfBirth: string;
-  birthPlaceCode: string | undefined;
+  private readonly _person: INSiPersonArgs;
 
-  constructor({ lastName, firstName, gender, dateOfBirth, birthPlaceCode }: IINSiPersonData) {
-    if (!lastName) {
-      throw new Error('Fail to create an INSiPerson, you must provide a lastName');
+  constructor(personArgs: INSiPersonArgs) {
+    if (!personArgs.birthName) {
+      throw new Error('Fail to create an INSiPerson, you must provide a birthName');
     }
-    this.lastName = lastName;
-
-    if (!firstName) {
+    if (!personArgs.firstName) {
       throw new Error('Fail to create an INSiPerson, you must provide a firstName');
     }
-    this.firstName = firstName;
-
-    if (!gender) {
+    if (!personArgs.gender) {
       throw new Error('Fail to create an INSiPerson, you must provide a gender');
     }
-    this.gender = gender;
-
-    if (!this._isValidBirthDate(dateOfBirth)) {
+    if (!this._isValidBirthDate(personArgs.dateOfBirth)) {
       throw new Error('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
     }
-    this.dateOfBirth = dateOfBirth;
-
-    this.birthPlaceCode = birthPlaceCode;
+    this._person = personArgs;
   }
 
-  public getSoapDataAsJson(): IINSiPersonSoapData {
+  public getSoapBodyAsJson(): INSiPersonSoapBody {
+    const { birthName, firstName, gender, dateOfBirth, placeOfBirthCode } = this._person;
     return {
-      NomNaissance: this.lastName,
-      Prenom: this.firstName,
-      Sexe: this.gender,
-      DateNaissance: this.dateOfBirth,
-      ...(this.birthPlaceCode ? { LieuNaissance: this.birthPlaceCode } : {}),
+      NomNaissance: birthName,
+      Prenom: firstName,
+      Sexe: gender,
+      DateNaissance: dateOfBirth,
+      ...(placeOfBirthCode ? { LieuNaissance: placeOfBirthCode } : {}),
     };
   }
 
-  public _isValidBirthDate(birthDate: string) {
-    if (!/\d{4}-\d{2}-\d{2}/.test(birthDate)) return false;
-    return new Date(birthDate).toString() !== 'Invalid Date';
+  public _isValidBirthDate(dateOfBirth: string) {
+    if (!/\d{4}-\d{2}-\d{2}/.test(dateOfBirth)) return false;
+    return new Date(dateOfBirth).toString() !== 'Invalid Date';
   }
 }

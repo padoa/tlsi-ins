@@ -1,26 +1,28 @@
+import path from 'path';
 import { Client, ClientSSLSecurityPFX, createClientAsync } from 'soap';
 import { v4 as uuidv4 } from 'uuid';
 import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCACertAsPem } from './utils/certificates';
-import { INSiSoapActions } from './models/insi-soap-action.models';
-import { INSiSearchFromIdentityTraits } from './models/insi-format.models';
+import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
+import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
+import { InsiHelper } from './utils/insi-helper';
 
-interface IINSiClientData {
+interface IINSiClientArgs {
   lpsContext: LpsContext,
   bamContext: BamContext,
 }
 
 export class INSiClient {
-  private readonly _wsdlUrl: string = 'src/fixtures/WSDL/DESIR_ICIR_EXP_1.5.0.wsdl';
+  private readonly _wsdlUrl: string = path.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
   private readonly _lpsContext: LpsContext;
   private readonly _bamContext: BamContext;
 
   private _soapClient: Client;
 
-  constructor({ lpsContext, bamContext }: IINSiClientData) {
+  constructor({ lpsContext, bamContext }: IINSiClientArgs) {
     this._lpsContext = lpsContext;
     this._bamContext = bamContext;
   }
@@ -32,19 +34,18 @@ export class INSiClient {
     this._setClientSSLSecurityPFX(pfx, passphrase);
   }
 
-  public async fetchIdentity(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiSearchFromIdentityTraits> {
+  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse> {
     if (!this._soapClient) {
-      throw new Error('fetchIdentity ERROR: you must init client first');
+      throw new Error('fetchIns ERROR: you must init client first');
     }
-    const { header, method } = INSiSoapActions.searchFromIdentityTraits;
-
+    const { header, method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     this._setDefaultHeaders();
     this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
     this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
 
     let rawSoapResponse;
     try {
-      rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapDataAsJson());
+      rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
     }
     catch (e: any) {
       // TODO: Better error management
@@ -53,16 +54,22 @@ export class INSiClient {
     finally {
       this._soapClient.clearSoapHeaders();
     }
-    const [responseAsJson, responseAsXMl, , requestAsXML] = rawSoapResponse;
-    return { requestId, responseAsJson, responseAsXMl, requestAsXML };
+    const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
+    return {
+      requestId,
+      rawBody: rawResponse,
+      body: InsiHelper.formatFetchINSRawResponse(rawResponse),
+      bodyAsXMl: responseAsXMl,
+      requestBodyAsXML: requestAsXML,
+    };
   }
 
   private _setClientSSLSecurityPFX(pfx: Buffer, passphrase?: string): void {
     this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
       passphrase,
       ca: combineCACertAsPem([
-        'certificates/ca/ACR-EL.cer',
-        'certificates/ca/ACI-EL-ORG.cer',
+        path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+        path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
       ]),
     }))
   }
