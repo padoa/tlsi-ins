@@ -27,11 +27,11 @@ describe('Convert CA cert to PEM', () => {
     const ACI_EL_ORG_PEM_CERTIFICATE = fs_1.default.readFileSync('src/fixtures/ACI_EL_ORG_PEM_CERTIFICATE.pem.fixture', 'utf-8').replace(/\n/g, '\r\n');
     const ACR_EL_PEM_CERTIFICATE = fs_1.default.readFileSync('src/fixtures/ACR_EL_PEM_CERTIFICATE.pem.fixture', 'utf-8').replace(/\n/g, '\r\n');
     test('convert a single file', () => {
-        const pem = (0, certificates_1.readCACertAsPem)('certificates/ca/ACI-EL-ORG.cer');
+        const pem = (0, certificates_1.readCertAsPem)('certificates/ca/ACI-EL-ORG.cer');
         expect(pem).toStrictEqual(ACI_EL_ORG_PEM_CERTIFICATE);
     });
     test('convert multiple files and concat', () => {
-        const certChain = (0, certificates_1.combineCACertAsPem)([
+        const certChain = (0, certificates_1.combineCertAsPem)([
             'certificates/ca/ACI-EL-ORG.cer',
             'certificates/ca/ACR-EL.cer',
         ]);
@@ -476,7 +476,7 @@ describe('INSi client', () => {
             yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow('fetchIns ERROR: you must init client first');
         }));
         test('should be able to initClient without throwing error', () => __awaiter(void 0, void 0, void 0, function* () {
-            yield insiClient.initClient(pfx, env_1.PASSPHRASE);
+            yield insiClient.initClientPfx(pfx, env_1.PASSPHRASE);
         }));
         test('should be able to call fetchIns', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
@@ -517,7 +517,7 @@ describe('INSi client', () => {
             const bamContext = new bam_context_class_1.BamContext({ emitter: 'medecin@yopmail.com' });
             insiClient = new insi_client_service_1.INSiClient({ lpsContext, bamContext, });
             const fakePfx = fs_1.default.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
-            yield insiClient.initClient(fakePfx, env_1.PASSPHRASE);
+            yield insiClient.initClientPfx(fakePfx, env_1.PASSPHRASE);
             const person = new insi_person_class_1.INSiPerson({
                 birthName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',
@@ -535,7 +535,7 @@ describe('INSi client', () => {
             const lpsContext = new lps_context_class_1.LpsContext({ emitter: 'medecin@yopmail.com', lps });
             const bamContext = new bam_context_class_1.BamContext({ emitter: 'medecin@yopmail.com' });
             insiClient = new insi_client_service_1.INSiClient({ lpsContext, bamContext, });
-            yield insiClient.initClient(pfx, 'fake-pass-phrase');
+            yield insiClient.initClientPfx(pfx, 'fake-pass-phrase');
             const person = new insi_person_class_1.INSiPerson({
                 birthName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',
@@ -553,7 +553,7 @@ describe('INSi client', () => {
             const lpsContext = new lps_context_class_1.LpsContext({ emitter: 'medecin@yopmail.com', lps });
             const bamContext = new bam_context_class_1.BamContext({ emitter: 'medecin@yopmail.com' });
             insiClient = new insi_client_service_1.INSiClient({ lpsContext, bamContext, });
-            yield insiClient.initClient(pfx, env_1.PASSPHRASE);
+            yield insiClient.initClientPfx(pfx, env_1.PASSPHRASE);
             const person = new insi_person_class_1.INSiPerson({
                 birthName: 'ADRTROIS',
                 firstName: 'DOMINIQUE',

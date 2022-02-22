@@ -1,5 +1,6 @@
 # Avoid accidentally uploading certificates
 *.pem
+!certificates/node-soap/*.pem
 
 # Upload p12 file only if in certificates folder
 *.p12

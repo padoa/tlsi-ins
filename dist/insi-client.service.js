@@ -20,9 +20,10 @@ const certificates_1 = require("./utils/certificates");
 const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
 const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
+const assertionPsSecurity_1 = require("./class/assertionPsSecurity");
 /**
  * @constructor
- * @param  {IINSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
+ * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
  */
 class INSiClient {
     constructor({ lpsContext, bamContext }) {
@@ -31,17 +32,33 @@ class INSiClient {
         this._bamContext = bamContext;
     }
     /**
-     * Initializes a soap client and sets it's SSLSecurityPFX
+     * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
      * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
      * @param  {string=''} passphrase needed for the pfx
      * @returns Promise
      */
-    initClient(pfx, passphrase = '') {
+    initClientPfx(pfx, passphrase = '') {
         return __awaiter(this, void 0, void 0, function* () {
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
                 forceSoap12Headers: true, // use soap v1.2
             });
             this._setClientSSLSecurityPFX(pfx, passphrase);
+        });
+    }
+    /**
+     * Initializes a soap client and sets it's AssertionPsSecurity
+     * @param  {string} privateKey the private key for certificate sign
+     * @param  {string} publicKey the associated public key
+     * @param  {string=''} password of the privateKey if needed
+     * @param  {AssertionPsInfos} assertionPsInfos infos of the PS (Personel de Santé) that needed to build the assertion
+     * @returns Promise
+     */
+    initClientCpx(privateKey, publicKey, password = '', assertionPsInfos) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
+                forceSoap12Headers: true, // use soap v1.2
+            });
+            this._setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
         });
     }
     /**
@@ -83,11 +100,15 @@ class INSiClient {
     _setClientSSLSecurityPFX(pfx, passphrase) {
         this._soapClient.setSecurity(new soap_1.ClientSSLSecurityPFX(pfx, {
             passphrase,
-            ca: (0, certificates_1.combineCACertAsPem)([
+            ca: (0, certificates_1.combineCertAsPem)([
                 path_1.default.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
                 path_1.default.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
             ]),
         }));
+    }
+    _setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos) {
+        const assertionPs = new assertionPsSecurity_1.AssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+        this._soapClient.setSecurity(assertionPs);
     }
     _setDefaultHeaders() {
         const { soapHeader: bamSoapHeader, name: bamName, namespace: bamNamespace } = this._bamContext.getSoapHeaderAsJson();

@@ -4,20 +4,21 @@ import { v4 as uuidv4 } from 'uuid';
 import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
-import { combineCACertAsPem } from './utils/certificates';
+import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
 import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
+import { AssertionPsInfos, AssertionPsSecurity } from './class/assertionPsSecurity';
 
-interface IINSiClientArgs {
+interface INSiClientArgs {
   lpsContext: LpsContext,
   bamContext: BamContext,
 }
 
 /**
  * @constructor
- * @param  {IINSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
+ * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
  */
 export class INSiClient {
   private readonly _wsdlUrl: string = path.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
@@ -26,22 +27,38 @@ export class INSiClient {
 
   private _soapClient: Client;
 
-  constructor({ lpsContext, bamContext }: IINSiClientArgs) {
+  constructor({ lpsContext, bamContext }: INSiClientArgs) {
     this._lpsContext = lpsContext;
     this._bamContext = bamContext;
   }
 
   /**
-   * Initializes a soap client and sets it's SSLSecurityPFX
+   * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
    * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
    * @param  {string=''} passphrase needed for the pfx
    * @returns Promise
    */
-  public async initClient(pfx: Buffer, passphrase: string = ''): Promise<void> {
+  public async initClientPfx(pfx: Buffer, passphrase: string = ''): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
     });
     this._setClientSSLSecurityPFX(pfx, passphrase);
+  }
+
+  /**
+   * Initializes a soap client and sets it's AssertionPsSecurity
+   * @param  {string} privateKey the private key for certificate sign
+   * @param  {string} publicKey the associated public key
+   * @param  {string=''} password of the privateKey if needed
+   * @param  {AssertionPsInfos} assertionPsInfos infos of the PS (Personel de Santé) that needed to build the assertion
+   * @returns Promise
+   */
+  public async initClientCpx(privateKey: string, publicKey: string, password: string = '', assertionPsInfos: AssertionPsInfos): Promise<void> {
+    this._soapClient = await createClientAsync(this._wsdlUrl, {
+      forceSoap12Headers: true, // use soap v1.2
+    });
+
+    this._setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
   }
 
   /**
@@ -83,11 +100,16 @@ export class INSiClient {
   private _setClientSSLSecurityPFX(pfx: Buffer, passphrase?: string): void {
     this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
       passphrase,
-      ca: combineCACertAsPem([
+      ca: combineCertAsPem([
         path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
         path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
       ]),
     }))
+  }
+
+  private _setAssertionPsSecurity(privateKey: string, publicKey: string, password: string, assertionPsInfos: AssertionPsInfos): void {
+    const assertionPs = new AssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+    this._soapClient.setSecurity(assertionPs);
   }
 
   private _setDefaultHeaders(): void {

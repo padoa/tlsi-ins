@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { validate as validateUUID } from 'uuid';
-import { combineCACertAsPem, readCACertAsPem } from './utils/certificates';
+import { combineCertAsPem, readCertAsPem } from './utils/certificates';
 import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import { INSiClient } from './insi-client.service';
 import { LPS } from './class/lps.class';
@@ -20,13 +20,12 @@ describe('Convert CA cert to PEM', () => {
   const ACR_EL_PEM_CERTIFICATE = fs.readFileSync('src/fixtures/ACR_EL_PEM_CERTIFICATE.pem.fixture', 'utf-8').replace(/\n/g, '\r\n');
 
   test('convert a single file', () => {
-    const pem = readCACertAsPem('certificates/ca/ACI-EL-ORG.cer');
-
+    const pem = readCertAsPem('certificates/ca/ACI-EL-ORG.cer');
     expect(pem).toStrictEqual(ACI_EL_ORG_PEM_CERTIFICATE);
   });
 
   test('convert multiple files and concat', () => {
-    const certChain = combineCACertAsPem([
+    const certChain = combineCertAsPem([
       'certificates/ca/ACI-EL-ORG.cer',
       'certificates/ca/ACR-EL.cer',
     ]);
@@ -527,7 +526,7 @@ describe('INSi client', () => {
     });
 
     test('should be able to initClient without throwing error', async () => {
-      await insiClient.initClient(pfx, PASSPHRASE);
+      await insiClient.initClientPfx(pfx, PASSPHRASE);
     });
 
     test('should be able to call fetchIns', async () => {
@@ -580,7 +579,7 @@ describe('INSi client', () => {
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
       insiClient = new INSiClient({ lpsContext, bamContext, });
       const fakePfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
-      await insiClient.initClient(fakePfx, PASSPHRASE);
+      await insiClient.initClientPfx(fakePfx, PASSPHRASE);
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
@@ -600,7 +599,7 @@ describe('INSi client', () => {
       const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
       insiClient = new INSiClient({ lpsContext, bamContext, });
-      await insiClient.initClient(pfx, 'fake-pass-phrase');
+      await insiClient.initClientPfx(pfx, 'fake-pass-phrase');
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
@@ -610,7 +609,7 @@ describe('INSi client', () => {
 
       await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('La passe phrase n\'est pas correct');
     });
-    
+
 
     test('should throw an INSi error if the software is not allowed', async () => {
       const lps = new LPS({
@@ -621,7 +620,7 @@ describe('INSi client', () => {
       const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
       insiClient = new INSiClient({ lpsContext, bamContext, });
-      await insiClient.initClient(pfx, PASSPHRASE);
+      await insiClient.initClientPfx(pfx, PASSPHRASE);
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
