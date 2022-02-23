@@ -15,6 +15,10 @@ interface IINSiClientArgs {
   bamContext: BamContext,
 }
 
+  /**
+   * @constructor
+   * @param  {IINSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
+   */
 export class INSiClient {
   private readonly _wsdlUrl: string = path.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
   private readonly _lpsContext: LpsContext;
@@ -27,6 +31,12 @@ export class INSiClient {
     this._bamContext = bamContext;
   }
 
+  /**
+   * Initializes a soap client and sets it's SSLSecurityPFX
+   * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
+   * @param  {string=''} passphrase needed for the pfx
+   * @returns Promise
+   */
   public async initClient(pfx: Buffer, passphrase: string = ''): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
@@ -34,6 +44,12 @@ export class INSiClient {
     this._setClientSSLSecurityPFX(pfx, passphrase);
   }
 
+  /**
+   * Fetches INS information of a person
+   * @param  {INSiPerson} person the person who's information are about to be fetched
+   * @param  {string} requestId of the current request to Ins
+   * @returns Promise<INSiFetchInsResponse>
+   */
   public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse> {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client first');
