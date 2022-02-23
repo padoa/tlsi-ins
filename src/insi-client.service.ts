@@ -15,10 +15,10 @@ interface IINSiClientArgs {
   bamContext: BamContext,
 }
 
-  /**
-   * @constructor
-   * @param  {IINSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
-   */
+/**
+ * @constructor
+ * @param  {IINSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
+ */
 export class INSiClient {
   private readonly _wsdlUrl: string = path.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
   private readonly _lpsContext: LpsContext;
@@ -63,9 +63,9 @@ export class INSiClient {
     try {
       rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
     }
-    catch (e: any) {
-      // TODO: Better error management
-      throw new InsiError({ requestId: requestId, originalError: e });
+    catch (fetchError) {
+      const originalError = this._specificErrorManagement(fetchError) || fetchError;
+      throw new InsiError({ requestId: requestId, originalError });
     }
     finally {
       this._soapClient.clearSoapHeaders();
@@ -95,5 +95,22 @@ export class INSiClient {
     this._soapClient.addSoapHeader(bamSoapHeader, bamName, bamNamespace);
     const { soapHeader: lpsSoapHeader, name: lpsName, namespace: lpsNamespace } = this._lpsContext.getSoapHeaderAsJson()
     this._soapClient.addSoapHeader(lpsSoapHeader, lpsName, lpsNamespace);
+  }
+
+  private _specificErrorManagement(error: any): { body: string} | undefined {
+    if (error.toString().includes('not enough data')) {
+      return { body: 'Le fichier pfx fourni n\'est pas un fichier pfx valid' };
+    }
+    if (error.toString().includes('mac verify failure')) {
+      return { body: 'La passe phrase n\'est pas correct' };
+    }
+    if(error.body) {
+      /**
+       * The INSi service returns an xml response with a tag <siram:Erreur> which contains the error
+       * we catch this error and send it
+      */
+      return { body: error.body.match(/(<siram:Erreur(.*)>)(.*)(<\/siram:Erreur>)/)[3] };
+    }
+    return error.toString().length > 0 ? { body: error.toString() } : undefined;
   }
 }

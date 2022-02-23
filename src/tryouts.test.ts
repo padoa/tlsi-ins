@@ -559,6 +559,59 @@ describe('INSi client', () => {
       }));
     });
 
+    test('should throw an INSi error if the person does not exist', async () => {
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS-DOES-NOT-EXIST',
+        firstName: 'DOMINIQUE',
+        gender: Gender.Female,
+        dateOfBirth: '1997-02-26',
+      });
+
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('L\'appel au service de recherche avec la carte vitale renvoie une erreur technique.');
+    });
+
+    test('should throw an INSi error if the pfx is not a correct pfx file', async () => {
+      const lps = new LPS({
+        idam: IDAM,
+        version: SOFTWARE_VERSION,
+        name: SOFTWARE_NAME,
+      });
+      const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
+      const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
+      insiClient = new INSiClient({ lpsContext, bamContext, });
+      const fakePfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
+      await insiClient.initClient(fakePfx, PASSPHRASE);
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS',
+        firstName: 'DOMINIQUE',
+        gender: Gender.Female,
+        dateOfBirth: '1997-02-26',
+      });
+
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('Le fichier pfx fourni n\'est pas un fichier pfx valid');
+    });
+
+    test('should throw an INSi error if the Passe phrase is not a correct', async () => {
+      const lps = new LPS({
+        idam: IDAM,
+        version: SOFTWARE_VERSION,
+        name: SOFTWARE_NAME,
+      });
+      const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
+      const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
+      insiClient = new INSiClient({ lpsContext, bamContext, });
+      await insiClient.initClient(pfx, 'fake-pass-phrase');
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS',
+        firstName: 'DOMINIQUE',
+        gender: Gender.Female,
+        dateOfBirth: '1997-02-26',
+      });
+
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('La passe phrase n\'est pas correct');
+    });
+    
+
     test('should throw an INSi error if the software is not allowed', async () => {
       const lps = new LPS({
         idam: 'FAKE-IDAM',
@@ -576,7 +629,7 @@ describe('INSi client', () => {
         dateOfBirth: '1997-02-26',
       });
 
-      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow();
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('Numéro d\'autorisation du logiciel inconnu.');
     });
   });
 });
