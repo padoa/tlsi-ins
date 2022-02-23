@@ -204,16 +204,16 @@ describe('INSi client', () => {
   describe('INSi Person', () => {
     test('should be able to create an INSi Person and get his data as json', () => {
       const insiPerson = new INSiPerson({
-        birthName: 'Dampierre',
-        firstName: 'Eric',
+        birthName: 'DAMPIERRE',
+        firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
         placeOfBirthCode: '20020',
       });
 
       expect(insiPerson.getSoapBodyAsJson()).toEqual({
-        NomNaissance: 'Dampierre',
-        Prenom: 'Eric',
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ERIC',
         Sexe: Gender.Male,
         DateNaissance: '1990-01-01',
         LieuNaissance: '20020',
@@ -222,15 +222,79 @@ describe('INSi client', () => {
 
     test('should be able to create an INSi Person without placeOfBirthCode and get his data as json', () => {
       const insiPerson = new INSiPerson({
-        birthName: 'Dampierre',
-        firstName: 'Eric',
+        birthName: 'DAMPIERRE',
+        firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
       });
 
       expect(insiPerson.getSoapBodyAsJson()).toEqual({
-        NomNaissance: 'Dampierre',
-        Prenom: 'Eric',
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ERIC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if birthName contains -', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPI-ERRE',
+        firstName: 'ERIC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPI-ERRE',
+        Prenom: 'ERIC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if birthName contains --', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPI--ERRE',
+        firstName: 'ERIC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPI--ERRE',
+        Prenom: 'ERIC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if birthName contains \'', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'D\'AMPIERRE',
+        firstName: 'ERIC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'D\'AMPIERRE',
+        Prenom: 'ERIC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if birthName contains blank space', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPI ERRE',
+        firstName: 'ERIC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPI ERRE',
+        Prenom: 'ERIC',
         Sexe: Gender.Male,
         DateNaissance: '1990-01-01',
       });
@@ -240,7 +304,7 @@ describe('INSi client', () => {
       expect(() => {
         new INSiPerson({
           birthName: '',
-          firstName: 'Eric',
+          firstName: 'ERIC',
           gender: Gender.Male,
           dateOfBirth: '1990-01-01',
           placeOfBirthCode: '20020',
@@ -248,10 +312,110 @@ describe('INSi client', () => {
       }).toThrow('Fail to create an INSiPerson, you must provide a birthName');
     });
 
-    test('should not be able to create an INSi Person if empty firstName', () => {
+    test('should not be able to create an INSi Person if birthName contains lowercase letters', () => {
       expect(() => {
         new INSiPerson({
           birthName: 'Dampierre',
+          firstName: 'ERIC',
+          gender: Gender.Male,
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
+        });
+      }).toThrow('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
+    });
+
+    test('should not be able to create an INSi Person if birthName starts with a blank', () => {
+      expect(() => {
+        new INSiPerson({
+          birthName: ' DAMPIERRE',
+          firstName: 'ERIC',
+          gender: Gender.Male,
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
+        });
+      }).toThrow('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
+    });
+
+    test('should not be able to create an INSi Person if birthName contains another character than those found in names', () => {
+      expect(() => {
+        new INSiPerson({
+          birthName: 'DAMPI_ERRE',
+          firstName: 'ERIC',
+          gender: Gender.Male,
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
+        });
+      }).toThrow('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
+    });
+
+    test('should be able to create an INSi Person if firstName contains -', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPIERRE',
+        firstName: 'ER-IC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ER-IC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if firstName contains --', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPIERRE',
+        firstName: 'ER--IC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ER--IC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if firstName contains \'', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPIERRE',
+        firstName: 'E\'RIC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'E\'RIC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should be able to create an INSi Person if firstName contains a blank space', () => {
+      const insiPerson = new INSiPerson({
+        birthName: 'DAMPIERRE',
+        firstName: 'ER IC',
+        gender: Gender.Male,
+        dateOfBirth: '1990-01-01',
+      });
+
+      expect(insiPerson.getSoapBodyAsJson()).toEqual({
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ER IC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      });
+    });
+
+    test('should not be able to create an INSi Person if empty firstName', () => {
+      expect(() => {
+        new INSiPerson({
+          birthName: 'DAMPIERRE',
           firstName: '',
           gender: Gender.Male,
           dateOfBirth: '1990-01-01',
@@ -260,11 +424,47 @@ describe('INSi client', () => {
       }).toThrow('Fail to create an INSiPerson, you must provide a firstName');
     });
 
+    test('should not be able to create an INSi Person if firstName contains lowercase letters', () => {
+      expect(() => {
+        new INSiPerson({
+          birthName: 'DAMPIERRE',
+          firstName: 'Eric',
+          gender: Gender.Male,
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
+        });
+      }).toThrow('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
+    });
+
+    test('should not be able to create an INSi Person if firstName starts with a blank', () => {
+      expect(() => {
+        new INSiPerson({
+          birthName: 'DAMPIERRE',
+          firstName: ' ERIC',
+          gender: Gender.Male,
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
+        });
+      }).toThrow('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
+    });
+
+    test('should not be able to create an INSi Person if firstName contains another character than those found in names', () => {
+      expect(() => {
+        new INSiPerson({
+          birthName: 'DAMPIERRE',
+          firstName: 'ER_IC',
+          gender: Gender.Male,
+          dateOfBirth: '1990-01-01',
+          placeOfBirthCode: '20020',
+        });
+      }).toThrow('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
+    });
+
     test('should not be able to create an INSi Person if empty dateOfBirth', () => {
       expect(() => {
         new INSiPerson({
-          birthName: 'Dampierre',
-          firstName: 'Eric',
+          birthName: 'DAMPIERRE',
+          firstName: 'ERIC',
           gender: Gender.Male,
           dateOfBirth: '',
           placeOfBirthCode: '20020',
@@ -275,8 +475,8 @@ describe('INSi client', () => {
     test('should not be able to create an INSi Person if dateOfBirth is not valid', () => {
       expect(() => {
         new INSiPerson({
-          birthName: 'Dampierre',
-          firstName: 'Eric',
+          birthName: 'DAMPIERRE',
+          firstName: 'ERIC',
           gender: Gender.Male,
           dateOfBirth: '2021-56-12',
           placeOfBirthCode: '20020',
@@ -359,6 +559,59 @@ describe('INSi client', () => {
       }));
     });
 
+    test('should throw an INSi error if the person does not exist', async () => {
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS-DOES-NOT-EXIST',
+        firstName: 'DOMINIQUE',
+        gender: Gender.Female,
+        dateOfBirth: '1997-02-26',
+      });
+
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('L\'appel au service de recherche avec la carte vitale renvoie une erreur technique.');
+    });
+
+    test('should throw an INSi error if the pfx is not a correct pfx file', async () => {
+      const lps = new LPS({
+        idam: IDAM,
+        version: SOFTWARE_VERSION,
+        name: SOFTWARE_NAME,
+      });
+      const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
+      const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
+      insiClient = new INSiClient({ lpsContext, bamContext, });
+      const fakePfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
+      await insiClient.initClient(fakePfx, PASSPHRASE);
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS',
+        firstName: 'DOMINIQUE',
+        gender: Gender.Female,
+        dateOfBirth: '1997-02-26',
+      });
+
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('Le fichier pfx fourni n\'est pas un fichier pfx valid');
+    });
+
+    test('should throw an INSi error if the Passe phrase is not a correct', async () => {
+      const lps = new LPS({
+        idam: IDAM,
+        version: SOFTWARE_VERSION,
+        name: SOFTWARE_NAME,
+      });
+      const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
+      const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
+      insiClient = new INSiClient({ lpsContext, bamContext, });
+      await insiClient.initClient(pfx, 'fake-pass-phrase');
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS',
+        firstName: 'DOMINIQUE',
+        gender: Gender.Female,
+        dateOfBirth: '1997-02-26',
+      });
+
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('La passe phrase n\'est pas correct');
+    });
+    
+
     test('should throw an INSi error if the software is not allowed', async () => {
       const lps = new LPS({
         idam: 'FAKE-IDAM',
@@ -376,7 +629,7 @@ describe('INSi client', () => {
         dateOfBirth: '1997-02-26',
       });
 
-      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow();
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('Numéro d\'autorisation du logiciel inconnu.');
     });
   });
 });

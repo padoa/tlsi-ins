@@ -26,8 +26,14 @@ export class INSiPerson {
     if (!personArgs.birthName) {
       throw new Error('Fail to create an INSiPerson, you must provide a birthName');
     }
+    if (!this._isValidName(personArgs.birthName)) {
+      throw new Error('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
+    }
     if (!personArgs.firstName) {
       throw new Error('Fail to create an INSiPerson, you must provide a firstName');
+    }
+    if (!this._isValidName(personArgs.firstName)) {
+      throw new Error('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
     }
     if (!personArgs.gender) {
       throw new Error('Fail to create an INSiPerson, you must provide a gender');
@@ -49,8 +55,12 @@ export class INSiPerson {
     };
   }
 
-  public _isValidBirthDate(dateOfBirth: string) {
+  public _isValidBirthDate(dateOfBirth: string): boolean {
     if (!/\d{4}-\d{2}-\d{2}/.test(dateOfBirth)) return false;
     return new Date(dateOfBirth).toString() !== 'Invalid Date';
+  }
+
+  public _isValidName(name: string): boolean {
+    return /^([A-Z]+(([-]{0,2}|[']|[ ])?[A-Z]+))+$/.test(name);
   }
 }
