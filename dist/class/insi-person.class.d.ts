@@ -21,5 +21,6 @@ export declare class INSiPerson {
     constructor(personArgs: INSiPersonArgs);
     getSoapBodyAsJson(): INSiPersonSoapBody;
     _isValidBirthDate(dateOfBirth: string): boolean;
+    _isValidName(name: string): boolean;
 }
 export {};

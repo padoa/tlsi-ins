@@ -20,12 +20,22 @@ const certificates_1 = require("./utils/certificates");
 const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
 const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
+/**
+ * @constructor
+ * @param  {IINSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
+ */
 class INSiClient {
     constructor({ lpsContext, bamContext }) {
         this._wsdlUrl = path_1.default.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
         this._lpsContext = lpsContext;
         this._bamContext = bamContext;
     }
+    /**
+     * Initializes a soap client and sets it's SSLSecurityPFX
+     * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
+     * @param  {string=''} passphrase needed for the pfx
+     * @returns Promise
+     */
     initClient(pfx, passphrase = '') {
         return __awaiter(this, void 0, void 0, function* () {
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
@@ -34,6 +44,12 @@ class INSiClient {
             this._setClientSSLSecurityPFX(pfx, passphrase);
         });
     }
+    /**
+     * Fetches INS information of a person
+     * @param  {INSiPerson} person the person who's information are about to be fetched
+     * @param  {string} requestId of the current request to Ins
+     * @returns Promise<INSiFetchInsResponse>
+     */
     fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._soapClient) {
@@ -47,9 +63,9 @@ class INSiClient {
             try {
                 rawSoapResponse = yield this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
             }
-            catch (e) {
-                // TODO: Better error management
-                throw new insi_error_1.InsiError({ requestId: requestId, originalError: e });
+            catch (fetchError) {
+                const originalError = this._specificErrorManagement(fetchError) || fetchError;
+                throw new insi_error_1.InsiError({ requestId: requestId, originalError });
             }
             finally {
                 this._soapClient.clearSoapHeaders();
@@ -78,6 +94,22 @@ class INSiClient {
         this._soapClient.addSoapHeader(bamSoapHeader, bamName, bamNamespace);
         const { soapHeader: lpsSoapHeader, name: lpsName, namespace: lpsNamespace } = this._lpsContext.getSoapHeaderAsJson();
         this._soapClient.addSoapHeader(lpsSoapHeader, lpsName, lpsNamespace);
+    }
+    _specificErrorManagement(error) {
+        if (error.toString().includes('not enough data')) {
+            return { body: 'Le fichier pfx fourni n\'est pas un fichier pfx valid' };
+        }
+        if (error.toString().includes('mac verify failure')) {
+            return { body: 'La passe phrase n\'est pas correct' };
+        }
+        if (error.body) {
+            /**
+             * The INSi service returns an xml response with a tag <siram:Erreur> which contains the error
+             * we catch this error and send it
+            */
+            return { body: error.body.match(/(<siram:Erreur(.*)>)(.*)(<\/siram:Erreur>)/)[3] };
+        }
+        return error.toString().length > 0 ? { body: error.toString() } : undefined;
     }
 }
 exports.INSiClient = INSiClient;
