@@ -38,7 +38,7 @@ class INSiPerson {
         return new Date(dateOfBirth).toString() !== 'Invalid Date';
     }
     _isValidName(name) {
-        return /^([A-Z]+(([-]{0,2}|[']|[ ])?[A-Z]+))+$/.test(name);
+        return /^[A-Z]+(?:(?:-{1,2}|[' ])[A-Z]+)*$/.test(name);
     }
 }
 exports.INSiPerson = INSiPerson;
