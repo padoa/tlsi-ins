@@ -9,7 +9,7 @@ import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.
 import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
-import { AssertionPsInfos, AssertionPsSecurity } from './class/assertionPsSecurity';
+import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -108,7 +108,7 @@ export class INSiClient {
   }
 
   private _setAssertionPsSecurity(privateKey: string, publicKey: string, password: string, assertionPsInfos: AssertionPsInfos): void {
-    const assertionPs = new AssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+    const assertionPs = new AssertionPsSecurityClass(privateKey, publicKey, password, assertionPsInfos);
     this._soapClient.setSecurity(assertionPs);
   }
 

@@ -1,5 +1,5 @@
-import { Gender } from './class/insi-person.class';
-import { FetchInsBody, FetchInsRawBody } from './models/insi-fetch-ins.models';
+import { Gender } from '../class/insi-person.class';
+import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
 
 export const getAdrtroisDominiqueXmlResponse = ():string => {
   return [

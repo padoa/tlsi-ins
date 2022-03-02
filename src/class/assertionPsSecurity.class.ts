@@ -27,7 +27,7 @@ export interface AssertionPsOptions {
   dateTime?: string; // YYYY-MM-DDTHH:mm:ss.sssZ
 }
 
-export class AssertionPsSecurity implements ISecurity {
+export class AssertionPsSecurityClass implements ISecurity {
   private assertionPsInfos: AssertionPsInfos;
   private publicP12PEM: string;
   private signer: any;
