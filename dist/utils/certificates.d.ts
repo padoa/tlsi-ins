@@ -1,2 +1,2 @@
-export declare const combineCACertAsPem: (caCertPaths: string[]) => string;
-export declare const readCACertAsPem: (path: string) => string;
+export declare const combineCertAsPem: (caCertPaths: string[]) => string;
+export declare const readCertAsPem: (path: string) => string;

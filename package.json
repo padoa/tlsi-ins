@@ -3,7 +3,7 @@
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "tsc --build --clean",
@@ -35,12 +35,14 @@
     "dotenv": "^10.0.0",
     "node-forge": "^1.2.0",
     "soap": "^0.43.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "xml-crypto": "^2.1.3"
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
     "@types/node-forge": "^0.10.10",
     "@types/uuid": "^8.3.3",
+    "@types/xml-crypto": "^1.4.2",
     "jest": "^27.4.3",
     "ts-jest": "^27.1.0",
     "typescript": "^4.5.2"

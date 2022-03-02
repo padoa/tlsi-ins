@@ -1,11 +1,11 @@
 import forge from 'node-forge';
 import fs from 'fs';
 
-export const combineCACertAsPem = (caCertPaths: string[]): string => {
-  return caCertPaths.map(readCACertAsPem).join('');
+export const combineCertAsPem = (caCertPaths: string[]): string => {
+  return caCertPaths.map(readCertAsPem).join('');
 }
 
-export const readCACertAsPem = (path: string): string => {
+export const readCertAsPem = (path: string): string => {
   const certFile = fs.readFileSync(path, 'binary');
 
   const asn1Cert = forge.asn1.fromDer(certFile);
