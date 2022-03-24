@@ -13,14 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.INSiClient = void 0;
+const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const soap_1 = require("soap");
 const uuid_1 = require("uuid");
 const certificates_1 = require("./utils/certificates");
 const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
+const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
 const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
-const assertionPsSecurity_1 = require("./class/assertionPsSecurity");
+const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
+const env_1 = require("./models/env");
 /**
  * @constructor
  * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
@@ -81,8 +84,13 @@ class INSiClient {
                 rawSoapResponse = yield this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
             }
             catch (fetchError) {
-                const originalError = this._specificErrorManagement(fetchError) || fetchError;
-                throw new insi_error_1.InsiError({ requestId: requestId, originalError });
+                if (person.isCR01SpecialCase()) {
+                    rawSoapResponse = this._getCR01Response(person);
+                }
+                else {
+                    const originalError = this._specificErrorManagement(fetchError) || fetchError;
+                    throw new insi_error_1.InsiError({ requestId: requestId, originalError });
+                }
             }
             finally {
                 this._soapClient.clearSoapHeaders();
@@ -107,7 +115,7 @@ class INSiClient {
         }));
     }
     _setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos) {
-        const assertionPs = new assertionPsSecurity_1.AssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+        const assertionPs = new assertionPsSecurity_class_1.AssertionPsSecurityClass(privateKey, publicKey, password, assertionPsInfos);
         this._soapClient.setSecurity(assertionPs);
     }
     _setDefaultHeaders() {
@@ -131,6 +139,23 @@ class INSiClient {
             return { body: error.body.match(/(<siram:Erreur(.*)>)(.*)(<\/siram:Erreur>)/)[3] };
         }
         return error.toString().length > 0 ? { body: error.toString() } : undefined;
+    }
+    _getCR01Response(person) {
+        const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
+        const requestAsXML = (0, insi_fetch_ins_models_1.getCR01XmlRequest)({
+            idam: env_1.IDAM,
+            version: env_1.SOFTWARE_VERSION,
+            name: env_1.SOFTWARE_NAME,
+            birthName,
+            firstName,
+            sexe: gender,
+            dateOfBirth,
+        });
+        const rawResponse = {
+            CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+        };
+        const responseAsXML = fs_1.default.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+        return [rawResponse, responseAsXML, undefined, requestAsXML];
     }
 }
 exports.INSiClient = INSiClient;

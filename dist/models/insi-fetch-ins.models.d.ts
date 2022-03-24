@@ -1,7 +1,7 @@
 import { Gender } from '../class/insi-person.class';
 export interface INSiFetchInsResponse {
     requestId: string;
-    body: FetchInsBody;
+    body: FetchInsBody | null;
     rawBody: FetchInsRawBody;
     bodyAsXMl: string;
     requestBodyAsXML: string;
@@ -39,3 +39,13 @@ export interface FetchInsBody {
     socialSecurityNumber: string;
     oid: string;
 }
+export declare const CR01_STAGING_ENV_CASES: string[];
+export declare const getCR01XmlRequest: ({ idam, version, name, birthName, firstName, sexe, dateOfBirth }: {
+    idam: string;
+    version: string;
+    name: string;
+    birthName: string;
+    firstName: string;
+    sexe: Gender;
+    dateOfBirth: string;
+}) => string;

@@ -3,7 +3,7 @@ import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
-import { AssertionPsInfos } from './class/assertionPsSecurity';
+import { AssertionPsInfos } from './class/assertionPsSecurity.class';
 interface INSiClientArgs {
     lpsContext: LpsContext;
     bamContext: BamContext;
@@ -47,5 +47,6 @@ export declare class INSiClient {
     private _setAssertionPsSecurity;
     private _setDefaultHeaders;
     private _specificErrorManagement;
+    private _getCR01Response;
 }
 export {};
