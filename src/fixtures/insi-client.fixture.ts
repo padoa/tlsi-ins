@@ -34,7 +34,7 @@ export const getAdrtroisDominiqueXmlResponse = ():string => {
   ].join('');
 }
 
-export const getAdrtroisDominiqueXmlResquest = (
+export const getAdrtroisDominiqueXmlRequest = (
   { idam, version, name }: { idam: string, version: string, name: string },
 ): string => {
   return [

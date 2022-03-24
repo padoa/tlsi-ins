@@ -7,9 +7,10 @@ import { Gender, INSiPerson } from './class/insi-person.class';
 import {
   getAdrtroisDominiqueFormattedResponse,
   getAdrtroisDominiqueRawResponse,
-  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlResquest,
+  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlRequest,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
+import { getCR01XmlRequest } from './models/insi-fetch-ins.models';
 
 describe('INSi Client', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
@@ -81,7 +82,7 @@ describe('INSi Client', () => {
     expect(body).toEqual(getAdrtroisDominiqueFormattedResponse());
     expect(rawBody).toEqual(getAdrtroisDominiqueRawResponse());
     expect(bodyAsXMl).toEqual(getAdrtroisDominiqueXmlResponse());
-    expect(requestBodyAsXML).toEqual(getAdrtroisDominiqueXmlResquest({
+    expect(requestBodyAsXML).toEqual(getAdrtroisDominiqueXmlRequest({
       idam: IDAM,
       version: SOFTWARE_VERSION,
       name: SOFTWARE_NAME,
@@ -97,6 +98,43 @@ describe('INSi Client', () => {
     });
 
     await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('L\'appel au service de recherche avec la carte vitale renvoie une erreur technique.');
+  });
+
+  test('should respond with a CR01 code when the person is in the CR01 special case', async () => {
+    const person = new INSiPerson({
+      birthName: 'TCHITCHI',
+      firstName: 'OLA',
+      gender: Gender.Female,
+      dateOfBirth: '1936-06-21',
+    });
+
+    const {
+      requestId,
+      body,
+      rawBody,
+      bodyAsXMl,
+      requestBodyAsXML,
+    } = await insiClient.fetchIns(person, {
+      requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+    });
+
+    const expectedResponseAsXML = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+
+    expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+    expect(body).toEqual(null);
+    expect(rawBody).toEqual({
+      CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+    });
+    expect(bodyAsXMl).toEqual(expectedResponseAsXML);
+    expect(requestBodyAsXML).toEqual(getCR01XmlRequest({
+      idam: IDAM,
+      version: SOFTWARE_VERSION,
+      name: SOFTWARE_NAME,
+      birthName: 'TCHITCHI',
+      firstName: 'OLA',
+      sexe: Gender.Female,
+      dateOfBirth: '1936-06-21',
+    }));
   });
 
   test('should throw an INSi error if the pfx is not a correct pfx file', async () => {
