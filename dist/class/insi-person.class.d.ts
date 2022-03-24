@@ -20,7 +20,9 @@ export declare class INSiPerson {
     private readonly _person;
     constructor(personArgs: INSiPersonArgs);
     getSoapBodyAsJson(): INSiPersonSoapBody;
+    getPerson(): INSiPersonArgs;
     _isValidBirthDate(dateOfBirth: string): boolean;
     _isValidName(name: string): boolean;
+    isCR01SpecialCase(): boolean;
 }
 export {};

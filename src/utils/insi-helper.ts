@@ -1,7 +1,10 @@
 import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
 
 export class InsiHelper {
-  public static formatFetchINSRawResponse(rawResponse: FetchInsRawBody): FetchInsBody {
+  public static formatFetchINSRawResponse(rawResponse: FetchInsRawBody): FetchInsBody | null {
+    if (!rawResponse.INDIVIDU) {
+      return null;
+    }
     const { NumIdentifiant, Cle } = rawResponse.INDIVIDU.INSACTIF.IdIndividu;
     return {
       birthName: rawResponse.INDIVIDU.TIQ.NomNaissance,

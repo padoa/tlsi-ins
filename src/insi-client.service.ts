@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { Client, ClientSSLSecurityPFX, createClientAsync } from 'soap';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,10 +7,11 @@ import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
-import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
+import { INSiFetchInsResponse, getCR01XmlRequest } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
+import { IDAM, SOFTWARE_VERSION, SOFTWARE_NAME } from './models/env';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -81,8 +83,12 @@ export class INSiClient {
       rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
     }
     catch (fetchError) {
-      const originalError = this._specificErrorManagement(fetchError) || fetchError;
-      throw new InsiError({ requestId: requestId, originalError });
+      if (person.isCR01SpecialCase()) {
+        rawSoapResponse = this._getCR01Response(person);
+      } else {
+        const originalError = this._specificErrorManagement(fetchError) || fetchError;
+        throw new InsiError({ requestId: requestId, originalError });
+      }
     }
     finally {
       this._soapClient.clearSoapHeaders();
@@ -134,5 +140,23 @@ export class INSiClient {
       return { body: error.body.match(/(<siram:Erreur(.*)>)(.*)(<\/siram:Erreur>)/)[3] };
     }
     return error.toString().length > 0 ? { body: error.toString() } : undefined;
+  }
+
+  private _getCR01Response(person: INSiPerson): any {
+    const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
+    const requestAsXML = getCR01XmlRequest({
+      idam: IDAM,
+      version: SOFTWARE_VERSION,
+      name: SOFTWARE_NAME,
+      birthName,
+      firstName,
+      sexe: gender,
+      dateOfBirth,
+    });
+    const rawResponse = {
+      CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+    };
+    const responseAsXML = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+    return [rawResponse, responseAsXML, undefined, requestAsXML];
   }
 }
