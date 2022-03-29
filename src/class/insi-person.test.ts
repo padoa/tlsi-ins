@@ -10,13 +10,13 @@ describe('INSi Person', () => {
       placeOfBirthCode: '20020',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPIERRE',
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
       LieuNaissance: '20020',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person without placeOfBirthCode and get his data as json', () => {
@@ -27,12 +27,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPIERRE',
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person if birthName contains -', () => {
@@ -43,12 +43,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPI-ERRE',
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person if birthName contains --', () => {
@@ -59,12 +59,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPI--ERRE',
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person if birthName contains \'', () => {
@@ -75,12 +75,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'D\'AMPIERRE',
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person if birthName contains blank space', () => {
@@ -91,12 +91,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPI ERRE',
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should not be able to create an INSi Person if empty birthName', () => {
@@ -155,12 +155,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPIERRE',
       Prenom: 'ER-IC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person if firstName contains --', () => {
@@ -171,12 +171,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPIERRE',
       Prenom: 'ER--IC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should be able to create an INSi Person if firstName contains \'', () => {
@@ -187,28 +187,12 @@ describe('INSi Person', () => {
       dateOfBirth: '1990-01-01',
     });
 
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([{
       NomNaissance: 'DAMPIERRE',
       Prenom: 'E\'RIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-    });
-  });
-
-  test('should be able to create an INSi Person if firstName contains a blank space', () => {
-    const insiPerson = new INSiPerson({
-      birthName: 'DAMPIERRE',
-      firstName: 'ER IC',
-      gender: Gender.Male,
-      dateOfBirth: '1990-01-01',
-    });
-
-    expect(insiPerson.getSoapBodyAsJson()).toEqual({
-      NomNaissance: 'DAMPIERRE',
-      Prenom: 'ER IC',
-      Sexe: Gender.Male,
-      DateNaissance: '1990-01-01',
-    });
+    }]);
   });
 
   test('should not be able to create an INSi Person if empty firstName', () => {
@@ -281,5 +265,35 @@ describe('INSi Person', () => {
         placeOfBirthCode: '20020',
       });
     }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
+  });
+
+  test('should return all components of firstName', () => {
+    const insiPerson = new INSiPerson({
+      birthName: 'DAMPIERRE',
+      firstName: 'ERIC MATHIEU',
+      gender: Gender.Male,
+      dateOfBirth: '1990-01-01',
+    });
+
+    expect(insiPerson.getSoapBodyAsJson()).toEqual([
+      {
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ERIC',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      },
+      {
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'MATHIEU',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      },
+      {
+        NomNaissance: 'DAMPIERRE',
+        Prenom: 'ERIC MATHIEU',
+        Sexe: Gender.Male,
+        DateNaissance: '1990-01-01',
+      }
+    ]);
   });
 });
