@@ -46,15 +46,27 @@ export class INSiPerson {
     this._person = personArgs;
   }
 
-  public getSoapBodyAsJson(): INSiPersonSoapBody {
+  public getSoapBodyAsJson(): INSiPersonSoapBody[] {
     const { birthName, firstName, gender, dateOfBirth, placeOfBirthCode } = this._person;
-    return {
+    const firstNamesList = firstName.split(' ').map((firstNameFromList) => ({
       NomNaissance: birthName,
-      Prenom: firstName,
+      Prenom: firstNameFromList,
       Sexe: gender,
       DateNaissance: dateOfBirth,
       ...(placeOfBirthCode ? { LieuNaissance: placeOfBirthCode } : {}),
-    };
+    }));
+    const namesToSendRequestFor = firstNamesList.length > 1 ? [
+      ...firstNamesList,
+      {
+        NomNaissance: birthName,
+        Prenom: firstName,
+        Sexe: gender,
+        DateNaissance: dateOfBirth,
+        ...(placeOfBirthCode ? { LieuNaissance: placeOfBirthCode } : {}),
+      },
+    ] : firstNamesList;
+
+    return namesToSendRequestFor;
   }
 
   public getPerson(): INSiPersonArgs {
