@@ -6,6 +6,7 @@ export interface INSiFetchInsResponse {
   rawBody: FetchInsRawBody;
   bodyAsXMl: string;
   requestBodyAsXML: string;
+  failedRequests?: INSiFetchInsResponse[];
 }
 
 export interface FetchInsRawBody {
@@ -85,3 +86,5 @@ export const getCR01XmlRequest = (
     '</soap:Envelope>',
   ].join('');
 }
+
+export const CR01Code = '01';

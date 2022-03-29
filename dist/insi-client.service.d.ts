@@ -43,6 +43,8 @@ export declare class INSiClient {
     fetchIns(person: INSiPerson, { requestId }?: {
         requestId?: string | undefined;
     }): Promise<INSiFetchInsResponse>;
+    private _launchSoapRequestForPerson;
+    private _getFetchResponseFromRawSoapResponse;
     private _setClientSSLSecurityPFX;
     private _setAssertionPsSecurity;
     private _setDefaultHeaders;

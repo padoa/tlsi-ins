@@ -7,10 +7,10 @@ import { Gender, INSiPerson } from './class/insi-person.class';
 import {
   getAdrtroisDominiqueFormattedResponse,
   getAdrtroisDominiqueRawResponse,
-  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlRequest,
+  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlRequest, getTchitchiFormattedResponse, getTchitchiXmlResponse, getTchitchiRawResponse,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
-import { getCR01XmlRequest } from './models/insi-fetch-ins.models';
+import { getCR01XmlRequest, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 
 describe('INSi Client', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
@@ -86,6 +86,124 @@ describe('INSi Client', () => {
       idam: IDAM,
       version: SOFTWARE_VERSION,
       name: SOFTWARE_NAME,
+    }));
+  });
+
+  test('should be able to call fetchIns with multiple names even if the first name fails', async () => {
+    const person = new INSiPerson({
+      birthName: 'TCHITCHI',
+      firstName: 'OLA CATARINA BELLA',
+      gender: Gender.Female,
+      dateOfBirth: '1936-06-21',
+    });
+
+    const {
+      requestId,
+      body,
+      rawBody,
+      bodyAsXMl,
+      requestBodyAsXML,
+    } = await insiClient.fetchIns(person, {
+      requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+    });
+
+    expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+    expect(body).toEqual(getTchitchiFormattedResponse());
+    expect(rawBody).toEqual(getTchitchiRawResponse());
+    expect(bodyAsXMl).toEqual(getTchitchiXmlResponse());
+    expect(requestBodyAsXML).toEqual(getCR01XmlRequest({
+      idam: IDAM,
+      version: SOFTWARE_VERSION,
+      name: SOFTWARE_NAME,
+      birthName: 'TCHITCHI',
+      firstName: 'CATARINA',
+      sexe: Gender.Female,
+      dateOfBirth: '1936-06-21',
+    }));
+  });
+
+  test('should be able to record failed attempts if the first name fails', async () => {
+    const person = new INSiPerson({
+      birthName: 'TCHITCHI',
+      firstName: 'OLA CATARINA BELLA',
+      gender: Gender.Female,
+      dateOfBirth: '1936-06-21',
+    });
+
+    const failedInsRequests = (await insiClient.fetchIns(person, {
+      requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+    })).failedRequests as unknown as INSiFetchInsResponse[];
+
+    const {
+      requestId,
+      body,
+      rawBody,
+      bodyAsXMl,
+      requestBodyAsXML,
+    } = failedInsRequests[0];
+
+    const expectedResponseAsXML = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+
+    expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+    expect(body).toEqual(null);
+    expect(rawBody).toEqual({
+      CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+    });
+    expect(bodyAsXMl).toEqual(expectedResponseAsXML);
+    expect(requestBodyAsXML).toEqual(getCR01XmlRequest({
+      idam: IDAM,
+      version: SOFTWARE_VERSION,
+      name: SOFTWARE_NAME,
+      birthName: 'TCHITCHI',
+      firstName: 'OLA',
+      sexe: Gender.Female,
+      dateOfBirth: '1936-06-21',
+    }));
+  });
+
+  test('should attempt all first names separately and all together at the end', async () => {
+    const person = new INSiPerson({
+      birthName: 'HOUILLES',
+      firstName: 'PIERRE PAUL JACQUES',
+      gender: Gender.Male,
+      dateOfBirth: '1993-01-27',
+    });
+
+    const failedInsRequests = (await insiClient.fetchIns(person, {
+      requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+    })).failedRequests as unknown as INSiFetchInsResponse[];
+
+    const defaultExpectedResponseForHouilles = {
+      idam: IDAM,
+      version: SOFTWARE_VERSION,
+      name: SOFTWARE_NAME,
+      birthName: 'HOUILLES',
+      sexe: Gender.Male,
+      dateOfBirth: '1993-01-27',
+    };
+
+    expect(failedInsRequests[0].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
+    expect(failedInsRequests[0].requestBodyAsXML).toEqual(getCR01XmlRequest({
+      ...defaultExpectedResponseForHouilles,
+      firstName: 'PIERRE',
+    }));
+
+    expect(failedInsRequests[1].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
+    expect(failedInsRequests[1].requestBodyAsXML).toEqual(getCR01XmlRequest({
+      ...defaultExpectedResponseForHouilles,
+      firstName: 'PAUL',
+    }));
+    
+    expect(failedInsRequests[2].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
+    expect(failedInsRequests[2].requestBodyAsXML).toEqual(getCR01XmlRequest({
+      ...defaultExpectedResponseForHouilles,
+      firstName: 'JACQUES',
+    }));
+
+    expect(failedInsRequests[3].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
+    expect(failedInsRequests[3].requestBodyAsXML).toEqual(getCR01XmlRequest({
+      ...defaultExpectedResponseForHouilles,
+      firstName: 'PIERRE PAUL JACQUES',
     }));
   });
 

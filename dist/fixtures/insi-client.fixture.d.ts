@@ -7,3 +7,6 @@ export declare const getAdrtroisDominiqueXmlRequest: ({ idam, version, name }: {
 }) => string;
 export declare const getAdrtroisDominiqueRawResponse: () => FetchInsRawBody;
 export declare const getAdrtroisDominiqueFormattedResponse: () => FetchInsBody;
+export declare const getTchitchiXmlResponse: () => string;
+export declare const getTchitchiRawResponse: () => FetchInsRawBody;
+export declare const getTchitchiFormattedResponse: () => FetchInsBody;

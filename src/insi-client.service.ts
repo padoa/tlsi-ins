@@ -7,7 +7,7 @@ import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
-import { INSiFetchInsResponse, getCR01XmlRequest } from './models/insi-fetch-ins.models';
+import { INSiFetchInsResponse, getCR01XmlRequest, CR01Code } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
@@ -73,26 +73,47 @@ export class INSiClient {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client first');
     }
-    const { header, method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+    const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     this._setDefaultHeaders();
     this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
     this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
+    return this._launchSoapRequestForPerson(person, requestId);
+  }
 
+  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiFetchInsResponse> {
     let rawSoapResponse;
-    try {
-      rawSoapResponse = await this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
-    }
-    catch (fetchError) {
-      if (person.isCR01SpecialCase()) {
-        rawSoapResponse = this._getCR01Response(person);
-      } else {
-        const originalError = this._specificErrorManagement(fetchError) || fetchError;
-        throw new InsiError({ requestId: requestId, originalError });
+    const failedRequests = [];
+    const namesToSendRequestFor = person.getSoapBodyAsJson();
+    const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+    for (let i = 0; i < namesToSendRequestFor.length; i++) {
+      try {
+        rawSoapResponse = await this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
+        // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
+        if (rawSoapResponse[0]?.CR?.CodeCR !== CR01Code) {
+          break;
+        }
+        failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
+      } catch (fetchError) {
+        // This is a special case, in the test environnement when the request is not found, the soap client will throw an error
+        if (person.isCR01SpecialCase()) {
+          const failedResponse = this._getCR01Response(person, namesToSendRequestFor[i].Prenom);
+          failedRequests.push(this._getFetchResponseFromRawSoapResponse(failedResponse, requestId));
+          rawSoapResponse = failedResponse;
+        } else {
+          // this is the default error management
+          const originalError = this._specificErrorManagement(fetchError) || fetchError;
+          throw new InsiError({ requestId: requestId, originalError });
+        }
       }
     }
-    finally {
-      this._soapClient.clearSoapHeaders();
-    }
+    this._soapClient.clearSoapHeaders();
+    return {
+      ...this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId),
+      failedRequests: failedRequests,
+    };
+  }
+
+  private _getFetchResponseFromRawSoapResponse(rawSoapResponse: any, requestId: string): INSiFetchInsResponse {
     const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
     return {
       requestId,
@@ -142,14 +163,14 @@ export class INSiClient {
     return error.toString().length > 0 ? { body: error.toString() } : undefined;
   }
 
-  private _getCR01Response(person: INSiPerson): any {
+  private _getCR01Response(person: INSiPerson, CustomFirstName?: string): any {
     const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
     const requestAsXML = getCR01XmlRequest({
       idam: IDAM,
       version: SOFTWARE_VERSION,
       name: SOFTWARE_NAME,
       birthName,
-      firstName,
+      firstName: CustomFirstName || firstName,
       sexe: gender,
       dateOfBirth,
     });

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCR01XmlRequest = exports.CR01_STAGING_ENV_CASES = void 0;
+exports.CR01Code = exports.getCR01XmlRequest = exports.CR01_STAGING_ENV_CASES = void 0;
 exports.CR01_STAGING_ENV_CASES = [
     'TCHITCHI',
     'HOUILLES',
@@ -40,4 +40,5 @@ const getCR01XmlRequest = ({ idam, version, name, birthName, firstName, sexe, da
     ].join('');
 };
 exports.getCR01XmlRequest = getCR01XmlRequest;
+exports.CR01Code = '01';
 //# sourceMappingURL=insi-fetch-ins.models.js.map

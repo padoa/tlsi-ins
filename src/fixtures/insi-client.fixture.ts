@@ -105,3 +105,71 @@ export const getAdrtroisDominiqueFormattedResponse = (): FetchInsBody => ({
   socialSecurityNumber: '297022A02077878',
   oid: '1.2.250.1.213.1.4.8',
 });
+
+export const getTchitchiXmlResponse = ():string => {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>\n',
+    '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+    '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+    '<ns2:RESULTAT xmlns:ns3="http://www.cnamts.fr/INSiRecVit" xmlns:ns2="http://www.cnamts.fr/INSiResultat" xmlns="http://www.cnamts.fr/INSiRecSans">',
+    '<ns2:CR>',
+    '<ns2:CodeCR>00</ns2:CodeCR>',
+    '<ns2:LibelleCR>OK</ns2:LibelleCR>',
+    '</ns2:CR>',
+    '<ns2:INDIVIDU>',
+    '<ns2:INSACTIF>',
+    '<ns2:IdIndividu>',
+    '<ns2:NumIdentifiant>2360663220836</ns2:NumIdentifiant>',
+    '<ns2:Cle>56</ns2:Cle>',
+    '</ns2:IdIndividu>',
+    '<ns2:OID>1.2.250.1.213.1.4.8</ns2:OID>',
+    '</ns2:INSACTIF>',
+    '<ns2:TIQ>',
+    '<ns2:NomNaissance>TCHITCHI</ns2:NomNaissance>',
+    '<ns2:Prenom>CATARINA</ns2:Prenom>',
+    '<ns2:ListePrenom>CATARINA BELLA</ns2:ListePrenom>',
+    '<ns2:Sexe>F</ns2:Sexe>',
+    '<ns2:DateNaissance>1936-06-21</ns2:DateNaissance>',
+    '<ns2:LieuNaissance>63220</ns2:LieuNaissance>',
+    '</ns2:TIQ>',
+    '</ns2:INDIVIDU>',
+    '</ns2:RESULTAT>',
+    '</env:Body>',
+    '</soap:Envelope>',
+  ].join('');
+}
+
+export const getTchitchiRawResponse = (): FetchInsRawBody => ({
+  CR: {
+    CodeCR: '00',
+    LibelleCR: 'OK'
+  },
+  INDIVIDU: {
+    INSACTIF: {
+      IdIndividu: {
+        NumIdentifiant: '2360663220836',
+        Cle: '56'
+      },
+      OID: '1.2.250.1.213.1.4.8'
+    },
+    TIQ: {
+      NomNaissance: 'TCHITCHI',
+      Prenom: 'CATARINA',
+      ListePrenom: 'CATARINA BELLA',
+      Sexe: Gender.Female,
+      DateNaissance: '1936-06-21',
+      LieuNaissance: '63220'
+    }
+  }
+});
+
+export const getTchitchiFormattedResponse = (): FetchInsBody => ({
+  birthName: 'TCHITCHI',
+  firstName: 'CATARINA',
+  allFirstNames: 'CATARINA BELLA',
+  gender: Gender.Female,
+  dateOfBirth: '1936-06-21',
+  placeOfBirthCode: '63220',
+  socialSecurityNumber: '236066322083656',
+  oid: '1.2.250.1.213.1.4.8',
+});
