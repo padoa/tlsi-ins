@@ -5,6 +5,7 @@ export interface INSiFetchInsResponse {
     rawBody: FetchInsRawBody;
     bodyAsXMl: string;
     requestBodyAsXML: string;
+    failedRequests?: INSiFetchInsResponse[];
 }
 export interface FetchInsRawBody {
     CR: {
@@ -49,3 +50,4 @@ export declare const getCR01XmlRequest: ({ idam, version, name, birthName, first
     sexe: Gender;
     dateOfBirth: string;
 }) => string;
+export declare const CR01Code = "01";

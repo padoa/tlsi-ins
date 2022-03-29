@@ -75,35 +75,56 @@ class INSiClient {
             if (!this._soapClient) {
                 throw new Error('fetchIns ERROR: you must init client first');
             }
-            const { header, method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+            const { header } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
             this._setDefaultHeaders();
             this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
             this._soapClient.addSoapHeader({ MessageID: requestId, }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
-            let rawSoapResponse;
-            try {
-                rawSoapResponse = yield this._soapClient[`${method}Async`](person.getSoapBodyAsJson());
-            }
-            catch (fetchError) {
-                if (person.isCR01SpecialCase()) {
-                    rawSoapResponse = this._getCR01Response(person);
-                }
-                else {
-                    const originalError = this._specificErrorManagement(fetchError) || fetchError;
-                    throw new insi_error_1.InsiError({ requestId: requestId, originalError });
-                }
-            }
-            finally {
-                this._soapClient.clearSoapHeaders();
-            }
-            const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
-            return {
-                requestId,
-                rawBody: rawResponse,
-                body: insi_helper_1.InsiHelper.formatFetchINSRawResponse(rawResponse),
-                bodyAsXMl: responseAsXMl,
-                requestBodyAsXML: requestAsXML,
-            };
+            return this._launchSoapRequestForPerson(person, requestId);
         });
+    }
+    _launchSoapRequestForPerson(person, requestId) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            let rawSoapResponse;
+            const failedRequests = [];
+            const namesToSendRequestFor = person.getSoapBodyAsJson();
+            const { method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+            for (let i = 0; i < namesToSendRequestFor.length; i++) {
+                try {
+                    rawSoapResponse = yield this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
+                    // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
+                    if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CR01Code) {
+                        break;
+                    }
+                    failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
+                }
+                catch (fetchError) {
+                    // This is a special case, in the test environnement when the request is not found, the soap client will throw an error
+                    if (person.isCR01SpecialCase()) {
+                        const failedResponse = this._getCR01Response(person, namesToSendRequestFor[i].Prenom);
+                        failedRequests.push(this._getFetchResponseFromRawSoapResponse(failedResponse, requestId));
+                        rawSoapResponse = failedResponse;
+                    }
+                    else {
+                        // this is the default error management
+                        const originalError = this._specificErrorManagement(fetchError) || fetchError;
+                        throw new insi_error_1.InsiError({ requestId: requestId, originalError });
+                    }
+                }
+            }
+            this._soapClient.clearSoapHeaders();
+            return Object.assign(Object.assign({}, this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId)), { failedRequests: failedRequests });
+        });
+    }
+    _getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId) {
+        const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
+        return {
+            requestId,
+            rawBody: rawResponse,
+            body: insi_helper_1.InsiHelper.formatFetchINSRawResponse(rawResponse),
+            bodyAsXMl: responseAsXMl,
+            requestBodyAsXML: requestAsXML,
+        };
     }
     _setClientSSLSecurityPFX(pfx, passphrase) {
         this._soapClient.setSecurity(new soap_1.ClientSSLSecurityPFX(pfx, {
@@ -140,14 +161,14 @@ class INSiClient {
         }
         return error.toString().length > 0 ? { body: error.toString() } : undefined;
     }
-    _getCR01Response(person) {
+    _getCR01Response(person, CustomFirstName) {
         const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
         const requestAsXML = (0, insi_fetch_ins_models_1.getCR01XmlRequest)({
             idam: env_1.IDAM,
             version: env_1.SOFTWARE_VERSION,
             name: env_1.SOFTWARE_NAME,
             birthName,
-            firstName,
+            firstName: CustomFirstName || firstName,
             sexe: gender,
             dateOfBirth,
         });

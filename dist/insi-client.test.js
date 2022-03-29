@@ -82,6 +82,85 @@ describe('INSi Client', () => {
             name: env_1.SOFTWARE_NAME,
         }));
     }));
+    test('should be able to call fetchIns with multiple names even if the first name fails', () => __awaiter(void 0, void 0, void 0, function* () {
+        const person = new insi_person_class_1.INSiPerson({
+            birthName: 'TCHITCHI',
+            firstName: 'OLA CATARINA BELLA',
+            gender: insi_person_class_1.Gender.Female,
+            dateOfBirth: '1936-06-21',
+        });
+        const { requestId, body, rawBody, bodyAsXMl, requestBodyAsXML, } = yield insiClient.fetchIns(person, {
+            requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+        });
+        expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+        expect(body).toEqual((0, insi_client_fixture_1.getTchitchiFormattedResponse)());
+        expect(rawBody).toEqual((0, insi_client_fixture_1.getTchitchiRawResponse)());
+        expect(bodyAsXMl).toEqual((0, insi_client_fixture_1.getTchitchiXmlResponse)());
+        expect(requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)({
+            idam: env_1.IDAM,
+            version: env_1.SOFTWARE_VERSION,
+            name: env_1.SOFTWARE_NAME,
+            birthName: 'TCHITCHI',
+            firstName: 'CATARINA',
+            sexe: insi_person_class_1.Gender.Female,
+            dateOfBirth: '1936-06-21',
+        }));
+    }));
+    test('should be able to record failed attempts if the first name fails', () => __awaiter(void 0, void 0, void 0, function* () {
+        const person = new insi_person_class_1.INSiPerson({
+            birthName: 'TCHITCHI',
+            firstName: 'OLA CATARINA BELLA',
+            gender: insi_person_class_1.Gender.Female,
+            dateOfBirth: '1936-06-21',
+        });
+        const failedInsRequests = (yield insiClient.fetchIns(person, {
+            requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+        })).failedRequests;
+        const { requestId, body, rawBody, bodyAsXMl, requestBodyAsXML, } = failedInsRequests[0];
+        const expectedResponseAsXML = fs_1.default.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+        expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+        expect(body).toEqual(null);
+        expect(rawBody).toEqual({
+            CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+        });
+        expect(bodyAsXMl).toEqual(expectedResponseAsXML);
+        expect(requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)({
+            idam: env_1.IDAM,
+            version: env_1.SOFTWARE_VERSION,
+            name: env_1.SOFTWARE_NAME,
+            birthName: 'TCHITCHI',
+            firstName: 'OLA',
+            sexe: insi_person_class_1.Gender.Female,
+            dateOfBirth: '1936-06-21',
+        }));
+    }));
+    test('should attempt all first names separately and all together at the end', () => __awaiter(void 0, void 0, void 0, function* () {
+        const person = new insi_person_class_1.INSiPerson({
+            birthName: 'HOUILLES',
+            firstName: 'PIERRE PAUL JACQUES',
+            gender: insi_person_class_1.Gender.Male,
+            dateOfBirth: '1993-01-27',
+        });
+        const failedInsRequests = (yield insiClient.fetchIns(person, {
+            requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+        })).failedRequests;
+        const defaultExpectedResponseForHouilles = {
+            idam: env_1.IDAM,
+            version: env_1.SOFTWARE_VERSION,
+            name: env_1.SOFTWARE_NAME,
+            birthName: 'HOUILLES',
+            sexe: insi_person_class_1.Gender.Male,
+            dateOfBirth: '1993-01-27',
+        };
+        expect(failedInsRequests[0].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
+        expect(failedInsRequests[0].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE' })));
+        expect(failedInsRequests[1].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
+        expect(failedInsRequests[1].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PAUL' })));
+        expect(failedInsRequests[2].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
+        expect(failedInsRequests[2].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'JACQUES' })));
+        expect(failedInsRequests[3].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
+        expect(failedInsRequests[3].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE PAUL JACQUES' })));
+    }));
     test('should throw an INSi error if the person does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
         const person = new insi_person_class_1.INSiPerson({
             birthName: 'ADRTROIS-DOES-NOT-EXIST',
