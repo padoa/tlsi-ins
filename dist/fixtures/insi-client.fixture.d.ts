@@ -1,4 +1,5 @@
 import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+export declare const getCR02XmlResponse: () => string;
 export declare const getAdrtroisDominiqueXmlResponse: () => string;
 export declare const getAdrtroisDominiqueXmlRequest: ({ idam, version, name }: {
     idam: string;

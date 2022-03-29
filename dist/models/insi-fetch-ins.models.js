@@ -1,6 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CR01Code = exports.getCR01XmlRequest = exports.CR01_STAGING_ENV_CASES = void 0;
+exports.getCR01XmlRequest = exports.CR01_STAGING_ENV_CASES = exports.CRLabels = exports.CRCodes = void 0;
+var CRCodes;
+(function (CRCodes) {
+    CRCodes["OK"] = "00";
+    CRCodes["NO_RESULT"] = "01";
+    CRCodes["MULTIPLE_MATCHES"] = "02";
+})(CRCodes = exports.CRCodes || (exports.CRCodes = {}));
+var CRLabels;
+(function (CRLabels) {
+    CRLabels["OK"] = "OK";
+    CRLabels["NO_RESULT"] = "Aucune identite trouvee";
+    CRLabels["MULTIPLE_MATCHES"] = "Plusieurs identites trouvees";
+})(CRLabels = exports.CRLabels || (exports.CRLabels = {}));
 exports.CR01_STAGING_ENV_CASES = [
     'TCHITCHI',
     'HOUILLES',
@@ -40,5 +52,4 @@ const getCR01XmlRequest = ({ idam, version, name, birthName, firstName, sexe, da
     ].join('');
 };
 exports.getCR01XmlRequest = getCR01XmlRequest;
-exports.CR01Code = '01';
 //# sourceMappingURL=insi-fetch-ins.models.js.map

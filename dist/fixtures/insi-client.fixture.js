@@ -1,7 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTchitchiFormattedResponse = exports.getTchitchiRawResponse = exports.getTchitchiXmlResponse = exports.getAdrtroisDominiqueFormattedResponse = exports.getAdrtroisDominiqueRawResponse = exports.getAdrtroisDominiqueXmlRequest = exports.getAdrtroisDominiqueXmlResponse = void 0;
+exports.getTchitchiFormattedResponse = exports.getTchitchiRawResponse = exports.getTchitchiXmlResponse = exports.getAdrtroisDominiqueFormattedResponse = exports.getAdrtroisDominiqueRawResponse = exports.getAdrtroisDominiqueXmlRequest = exports.getAdrtroisDominiqueXmlResponse = exports.getCR02XmlResponse = void 0;
 const insi_person_class_1 = require("../class/insi-person.class");
+const insi_fetch_ins_models_1 = require("../models/insi-fetch-ins.models");
+const getCR02XmlResponse = () => {
+    return [
+        '<?xml version="1.0" encoding="UTF-8"?>\n',
+        '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+        '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+        '<ns2:RESULTAT xmlns:ns3="http://www.cnamts.fr/INSiRecVit" xmlns:ns2="http://www.cnamts.fr/INSiResultat" xmlns="http://www.cnamts.fr/INSiRecSans">',
+        '<ns2:CR>',
+        '<ns2:CodeCR>02</ns2:CodeCR>',
+        '<ns2:LibelleCR>Plusieurs identites trouvees</ns2:LibelleCR>',
+        '</ns2:CR>',
+        '</ns2:RESULTAT>',
+        '</env:Body>',
+        '</soap:Envelope>',
+    ].join('');
+};
+exports.getCR02XmlResponse = getCR02XmlResponse;
 const getAdrtroisDominiqueXmlResponse = () => {
     return [
         '<?xml version="1.0" encoding="UTF-8"?>\n',
@@ -72,8 +89,8 @@ const getAdrtroisDominiqueXmlRequest = ({ idam, version, name }) => {
 exports.getAdrtroisDominiqueXmlRequest = getAdrtroisDominiqueXmlRequest;
 const getAdrtroisDominiqueRawResponse = () => ({
     CR: {
-        CodeCR: '00',
-        LibelleCR: 'OK'
+        CodeCR: insi_fetch_ins_models_1.CRCodes.OK,
+        LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
     },
     INDIVIDU: {
         INSACTIF: {
@@ -140,8 +157,8 @@ const getTchitchiXmlResponse = () => {
 exports.getTchitchiXmlResponse = getTchitchiXmlResponse;
 const getTchitchiRawResponse = () => ({
     CR: {
-        CodeCR: '00',
-        LibelleCR: 'OK'
+        CodeCR: insi_fetch_ins_models_1.CRCodes.OK,
+        LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
     },
     INDIVIDU: {
         INSACTIF: {
