@@ -1,5 +1,21 @@
 import { Gender } from '../class/insi-person.class';
-import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+import { CRCodes, CRLabels, FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+
+export const getCR02XmlResponse = (): string => {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>\n',
+    '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+    '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+    '<ns2:RESULTAT xmlns:ns3="http://www.cnamts.fr/INSiRecVit" xmlns:ns2="http://www.cnamts.fr/INSiResultat" xmlns="http://www.cnamts.fr/INSiRecSans">',
+    '<ns2:CR>',
+    '<ns2:CodeCR>02</ns2:CodeCR>',
+    '<ns2:LibelleCR>Plusieurs identites trouvees</ns2:LibelleCR>',
+    '</ns2:CR>',
+    '</ns2:RESULTAT>',
+    '</env:Body>',
+    '</soap:Envelope>',
+  ].join('');
+}
 
 export const getAdrtroisDominiqueXmlResponse = ():string => {
   return [
@@ -33,6 +49,7 @@ export const getAdrtroisDominiqueXmlResponse = ():string => {
     '</soap:Envelope>',
   ].join('');
 }
+
 
 export const getAdrtroisDominiqueXmlRequest = (
   { idam, version, name }: { idam: string, version: string, name: string },
@@ -73,8 +90,8 @@ export const getAdrtroisDominiqueXmlRequest = (
 
 export const getAdrtroisDominiqueRawResponse = (): FetchInsRawBody => ({
   CR: {
-    CodeCR: '00',
-    LibelleCR: 'OK'
+    CodeCR: CRCodes.OK,
+    LibelleCR: CRLabels.OK,
   },
   INDIVIDU: {
     INSACTIF: {
@@ -141,8 +158,8 @@ export const getTchitchiXmlResponse = ():string => {
 
 export const getTchitchiRawResponse = (): FetchInsRawBody => ({
   CR: {
-    CodeCR: '00',
-    LibelleCR: 'OK'
+    CodeCR: CRCodes.OK,
+    LibelleCR: CRLabels.OK,
   },
   INDIVIDU: {
     INSACTIF: {

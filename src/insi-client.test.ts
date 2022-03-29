@@ -7,10 +7,10 @@ import { Gender, INSiPerson } from './class/insi-person.class';
 import {
   getAdrtroisDominiqueFormattedResponse,
   getAdrtroisDominiqueRawResponse,
-  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlRequest, getTchitchiFormattedResponse, getTchitchiXmlResponse, getTchitchiRawResponse,
+  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlRequest, getTchitchiFormattedResponse, getTchitchiXmlResponse, getTchitchiRawResponse, getCR02XmlResponse,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
-import { getCR01XmlRequest, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
+import { CRCodes, CRLabels, getCR01XmlRequest, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 
 describe('INSi Client', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
@@ -87,6 +87,35 @@ describe('INSi Client', () => {
       version: SOFTWARE_VERSION,
       name: SOFTWARE_NAME,
     }));
+  });
+
+  test('should respond with CR02 code when multiple identities are found', async () => {
+    const person = new INSiPerson({
+      birthName: 'DE VINCI',
+      firstName: 'LEONARDO',
+      gender: Gender.Male,
+      dateOfBirth: '2014-02-01',
+    });
+
+    const {
+      requestId,
+      body,
+      rawBody,
+      bodyAsXMl,
+      requestBodyAsXML,
+    } = await insiClient.fetchIns(person, {
+      requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+    });
+
+    expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+    expect(body).toEqual(null);
+    expect(rawBody).toEqual({
+      CR: {
+        CodeCR: CRCodes.MULTIPLE_MATCHES,
+        LibelleCR: CRLabels.MULTIPLE_MATCHES,
+      }
+    });
+    expect(bodyAsXMl).toEqual(getCR02XmlResponse());
   });
 
   test('should be able to call fetchIns with multiple names even if the first name fails', async () => {

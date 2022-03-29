@@ -7,7 +7,7 @@ import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
-import { INSiFetchInsResponse, getCR01XmlRequest, CR01Code } from './models/insi-fetch-ins.models';
+import { INSiFetchInsResponse, getCR01XmlRequest, CRCodes, CRLabels } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
@@ -89,7 +89,7 @@ export class INSiClient {
       try {
         rawSoapResponse = await this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
         // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
-        if (rawSoapResponse[0]?.CR?.CodeCR !== CR01Code) {
+        if (rawSoapResponse[0]?.CR?.CodeCR !== CRCodes.NO_RESULT) {
           break;
         }
         failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
@@ -175,7 +175,7 @@ export class INSiClient {
       dateOfBirth,
     });
     const rawResponse = {
-      CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+      CR: { CodeCR: CRCodes.NO_RESULT, LibelleCR: CRLabels.NO_RESULT },
     };
     const responseAsXML = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
     return [rawResponse, responseAsXML, undefined, requestAsXML];
