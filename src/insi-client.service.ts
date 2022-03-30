@@ -11,7 +11,6 @@ import { INSiFetchInsResponse, getCR01XmlRequest, CRCodes, CRLabels } from './mo
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
-import { IDAM, SOFTWARE_VERSION, SOFTWARE_NAME } from './models/env';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -178,7 +177,7 @@ export class INSiClient {
     const rawResponse = {
       CR: { CodeCR: CRCodes.NO_RESULT, LibelleCR: CRLabels.NO_RESULT },
     };
-    const responseAsXML = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+    const responseAsXML = fs.readFileSync(path.resolve(__dirname, './fixtures/REP_CR01.xml'), 'utf-8');
     return [rawResponse, responseAsXML, undefined, requestAsXML];
   }
 }

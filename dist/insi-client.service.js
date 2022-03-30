@@ -175,7 +175,7 @@ class INSiClient {
         const rawResponse = {
             CR: { CodeCR: insi_fetch_ins_models_1.CRCodes.NO_RESULT, LibelleCR: insi_fetch_ins_models_1.CRLabels.NO_RESULT },
         };
-        const responseAsXML = fs_1.default.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+        const responseAsXML = fs_1.default.readFileSync(path_1.default.resolve(__dirname, './fixtures/REP_CR01.xml'), 'utf-8');
         return [rawResponse, responseAsXML, undefined, requestAsXML];
     }
 }
