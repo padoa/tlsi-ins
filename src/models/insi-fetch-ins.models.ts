@@ -9,10 +9,28 @@ export interface INSiFetchInsResponse {
   failedRequests?: INSiFetchInsResponse[];
 }
 
+export enum CRCodes {
+  OK = '00',
+  NO_RESULT = '01',
+  MULTIPLE_MATCHES = '02',
+}
+
+export enum CRLabels {
+  OK = 'OK',
+  NO_RESULT = 'Aucune identite trouvee',
+  MULTIPLE_MATCHES = 'Plusieurs identites trouvees',
+}
+
 export interface FetchInsRawBody {
   CR: {
-    CodeCR: '00',
-    LibelleCR: 'OK'
+    CodeCR: CRCodes.OK,
+    LibelleCR: CRLabels.OK,
+  } | {
+    CodeCR: CRCodes.NO_RESULT,
+    LibelleCR: CRLabels.NO_RESULT,
+  } | {
+    CodeCR: CRCodes.MULTIPLE_MATCHES,
+    LibelleCR: CRLabels.MULTIPLE_MATCHES,
   },
   INDIVIDU: {
     INSACTIF: {
@@ -86,5 +104,3 @@ export const getCR01XmlRequest = (
     '</soap:Envelope>',
   ].join('');
 }
-
-export const CR01Code = '01';

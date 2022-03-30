@@ -93,7 +93,7 @@ class INSiClient {
                 try {
                     rawSoapResponse = yield this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
                     // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
-                    if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CR01Code) {
+                    if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CRCodes.NO_RESULT) {
                         break;
                     }
                     failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
@@ -173,7 +173,7 @@ class INSiClient {
             dateOfBirth,
         });
         const rawResponse = {
-            CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+            CR: { CodeCR: insi_fetch_ins_models_1.CRCodes.NO_RESULT, LibelleCR: insi_fetch_ins_models_1.CRLabels.NO_RESULT },
         };
         const responseAsXML = fs_1.default.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
         return [rawResponse, responseAsXML, undefined, requestAsXML];
