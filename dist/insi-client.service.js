@@ -23,7 +23,6 @@ const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
 const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
-const env_1 = require("./models/env");
 /**
  * @constructor
  * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
@@ -163,10 +162,11 @@ class INSiClient {
     }
     _getCR01Response(person, CustomFirstName) {
         const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
+        const lpsContext = this._lpsContext.getSoapHeaderAsJson();
         const requestAsXML = (0, insi_fetch_ins_models_1.getCR01XmlRequest)({
-            idam: env_1.IDAM,
-            version: env_1.SOFTWARE_VERSION,
-            name: env_1.SOFTWARE_NAME,
+            idam: lpsContext.soapHeader.ContexteLPS.LPS.IDAM.$value,
+            version: lpsContext.soapHeader.ContexteLPS.LPS.Version,
+            name: lpsContext.soapHeader.ContexteLPS.LPS.Nom,
             birthName,
             firstName: CustomFirstName || firstName,
             sexe: gender,

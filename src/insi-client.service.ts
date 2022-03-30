@@ -165,10 +165,11 @@ export class INSiClient {
 
   private _getCR01Response(person: INSiPerson, CustomFirstName?: string): any {
     const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
+    const lpsContext = this._lpsContext.getSoapHeaderAsJson();
     const requestAsXML = getCR01XmlRequest({
-      idam: IDAM,
-      version: SOFTWARE_VERSION,
-      name: SOFTWARE_NAME,
+      idam: lpsContext.soapHeader.ContexteLPS.LPS.IDAM.$value,
+      version: lpsContext.soapHeader.ContexteLPS.LPS.Version,
+      name: lpsContext.soapHeader.ContexteLPS.LPS.Nom,
       birthName,
       firstName: CustomFirstName || firstName,
       sexe: gender,
