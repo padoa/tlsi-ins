@@ -10,7 +10,7 @@ import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.
 import { INSiFetchInsResponse, getCR01XmlRequest, CRCodes, CRLabels } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
-import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
+import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -48,18 +48,15 @@ export class INSiClient {
 
   /**
    * Initializes a soap client and sets it's AssertionPsSecurity
-   * @param  {string} privateKey the private key for certificate sign
-   * @param  {string} publicKey the associated public key
-   * @param  {string=''} password of the privateKey if needed
-   * @param  {AssertionPsInfos} assertionPsInfos infos of the PS (Personel de Santé) that needed to build the assertion
+   * @param  {string} assertionPs the assertion Ps to use for the call
    * @returns Promise
    */
-  public async initClientCpx(privateKey: string, publicKey: string, password: string = '', assertionPsInfos: AssertionPsInfos): Promise<void> {
+  public async initClientCpx(assertionPs: string): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
+      wsdl_options: { rejectUnauthorized: false },
       forceSoap12Headers: true, // use soap v1.2
     });
-
-    this._setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+    this._setAssertionPsSecurity(assertionPs);
   }
 
   /**
@@ -70,7 +67,7 @@ export class INSiClient {
    */
   public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse> {
     if (!this._soapClient) {
-      throw new Error('fetchIns ERROR: you must init client first');
+      throw new Error('fetchIns ERROR: you must init client security first');
     }
     const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     this._setDefaultHeaders();
@@ -101,6 +98,7 @@ export class INSiClient {
         } else {
           // this is the default error management
           const originalError = this._specificErrorManagement(fetchError) || fetchError;
+          console.log(originalError);
           throw new InsiError({ requestId: requestId, originalError });
         }
       }
@@ -133,9 +131,14 @@ export class INSiClient {
     }))
   }
 
-  private _setAssertionPsSecurity(privateKey: string, publicKey: string, password: string, assertionPsInfos: AssertionPsInfos): void {
-    const assertionPs = new AssertionPsSecurityClass(privateKey, publicKey, password, assertionPsInfos);
-    this._soapClient.setSecurity(assertionPs);
+  private _setAssertionPsSecurity(assertionPs: string): void {
+    this._soapClient.setEndpoint('https://qualiflps.services-ps.ameli.fr:443/lps');
+    this._soapClient.setSecurity(new AssertionPsSecurityClass(assertionPs, {
+      ca: combineCertAsPem([
+        path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+        path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
+      ]),
+    }));
   }
 
   private _setDefaultHeaders(): void {
