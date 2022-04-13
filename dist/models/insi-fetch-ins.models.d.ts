@@ -17,6 +17,14 @@ export declare enum CRLabels {
     NO_RESULT = "Aucune identite trouvee",
     MULTIPLE_MATCHES = "Plusieurs identites trouvees"
 }
+interface InsHisto {
+    IdIndividu: {
+        Cle: string;
+        NumIdentifiant: string;
+        TypeMatricule: string;
+    };
+    OID: string;
+}
 export interface FetchInsRawBody {
     CR: {
         CodeCR: CRCodes.OK;
@@ -36,6 +44,7 @@ export interface FetchInsRawBody {
             };
             OID: string;
         };
+        INSHISTO?: InsHisto[] | InsHisto;
         TIQ: {
             NomNaissance: string;
             Prenom: string;
@@ -56,13 +65,4 @@ export interface FetchInsBody {
     socialSecurityNumber: string;
     oid: string;
 }
-export declare const CR01_STAGING_ENV_CASES: string[];
-export declare const getCR01XmlRequest: ({ idam, version, name, birthName, firstName, sexe, dateOfBirth }: {
-    idam: string;
-    version: string;
-    name: string;
-    birthName: string;
-    firstName: string;
-    sexe: Gender;
-    dateOfBirth: string;
-}) => string;
+export {};

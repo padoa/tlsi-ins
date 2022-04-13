@@ -45,6 +45,7 @@ const getClientWithDefinedId = () => {
     return new insi_client_service_1.INSiClient({
         lpsContext,
         bamContext,
+        overrideSpecialCases: true,
     });
 };
 describe('INSi Client', () => {
@@ -193,7 +194,7 @@ describe('INSi Client', () => {
             expect(body).toEqual((0, insi_client_fixture_1.getTchitchiFormattedResponse)());
             expect(rawBody).toEqual((0, insi_client_fixture_1.getTchitchiRawResponse)());
             expect(bodyAsXMl).toEqual((0, insi_client_fixture_1.getTchitchiXmlResponse)());
-            expect(requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)({
+            expect(requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
                 name: env_1.SOFTWARE_NAME,
@@ -201,6 +202,30 @@ describe('INSi Client', () => {
                 firstName: 'CATARINA',
                 sexe: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1936-06-21',
+            }));
+        }));
+        test('should be able to call fetchIns when its overridden for test_2.04', () => __awaiter(void 0, void 0, void 0, function* () {
+            const person = new insi_person_class_1.INSiPerson({
+                birthName: 'ECETINSI',
+                firstName: 'PIERRE-ALAIN',
+                gender: insi_person_class_1.Gender.Male,
+                dateOfBirth: '2009-07-14',
+            });
+            const { requestId, body, rawBody, bodyAsXMl, requestBodyAsXML, } = yield insiClient.fetchIns(person, {
+                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+            });
+            expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+            expect(body).toEqual((0, insi_client_fixture_1.getPierreAlainFormattedResponse)());
+            expect(rawBody).toEqual((0, insi_client_fixture_1.getPierreAlainRawResponse)());
+            expect(bodyAsXMl).toEqual((0, insi_client_fixture_1.getPierreAlainXmlResponse)());
+            expect(requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
+                idam: env_1.IDAM,
+                version: env_1.SOFTWARE_VERSION,
+                name: env_1.SOFTWARE_NAME,
+                birthName: 'ECETINSI',
+                firstName: 'PIERRE-ALAIN',
+                sexe: insi_person_class_1.Gender.Male,
+                dateOfBirth: '2009-07-14',
             }));
         }));
         test('should be able to record failed attempts if the first name fails', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -221,7 +246,7 @@ describe('INSi Client', () => {
                 CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
             });
             expect(bodyAsXMl).toEqual(expectedResponseAsXML);
-            expect(requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)({
+            expect(requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
                 name: env_1.SOFTWARE_NAME,
@@ -250,13 +275,13 @@ describe('INSi Client', () => {
                 dateOfBirth: '1993-01-27',
             };
             expect(failedInsRequests[0].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
-            expect(failedInsRequests[0].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE' })));
+            expect(failedInsRequests[0].requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE' })));
             expect(failedInsRequests[1].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
-            expect(failedInsRequests[1].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PAUL' })));
+            expect(failedInsRequests[1].requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PAUL' })));
             expect(failedInsRequests[2].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
-            expect(failedInsRequests[2].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'JACQUES' })));
+            expect(failedInsRequests[2].requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'JACQUES' })));
             expect(failedInsRequests[3].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
-            expect(failedInsRequests[3].requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE PAUL JACQUES' })));
+            expect(failedInsRequests[3].requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE PAUL JACQUES' })));
         }));
         test('should throw an INSi error if the person does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
@@ -284,7 +309,7 @@ describe('INSi Client', () => {
                 CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
             });
             expect(bodyAsXMl).toEqual(expectedResponseAsXML);
-            expect(requestBodyAsXML).toEqual((0, insi_fetch_ins_models_1.getCR01XmlRequest)({
+            expect(requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
                 name: env_1.SOFTWARE_NAME,

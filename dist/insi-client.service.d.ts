@@ -6,6 +6,7 @@ import { INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 interface INSiClientArgs {
     lpsContext: LpsContext;
     bamContext: BamContext;
+    overrideSpecialCases?: boolean;
 }
 export declare const INSi_CPX_TEST_URL = "https://qualiflps.services-ps.ameli.fr:443/lps";
 export declare const INSi_mTLS_TEST_URL = "https://qualiflps-services-ps-tlsm.ameli.fr:443/lps";
@@ -18,7 +19,9 @@ export declare class INSiClient {
     private readonly _lpsContext;
     private readonly _bamContext;
     private _soapClient;
-    constructor({ lpsContext, bamContext }: INSiClientArgs);
+    private _overrideSpecialCases;
+    private _httpClient;
+    constructor({ lpsContext, bamContext, overrideSpecialCases }: INSiClientArgs);
     /**
      * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
      * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
@@ -49,6 +52,7 @@ export declare class INSiClient {
     private _setAssertionPsSecurity;
     private _setDefaultHeaders;
     private _specificErrorManagement;
-    private _getCR01Response;
+    private _overrideHttpClientResponse;
+    private _manageCndaValidationSpecialCases;
 }
 export {};
