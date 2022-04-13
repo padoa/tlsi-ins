@@ -3,7 +3,7 @@
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "tsc --build --clean",
@@ -33,6 +33,7 @@
   "homepage": "https://github.com/padoa/tlsi-ins",
   "dependencies": {
     "dotenv": "^10.0.0",
+    "lodash": "^4.17.21",
     "node-forge": "^1.2.0",
     "soap": "^0.43.0",
     "uuid": "^8.3.2",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",
+    "@types/lodash": "^4.14.181",
     "@types/node-forge": "^0.10.10",
     "@types/uuid": "^8.3.3",
     "@types/xml-crypto": "^1.4.2",

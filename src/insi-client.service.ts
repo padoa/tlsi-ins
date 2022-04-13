@@ -10,12 +10,15 @@ import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.
 import { INSiFetchInsResponse, getCR01XmlRequest, CRCodes, CRLabels } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
-import { AssertionPsInfos, AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
+import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
   bamContext: BamContext,
 }
+
+export const INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
+export const INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 
 /**
  * @constructor
@@ -37,29 +40,29 @@ export class INSiClient {
    * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
    * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
    * @param  {string=''} passphrase needed for the pfx
+   * @param  {string} endpoint service url, test by default
    * @returns Promise
    */
-  public async initClientPfx(pfx: Buffer, passphrase: string = ''): Promise<void> {
+  public async initClientPfx(pfx: Buffer, passphrase: string = '', endpoint = INSi_mTLS_TEST_URL): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
     });
+    this._soapClient.setEndpoint(endpoint);
     this._setClientSSLSecurityPFX(pfx, passphrase);
   }
 
   /**
    * Initializes a soap client and sets it's AssertionPsSecurity
-   * @param  {string} privateKey the private key for certificate sign
-   * @param  {string} publicKey the associated public key
-   * @param  {string=''} password of the privateKey if needed
-   * @param  {AssertionPsInfos} assertionPsInfos infos of the PS (Personel de Santé) that needed to build the assertion
+   * @param  {string} assertionPs the assertion Ps to use for the call
+   * @param  {string} endpoint service url, test by default
    * @returns Promise
    */
-  public async initClientCpx(privateKey: string, publicKey: string, password: string = '', assertionPsInfos: AssertionPsInfos): Promise<void> {
+  public async initClientCpx(assertionPs: string, endpoint = INSi_CPX_TEST_URL): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
     });
-
-    this._setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+    this._soapClient.setEndpoint(endpoint);
+    this._setAssertionPsSecurity(assertionPs);
   }
 
   /**
@@ -70,7 +73,7 @@ export class INSiClient {
    */
   public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse> {
     if (!this._soapClient) {
-      throw new Error('fetchIns ERROR: you must init client first');
+      throw new Error('fetchIns ERROR: you must init client security first');
     }
     const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     this._setDefaultHeaders();
@@ -133,9 +136,13 @@ export class INSiClient {
     }))
   }
 
-  private _setAssertionPsSecurity(privateKey: string, publicKey: string, password: string, assertionPsInfos: AssertionPsInfos): void {
-    const assertionPs = new AssertionPsSecurityClass(privateKey, publicKey, password, assertionPsInfos);
-    this._soapClient.setSecurity(assertionPs);
+  private _setAssertionPsSecurity(assertionPs: string): void {
+    this._soapClient.setSecurity(new AssertionPsSecurityClass(assertionPs, {
+      ca: combineCertAsPem([
+        path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+        path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
+      ]),
+    }));
   }
 
   private _setDefaultHeaders(): void {
