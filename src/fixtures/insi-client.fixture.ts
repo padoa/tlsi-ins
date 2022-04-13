@@ -191,7 +191,7 @@ export const getTchitchiFormattedResponse = (): FetchInsBody => ({
   oid: '1.2.250.1.213.1.4.8',
 });
 
-export const getCNDAvalidationXmlRequest = (
+export const getCNDAValidationXmlRequest = (
   { idam, version, name, birthName, firstName, sexe, dateOfBirth }: { idam: string, version: string, name: string, birthName: string, firstName: string, sexe: Gender, dateOfBirth: string },
 ): string => {
   return [

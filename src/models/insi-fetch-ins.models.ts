@@ -21,6 +21,15 @@ export enum CRLabels {
   MULTIPLE_MATCHES = 'Plusieurs identites trouvees',
 }
 
+interface InsHisto {
+  IdIndividu: {
+    Cle: string,
+    NumIdentifiant: string,
+    TypeMatricule: string,
+  },
+  OID: string,
+}
+
 export interface FetchInsRawBody {
   CR: {
     CodeCR: CRCodes.OK,
@@ -40,15 +49,7 @@ export interface FetchInsRawBody {
       },
       OID: string;
     },
-    INSHISTO?: Array<
-      {
-        IdIndividu: {
-          Cle: string,
-          NumIdentifiant: string,
-          TypeMatricule: string,
-        },
-        OID: string,
-      }>,
+    INSHISTO?: InsHisto[] | InsHisto,
     TIQ: {
       NomNaissance: string;
       Prenom: string;
@@ -70,21 +71,4 @@ export interface FetchInsBody {
   placeOfBirthCode: string;
   socialSecurityNumber: string;
   oid: string;
-}
-
-export const CR01_STAGING_ENV_CASES = [
-  'OLA',
-  'PIERRE',
-  'PAUL',
-  'JACQUES',
-  'PIERRE PAUL JACQUES',
-];
-
-export const TEST_2_04_STAGING_ENV_CASES = [
-  'PIERRE-ALAIN',
-];
-
-export enum FetchMode {
-  CNDA_VALIDATION = 'CNDA_VALIDATION',
-  STANDARD = 'STANDARD',
 }

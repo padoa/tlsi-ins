@@ -13,13 +13,13 @@ import {
   getTchitchiXmlResponse,
   getTchitchiRawResponse,
   getCR02XmlResponse,
-  getCNDAvalidationXmlRequest,
+  getCNDAValidationXmlRequest,
   getPierreAlainFormattedResponse,
   getPierreAlainRawResponse,
   getPierreAlainXmlResponse,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
-import { CRCodes, CRLabels, FetchMode, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
+import { CRCodes, CRLabels, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 
 const getClientWithDefinedId = (): INSiClient => {
   const lps = new LPS({
@@ -48,7 +48,7 @@ const getClientWithDefinedId = (): INSiClient => {
   return new INSiClient({
     lpsContext,
     bamContext,
-    fetchMode: FetchMode.CNDA_VALIDATION,
+    overrideSpecialCases: true,
   });
 };
 
@@ -244,7 +244,7 @@ describe('INSi Client', () => {
       expect(body).toEqual(getTchitchiFormattedResponse());
       expect(rawBody).toEqual(getTchitchiRawResponse());
       expect(bodyAsXMl).toEqual(getTchitchiXmlResponse());
-      expect(requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
@@ -277,7 +277,7 @@ describe('INSi Client', () => {
       expect(body).toEqual(getPierreAlainFormattedResponse());
       expect(rawBody).toEqual(getPierreAlainRawResponse());
       expect(bodyAsXMl).toEqual(getPierreAlainXmlResponse());
-      expect(requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
@@ -316,7 +316,7 @@ describe('INSi Client', () => {
         CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
       });
       expect(bodyAsXMl).toEqual(expectedResponseAsXML);
-      expect(requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
@@ -349,25 +349,25 @@ describe('INSi Client', () => {
       };
 
       expect(failedInsRequests[0].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(failedInsRequests[0].requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(failedInsRequests[0].requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'PIERRE',
       }));
 
       expect(failedInsRequests[1].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(failedInsRequests[1].requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(failedInsRequests[1].requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'PAUL',
       }));
 
       expect(failedInsRequests[2].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(failedInsRequests[2].requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(failedInsRequests[2].requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'JACQUES',
       }));
 
       expect(failedInsRequests[3].rawBody).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(failedInsRequests[3].requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(failedInsRequests[3].requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'PIERRE PAUL JACQUES',
       }));
@@ -410,7 +410,7 @@ describe('INSi Client', () => {
         CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
       });
       expect(bodyAsXMl).toEqual(expectedResponseAsXML);
-      expect(requestBodyAsXML).toEqual(getCNDAvalidationXmlRequest({
+      expect(requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,

@@ -1,5 +1,3 @@
-import { CR01_STAGING_ENV_CASES } from "../models/insi-fetch-ins.models";
-
 export enum Gender {
   Male = 'M',
   Female = 'F',

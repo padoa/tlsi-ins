@@ -7,15 +7,16 @@ import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
-import { INSiFetchInsResponse, CRCodes, CR01_STAGING_ENV_CASES, FetchMode, TEST_2_04_STAGING_ENV_CASES } from './models/insi-fetch-ins.models';
+import { INSiFetchInsResponse, CRCodes } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
+import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
   bamContext: BamContext,
-  fetchMode?: FetchMode,
+  overrideSpecialCases?: boolean,
 }
 
 export const INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
@@ -31,13 +32,13 @@ export class INSiClient {
   private readonly _bamContext: BamContext;
 
   private _soapClient: Client;
-  private _fetchMode: FetchMode;
+  private _overrideSpecialCases: boolean;
   private _httpClient: HttpClient;
 
-  constructor({ lpsContext, bamContext, fetchMode }: INSiClientArgs) {
+  constructor({ lpsContext, bamContext, overrideSpecialCases }: INSiClientArgs) {
     this._lpsContext = lpsContext;
     this._bamContext = bamContext;
-    this._fetchMode = fetchMode || FetchMode.STANDARD;
+    this._overrideSpecialCases = !!overrideSpecialCases;
   }
 
   /**
@@ -185,7 +186,7 @@ export class INSiClient {
   }
 
   private _manageCndaValidationSpecialCases(firstName: string): void {
-    if (this._fetchMode === FetchMode.STANDARD) { return }
+    if (!this._overrideSpecialCases) { return }
     if (CR01_STAGING_ENV_CASES.includes(firstName)) {
       this._overrideHttpClientResponse('./fixtures/REP_CR01.xml');
     }
