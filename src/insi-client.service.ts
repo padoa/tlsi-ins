@@ -17,6 +17,9 @@ interface INSiClientArgs {
   bamContext: BamContext,
 }
 
+export const INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
+export const INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
+
 /**
  * @constructor
  * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
@@ -37,25 +40,28 @@ export class INSiClient {
    * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
    * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
    * @param  {string=''} passphrase needed for the pfx
+   * @param  {string} endpoint service url, test by default
    * @returns Promise
    */
-  public async initClientPfx(pfx: Buffer, passphrase: string = ''): Promise<void> {
+  public async initClientPfx(pfx: Buffer, passphrase: string = '', endpoint = INSi_mTLS_TEST_URL): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
     });
+    this._soapClient.setEndpoint(endpoint);
     this._setClientSSLSecurityPFX(pfx, passphrase);
   }
 
   /**
    * Initializes a soap client and sets it's AssertionPsSecurity
    * @param  {string} assertionPs the assertion Ps to use for the call
+   * @param  {string} endpoint service url, test by default
    * @returns Promise
    */
-  public async initClientCpx(assertionPs: string): Promise<void> {
+  public async initClientCpx(assertionPs: string, endpoint = INSi_CPX_TEST_URL): Promise<void> {
     this._soapClient = await createClientAsync(this._wsdlUrl, {
-      wsdl_options: { rejectUnauthorized: false },
       forceSoap12Headers: true, // use soap v1.2
     });
+    this._soapClient.setEndpoint(endpoint);
     this._setAssertionPsSecurity(assertionPs);
   }
 
@@ -98,7 +104,6 @@ export class INSiClient {
         } else {
           // this is the default error management
           const originalError = this._specificErrorManagement(fetchError) || fetchError;
-          console.log(originalError);
           throw new InsiError({ requestId: requestId, originalError });
         }
       }
@@ -132,7 +137,6 @@ export class INSiClient {
   }
 
   private _setAssertionPsSecurity(assertionPs: string): void {
-    this._soapClient.setEndpoint('https://qualiflps.services-ps.ameli.fr:443/lps');
     this._soapClient.setSecurity(new AssertionPsSecurityClass(assertionPs, {
       ca: combineCertAsPem([
         path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),

@@ -1,5 +1,5 @@
 import { ISecurity } from 'soap';
-import https from 'https';
+import https  from 'https';
 import _ from 'lodash';
 
 // Insert à string at a given position (return a new string)
@@ -11,12 +11,12 @@ const WSS_WSSECURITY_SECEXT = 'http://docs.oasis-open.org/wss/2004/01/oasis-2004
 
 export class AssertionPsSecurityClass implements ISecurity {
   private assertionPs: string;
-  private defaults;
+  private defaultOptions: https.AgentOptions;
 
-  constructor(assertionPs: string, defaults?: any) {
+  constructor(assertionPs: string, defaultOptions?: https.AgentOptions) {
     this.assertionPs = assertionPs;
-    this.defaults = {};
-    _.merge(this.defaults, defaults);
+    this.defaultOptions = {};
+    _.merge(this.defaultOptions, defaultOptions);
   }
 
   public postProcess(xml: string, envelopeKey: string = 'soap') {
@@ -25,7 +25,7 @@ export class AssertionPsSecurityClass implements ISecurity {
   }
 
   public addOptions(options: any): void {
-    _.merge(options, this.defaults);
+    _.merge(options, this.defaultOptions);
     options.httpsAgent = new https.Agent(options);
   }
 }
