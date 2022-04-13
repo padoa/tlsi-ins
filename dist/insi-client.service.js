@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.INSiClient = void 0;
+exports.INSiClient = exports.INSi_mTLS_TEST_URL = exports.INSi_CPX_TEST_URL = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const soap_1 = require("soap");
@@ -23,6 +23,8 @@ const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
 const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
+exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
+exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 /**
  * @constructor
  * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
@@ -37,30 +39,31 @@ class INSiClient {
      * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
      * @param  {Buffer} pfx contains the SSL certificate (public keys) and the corresponding private keys
      * @param  {string=''} passphrase needed for the pfx
+     * @param  {string} endpoint service url, test by default
      * @returns Promise
      */
-    initClientPfx(pfx, passphrase = '') {
+    initClientPfx(pfx, passphrase = '', endpoint = exports.INSi_mTLS_TEST_URL) {
         return __awaiter(this, void 0, void 0, function* () {
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
                 forceSoap12Headers: true, // use soap v1.2
             });
+            this._soapClient.setEndpoint(endpoint);
             this._setClientSSLSecurityPFX(pfx, passphrase);
         });
     }
     /**
      * Initializes a soap client and sets it's AssertionPsSecurity
-     * @param  {string} privateKey the private key for certificate sign
-     * @param  {string} publicKey the associated public key
-     * @param  {string=''} password of the privateKey if needed
-     * @param  {AssertionPsInfos} assertionPsInfos infos of the PS (Personel de Santé) that needed to build the assertion
+     * @param  {string} assertionPs the assertion Ps to use for the call
+     * @param  {string} endpoint service url, test by default
      * @returns Promise
      */
-    initClientCpx(privateKey, publicKey, password = '', assertionPsInfos) {
+    initClientCpx(assertionPs, endpoint = exports.INSi_CPX_TEST_URL) {
         return __awaiter(this, void 0, void 0, function* () {
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
                 forceSoap12Headers: true, // use soap v1.2
             });
-            this._setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos);
+            this._soapClient.setEndpoint(endpoint);
+            this._setAssertionPsSecurity(assertionPs);
         });
     }
     /**
@@ -72,7 +75,7 @@ class INSiClient {
     fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._soapClient) {
-                throw new Error('fetchIns ERROR: you must init client first');
+                throw new Error('fetchIns ERROR: you must init client security first');
             }
             const { header } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
             this._setDefaultHeaders();
@@ -134,9 +137,13 @@ class INSiClient {
             ]),
         }));
     }
-    _setAssertionPsSecurity(privateKey, publicKey, password, assertionPsInfos) {
-        const assertionPs = new assertionPsSecurity_class_1.AssertionPsSecurityClass(privateKey, publicKey, password, assertionPsInfos);
-        this._soapClient.setSecurity(assertionPs);
+    _setAssertionPsSecurity(assertionPs) {
+        this._soapClient.setSecurity(new assertionPsSecurity_class_1.AssertionPsSecurityClass(assertionPs, {
+            ca: (0, certificates_1.combineCertAsPem)([
+                path_1.default.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+                path_1.default.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
+            ]),
+        }));
     }
     _setDefaultHeaders() {
         const { soapHeader: bamSoapHeader, name: bamName, namespace: bamNamespace } = this._bamContext.getSoapHeaderAsJson();
