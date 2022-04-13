@@ -44,7 +44,7 @@ export interface FetchInsRawBody {
             };
             OID: string;
         };
-        INSHISTO?: InsHisto[] | InsHisto;
+        INSHISTO?: InsHisto[];
         TIQ: {
             NomNaissance: string;
             Prenom: string;

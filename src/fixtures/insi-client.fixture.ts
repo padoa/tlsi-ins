@@ -277,7 +277,48 @@ export const getPierreAlainXmlResponse = ():string => {
   ].join('');
 }
 
-export const getPierreAlainRawResponse = (): FetchInsRawBody => ({
+export const getPierreAlainLiveXmlResponse = ():string => {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>\n',
+    '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+    '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+    '<ns2:RESULTAT xmlns:ns3="http://www.cnamts.fr/INSiRecVit" xmlns:ns2="http://www.cnamts.fr/INSiResultat" xmlns="http://www.cnamts.fr/INSiRecSans">',
+    '<ns2:CR>',
+    '<ns2:CodeCR>00</ns2:CodeCR>',
+    '<ns2:LibelleCR>OK</ns2:LibelleCR>',
+    '</ns2:CR>',
+    '<ns2:INDIVIDU>',
+    '<ns2:INSACTIF>',
+    '<ns2:IdIndividu>',
+    '<ns2:NumIdentifiant>1090763220834</ns2:NumIdentifiant>',
+    '<ns2:Cle>89</ns2:Cle>',
+    '</ns2:IdIndividu>',
+    '<ns2:OID>1.2.250.1.213.1.4.8</ns2:OID>',
+    '</ns2:INSACTIF>',
+    '<ns2:INSHISTO>',
+    '<ns2:IdIndividu>',
+    '<ns2:NumIdentifiant>2090763220834</ns2:NumIdentifiant>',
+    '<ns2:Cle>39</ns2:Cle>',
+    '<ns2:TypeMatricule>NIR</ns2:TypeMatricule>',
+    '</ns2:IdIndividu>',
+    '<ns2:OID>1.2.250.1.213.1.4.8</ns2:OID>',
+    '</ns2:INSHISTO>',
+    '<ns2:TIQ>',
+    '<ns2:NomNaissance>ECETINSI</ns2:NomNaissance>',
+    '<ns2:Prenom>PIERRE-ALAIN</ns2:Prenom>',
+    '<ns2:ListePrenom>PIERRE-ALAIN MURIEL FLORIANT</ns2:ListePrenom>',
+    '<ns2:Sexe>M</ns2:Sexe>',
+    '<ns2:DateNaissance>2009-07-14</ns2:DateNaissance>',
+    '<ns2:LieuNaissance>63220</ns2:LieuNaissance>',
+    '</ns2:TIQ>',
+    '</ns2:INDIVIDU>',
+    '</ns2:RESULTAT>',
+    '</env:Body>',
+    '</soap:Envelope>',
+  ].join('');
+}
+
+export const getPierreAlainRawResponse = ({ liveVersion = false } = {}): FetchInsRawBody => ({
   CR: {
     CodeCR: CRCodes.OK,
     LibelleCR: CRLabels.OK,
@@ -299,14 +340,14 @@ export const getPierreAlainRawResponse = (): FetchInsRawBody => ({
         },
         OID: '1.2.250.1.213.1.4.8',
       },
-      {
+      ...(liveVersion ? [] : [{
         IdIndividu: {
           Cle: '55',
           NumIdentifiant: '2090663220123',
           TypeMatricule: 'NIR',
         },
         OID: '1.2.250.1.213.1.4.8',
-      },
+      }]),
   ],
     TIQ: {
       NomNaissance: 'ECETINSI',

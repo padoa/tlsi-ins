@@ -17,11 +17,12 @@ import {
   getPierreAlainFormattedResponse,
   getPierreAlainRawResponse,
   getPierreAlainXmlResponse,
+  getPierreAlainLiveXmlResponse,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
 
-const getClientWithDefinedId = (): INSiClient => {
+const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lps = new LPS({
     idam: IDAM,
     version: SOFTWARE_VERSION,
@@ -48,7 +49,7 @@ const getClientWithDefinedId = (): INSiClient => {
   return new INSiClient({
     lpsContext,
     bamContext,
-    overrideSpecialCases: true,
+    overrideSpecialCases,
   });
 };
 
@@ -255,14 +256,14 @@ describe('INSi Client', () => {
       }));
     });
 
-    test('should be able to call fetchIns when its overridden for test_2.04', async () => {
+    test('should be able to call fetchIns when its overridden for test_2.04 INSHISTO', async () => {
       const person = new INSiPerson({
         birthName: 'ECETINSI',
         firstName: 'PIERRE-ALAIN',
         gender: Gender.Male,
         dateOfBirth: '2009-07-14',
       });
-  
+
       const {
         requestId,
         body,
@@ -272,11 +273,44 @@ describe('INSi Client', () => {
       } = await insiClient.fetchIns(person, {
         requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
       });
-  
+
       expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
       expect(body).toEqual(getPierreAlainFormattedResponse());
       expect(rawBody).toEqual(getPierreAlainRawResponse());
       expect(bodyAsXMl).toEqual(getPierreAlainXmlResponse());
+      expect(requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
+        idam: IDAM,
+        version: SOFTWARE_VERSION,
+        name: SOFTWARE_NAME,
+        birthName: 'ECETINSI',
+        firstName: 'PIERRE-ALAIN',
+        sexe: Gender.Male,
+        dateOfBirth: '2009-07-14',
+      }));
+    });
+
+    test('should handle single INSHISTO as an array, test_2.04 LIVE', async () => {
+      const client = getClientWithDefinedId(false);
+      await client.initClientPfx(pfx, PASSPHRASE);
+      const person = new INSiPerson({
+        birthName: 'ECETINSI',
+        firstName: 'PIERRE-ALAIN',
+        gender: Gender.Male,
+        dateOfBirth: '2009-07-14',
+      });
+
+      const {
+        requestId,
+        body,
+        rawBody,
+        bodyAsXMl,
+        requestBodyAsXML,
+      } = await client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
+
+      expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+      expect(body).toEqual(getPierreAlainFormattedResponse());
+      expect(rawBody).toEqual(getPierreAlainRawResponse({ liveVersion: true }));
+      expect(bodyAsXMl).toEqual(getPierreAlainLiveXmlResponse());
       expect(requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         idam: IDAM,
         version: SOFTWARE_VERSION,

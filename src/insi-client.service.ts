@@ -12,6 +12,7 @@ import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
+import _ from 'lodash';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -125,6 +126,9 @@ export class INSiClient {
 
   private _getFetchResponseFromRawSoapResponse(rawSoapResponse: any, requestId: string): INSiFetchInsResponse {
     const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
+    if (rawResponse?.INDIVIDU?.INSHISTO && !_.isArray(rawResponse?.INDIVIDU?.INSHISTO)) {
+      rawResponse.INDIVIDU.INSHISTO = [rawResponse.INDIVIDU.INSHISTO];
+    }
     return {
       requestId,
       rawBody: rawResponse,
