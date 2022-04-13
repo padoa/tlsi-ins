@@ -23,6 +23,7 @@ const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
 const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
+const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 /**
@@ -30,10 +31,11 @@ exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lp
  * @param  {INSiClientArgs} InsClientArguments contains the lpsContext and the bamContext
  */
 class INSiClient {
-    constructor({ lpsContext, bamContext }) {
+    constructor({ lpsContext, bamContext, overrideSpecialCases }) {
         this._wsdlUrl = path_1.default.resolve(__dirname, '../wsdl/DESIR_ICIR_EXP_1.5.0.wsdl');
         this._lpsContext = lpsContext;
         this._bamContext = bamContext;
+        this._overrideSpecialCases = !!overrideSpecialCases;
     }
     /**
      * Initializes a soap client and sets it's SSLSecurityPFX TLS authentication
@@ -44,8 +46,10 @@ class INSiClient {
      */
     initClientPfx(pfx, passphrase = '', endpoint = exports.INSi_mTLS_TEST_URL) {
         return __awaiter(this, void 0, void 0, function* () {
+            this._httpClient = new soap_1.HttpClient();
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
-                forceSoap12Headers: true, // use soap v1.2
+                forceSoap12Headers: true,
+                httpClient: this._httpClient,
             });
             this._soapClient.setEndpoint(endpoint);
             this._setClientSSLSecurityPFX(pfx, passphrase);
@@ -59,8 +63,10 @@ class INSiClient {
      */
     initClientCpx(assertionPs, endpoint = exports.INSi_CPX_TEST_URL) {
         return __awaiter(this, void 0, void 0, function* () {
+            this._httpClient = new soap_1.HttpClient();
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
-                forceSoap12Headers: true, // use soap v1.2
+                forceSoap12Headers: true,
+                httpClient: this._httpClient,
             });
             this._soapClient.setEndpoint(endpoint);
             this._setAssertionPsSecurity(assertionPs);
@@ -91,9 +97,13 @@ class INSiClient {
             const failedRequests = [];
             const namesToSendRequestFor = person.getSoapBodyAsJson();
             const { method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+            const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
             for (let i = 0; i < namesToSendRequestFor.length; i++) {
                 try {
+                    this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
                     rawSoapResponse = yield this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
+                    // reset the httpClient to the original one
+                    this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
                     // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
                     if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CRCodes.NO_RESULT) {
                         break;
@@ -101,17 +111,11 @@ class INSiClient {
                     failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
                 }
                 catch (fetchError) {
-                    // This is a special case, in the test environnement when the request is not found, the soap client will throw an error
-                    if (person.isCR01SpecialCase()) {
-                        const failedResponse = this._getCR01Response(person, namesToSendRequestFor[i].Prenom);
-                        failedRequests.push(this._getFetchResponseFromRawSoapResponse(failedResponse, requestId));
-                        rawSoapResponse = failedResponse;
-                    }
-                    else {
-                        // this is the default error management
-                        const originalError = this._specificErrorManagement(fetchError) || fetchError;
-                        throw new insi_error_1.InsiError({ requestId: requestId, originalError });
-                    }
+                    // reset the httpClient to the original one
+                    this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
+                    this._soapClient.clearSoapHeaders();
+                    const originalError = this._specificErrorManagement(fetchError) || fetchError;
+                    throw new insi_error_1.InsiError({ requestId: requestId, originalError });
                 }
             }
             this._soapClient.clearSoapHeaders();
@@ -167,23 +171,23 @@ class INSiClient {
         }
         return error.toString().length > 0 ? { body: error.toString() } : undefined;
     }
-    _getCR01Response(person, CustomFirstName) {
-        const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
-        const lpsContext = this._lpsContext.getSoapHeaderAsJson();
-        const requestAsXML = (0, insi_fetch_ins_models_1.getCR01XmlRequest)({
-            idam: lpsContext.soapHeader.ContexteLPS.LPS.IDAM.$value,
-            version: lpsContext.soapHeader.ContexteLPS.LPS.Version,
-            name: lpsContext.soapHeader.ContexteLPS.LPS.Nom,
-            birthName,
-            firstName: CustomFirstName || firstName,
-            sexe: gender,
-            dateOfBirth,
-        });
-        const rawResponse = {
-            CR: { CodeCR: insi_fetch_ins_models_1.CRCodes.NO_RESULT, LibelleCR: insi_fetch_ins_models_1.CRLabels.NO_RESULT },
+    _overrideHttpClientResponse(fileName) {
+        const copyOfHttpClient = Object.assign({}, this._httpClient);
+        this._httpClient.handleResponse = function (req, res, _body) {
+            const overriddenBody = fs_1.default.readFileSync(path_1.default.resolve(__dirname, fileName), 'utf-8');
+            return copyOfHttpClient.handleResponse(req, res, overriddenBody);
         };
-        const responseAsXML = fs_1.default.readFileSync(path_1.default.resolve(__dirname, './fixtures/REP_CR01.xml'), 'utf-8');
-        return [rawResponse, responseAsXML, undefined, requestAsXML];
+    }
+    _manageCndaValidationSpecialCases(firstName) {
+        if (!this._overrideSpecialCases) {
+            return;
+        }
+        if (insi_fetch_ins_special_cases_models_1.CR01_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/REP_CR01.xml');
+        }
+        if (insi_fetch_ins_special_cases_models_1.TEST_2_04_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/TEST_2.04_cas2.xml');
+        }
     }
 }
 exports.INSiClient = INSiClient;

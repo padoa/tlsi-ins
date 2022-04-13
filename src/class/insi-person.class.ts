@@ -1,5 +1,3 @@
-import { CR01_STAGING_ENV_CASES } from "../models/insi-fetch-ins.models";
-
 export enum Gender {
   Male = 'M',
   Female = 'F',
@@ -80,9 +78,5 @@ export class INSiPerson {
 
   public _isValidName(name: string): boolean {
     return /^[A-Z]+(?:(?:-{1,2}|[' ])[A-Z]+)*$/.test(name);
-  }
-
-  public isCR01SpecialCase(): boolean {
-    return CR01_STAGING_ENV_CASES.includes(this._person.birthName);
   }
 }

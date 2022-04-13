@@ -23,6 +23,5 @@ export declare class INSiPerson {
     getPerson(): INSiPersonArgs;
     _isValidBirthDate(dateOfBirth: string): boolean;
     _isValidName(name: string): boolean;
-    isCR01SpecialCase(): boolean;
 }
 export {};

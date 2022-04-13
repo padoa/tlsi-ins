@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.INSiPerson = exports.Gender = void 0;
-const insi_fetch_ins_models_1 = require("../models/insi-fetch-ins.models");
 var Gender;
 (function (Gender) {
     Gender["Male"] = "M";
@@ -48,9 +47,6 @@ class INSiPerson {
     }
     _isValidName(name) {
         return /^[A-Z]+(?:(?:-{1,2}|[' ])[A-Z]+)*$/.test(name);
-    }
-    isCR01SpecialCase() {
-        return insi_fetch_ins_models_1.CR01_STAGING_ENV_CASES.includes(this._person.birthName);
     }
 }
 exports.INSiPerson = INSiPerson;
