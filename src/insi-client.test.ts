@@ -7,7 +7,16 @@ import { Gender, INSiPerson } from './class/insi-person.class';
 import {
   getAdrtroisDominiqueFormattedResponse,
   getAdrtroisDominiqueRawResponse,
-  getAdrtroisDominiqueXmlResponse, getAdrtroisDominiqueXmlRequest, getTchitchiFormattedResponse, getTchitchiXmlResponse, getTchitchiRawResponse, getCR02XmlResponse, getCNDAvalidationXmlRequest, getPierreAlainFormattedResponse, getPierreAlainRawResponse, getPierreAlainXmlResponse
+  getAdrtroisDominiqueXmlResponse,
+  getAdrtroisDominiqueXmlRequest,
+  getTchitchiFormattedResponse,
+  getTchitchiXmlResponse,
+  getTchitchiRawResponse,
+  getCR02XmlResponse,
+  getCNDAvalidationXmlRequest,
+  getPierreAlainFormattedResponse,
+  getPierreAlainRawResponse,
+  getPierreAlainXmlResponse,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, FetchMode, INSiFetchInsResponse } from './models/insi-fetch-ins.models';

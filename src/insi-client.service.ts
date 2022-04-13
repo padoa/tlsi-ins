@@ -177,17 +177,10 @@ export class INSiClient {
   }
 
   private _overrideHttpClientResponse(fileName: string): void {
-    this._httpClient.handleResponse = function (req, res, body) {
-      if (typeof body === 'string') {
-        body = fs.readFileSync(path.resolve(__dirname, fileName), 'utf-8');
-        // Remove any extra characters that appear before or after the SOAP envelope.
-        var regex = /(?:<\?[^?]*\?>[\s]*)?<([^:]*):Envelope([\S\s]*)<\/\1:Envelope>/i;
-        var match = body.replace(/<!--[\s\S]*?-->/, '').match(regex);
-        if (match) {
-            body = match[0];
-        }
-      }
-      return body;
+    const copyOfHttpClient = { ...this._httpClient } as HttpClient;
+    this._httpClient.handleResponse = function (req, res, _body) {
+      const overriddenBody = fs.readFileSync(path.resolve(__dirname, fileName), 'utf-8');
+      return copyOfHttpClient.handleResponse(req, res, overriddenBody);
     };
   }
 
