@@ -24,6 +24,7 @@ const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
 const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
+const lodash_1 = __importDefault(require("lodash"));
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 /**
@@ -123,7 +124,11 @@ class INSiClient {
         });
     }
     _getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId) {
+        var _a, _b;
         const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
+        if (((_a = rawResponse === null || rawResponse === void 0 ? void 0 : rawResponse.INDIVIDU) === null || _a === void 0 ? void 0 : _a.INSHISTO) && !lodash_1.default.isArray((_b = rawResponse === null || rawResponse === void 0 ? void 0 : rawResponse.INDIVIDU) === null || _b === void 0 ? void 0 : _b.INSHISTO)) {
+            rawResponse.INDIVIDU.INSHISTO = [rawResponse.INDIVIDU.INSHISTO];
+        }
         return {
             requestId,
             rawBody: rawResponse,

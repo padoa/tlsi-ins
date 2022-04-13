@@ -22,5 +22,8 @@ export declare const getCNDAValidationXmlRequest: ({ idam, version, name, birthN
     dateOfBirth: string;
 }) => string;
 export declare const getPierreAlainXmlResponse: () => string;
-export declare const getPierreAlainRawResponse: () => FetchInsRawBody;
+export declare const getPierreAlainLiveXmlResponse: () => string;
+export declare const getPierreAlainRawResponse: ({ liveVersion }?: {
+    liveVersion?: boolean | undefined;
+}) => FetchInsRawBody;
 export declare const getPierreAlainFormattedResponse: () => FetchInsBody;

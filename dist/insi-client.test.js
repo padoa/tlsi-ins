@@ -21,7 +21,7 @@ const insi_person_class_1 = require("./class/insi-person.class");
 const insi_client_fixture_1 = require("./fixtures/insi-client.fixture");
 const fs_1 = __importDefault(require("fs"));
 const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
-const getClientWithDefinedId = () => {
+const getClientWithDefinedId = (overrideSpecialCases = true) => {
     const lps = new lps_class_1.LPS({
         idam: env_1.IDAM,
         version: env_1.SOFTWARE_VERSION,
@@ -45,7 +45,7 @@ const getClientWithDefinedId = () => {
     return new insi_client_service_1.INSiClient({
         lpsContext,
         bamContext,
-        overrideSpecialCases: true,
+        overrideSpecialCases,
     });
 };
 describe('INSi Client', () => {
@@ -204,7 +204,7 @@ describe('INSi Client', () => {
                 dateOfBirth: '1936-06-21',
             }));
         }));
-        test('should be able to call fetchIns when its overridden for test_2.04', () => __awaiter(void 0, void 0, void 0, function* () {
+        test('should be able to call fetchIns when its overridden for test_2.04 INSHISTO', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
                 birthName: 'ECETINSI',
                 firstName: 'PIERRE-ALAIN',
@@ -218,6 +218,30 @@ describe('INSi Client', () => {
             expect(body).toEqual((0, insi_client_fixture_1.getPierreAlainFormattedResponse)());
             expect(rawBody).toEqual((0, insi_client_fixture_1.getPierreAlainRawResponse)());
             expect(bodyAsXMl).toEqual((0, insi_client_fixture_1.getPierreAlainXmlResponse)());
+            expect(requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
+                idam: env_1.IDAM,
+                version: env_1.SOFTWARE_VERSION,
+                name: env_1.SOFTWARE_NAME,
+                birthName: 'ECETINSI',
+                firstName: 'PIERRE-ALAIN',
+                sexe: insi_person_class_1.Gender.Male,
+                dateOfBirth: '2009-07-14',
+            }));
+        }));
+        test('should handle single INSHISTO as an array, test_2.04 LIVE', () => __awaiter(void 0, void 0, void 0, function* () {
+            const client = getClientWithDefinedId(false);
+            yield client.initClientPfx(pfx, env_1.PASSPHRASE);
+            const person = new insi_person_class_1.INSiPerson({
+                birthName: 'ECETINSI',
+                firstName: 'PIERRE-ALAIN',
+                gender: insi_person_class_1.Gender.Male,
+                dateOfBirth: '2009-07-14',
+            });
+            const { requestId, body, rawBody, bodyAsXMl, requestBodyAsXML, } = yield client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
+            expect(requestId).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+            expect(body).toEqual((0, insi_client_fixture_1.getPierreAlainFormattedResponse)());
+            expect(rawBody).toEqual((0, insi_client_fixture_1.getPierreAlainRawResponse)({ liveVersion: true }));
+            expect(bodyAsXMl).toEqual((0, insi_client_fixture_1.getPierreAlainLiveXmlResponse)());
             expect(requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
