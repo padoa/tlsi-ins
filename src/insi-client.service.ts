@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { Client, ClientSSLSecurityPFX, createClientAsync } from 'soap';
+import { Client, ClientSSLSecurityPFX, createClientAsync, HttpClient } from 'soap';
 import { v4 as uuidv4 } from 'uuid';
 import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
-import { INSiFetchInsResponse, getCR01XmlRequest, CRCodes, CRLabels } from './models/insi-fetch-ins.models';
+import { INSiFetchInsResponse, CRCodes, CR01_STAGING_ENV_CASES, FetchMode, TEST_2_04_STAGING_ENV_CASES } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
@@ -15,6 +15,7 @@ import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 interface INSiClientArgs {
   lpsContext: LpsContext,
   bamContext: BamContext,
+  fetchMode?: FetchMode,
 }
 
 export const INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
@@ -30,10 +31,13 @@ export class INSiClient {
   private readonly _bamContext: BamContext;
 
   private _soapClient: Client;
+  private _fetchMode: FetchMode;
+  private _httpClient: HttpClient;
 
-  constructor({ lpsContext, bamContext }: INSiClientArgs) {
+  constructor({ lpsContext, bamContext, fetchMode }: INSiClientArgs) {
     this._lpsContext = lpsContext;
     this._bamContext = bamContext;
+    this._fetchMode = fetchMode || FetchMode.STANDARD;
   }
 
   /**
@@ -44,8 +48,10 @@ export class INSiClient {
    * @returns Promise
    */
   public async initClientPfx(pfx: Buffer, passphrase: string = '', endpoint = INSi_mTLS_TEST_URL): Promise<void> {
+    this._httpClient = new HttpClient();
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
+      httpClient: this._httpClient,
     });
     this._soapClient.setEndpoint(endpoint);
     this._setClientSSLSecurityPFX(pfx, passphrase);
@@ -58,8 +64,10 @@ export class INSiClient {
    * @returns Promise
    */
   public async initClientCpx(assertionPs: string, endpoint = INSi_CPX_TEST_URL): Promise<void> {
+    this._httpClient = new HttpClient();
     this._soapClient = await createClientAsync(this._wsdlUrl, {
       forceSoap12Headers: true, // use soap v1.2
+      httpClient: this._httpClient,
     });
     this._soapClient.setEndpoint(endpoint);
     this._setAssertionPsSecurity(assertionPs);
@@ -87,25 +95,24 @@ export class INSiClient {
     const failedRequests = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
     const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+    const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
       try {
+        this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
         rawSoapResponse = await this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
+        // reset the httpClient to the original one
+        this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
         // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
         if (rawSoapResponse[0]?.CR?.CodeCR !== CRCodes.NO_RESULT) {
           break;
         }
         failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
       } catch (fetchError) {
-        // This is a special case, in the test environnement when the request is not found, the soap client will throw an error
-        if (person.isCR01SpecialCase()) {
-          const failedResponse = this._getCR01Response(person, namesToSendRequestFor[i].Prenom);
-          failedRequests.push(this._getFetchResponseFromRawSoapResponse(failedResponse, requestId));
-          rawSoapResponse = failedResponse;
-        } else {
-          // this is the default error management
-          const originalError = this._specificErrorManagement(fetchError) || fetchError;
-          throw new InsiError({ requestId: requestId, originalError });
-        }
+        // reset the httpClient to the original one
+        this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
+        this._soapClient.clearSoapHeaders();
+        const originalError = this._specificErrorManagement(fetchError) || fetchError;
+        throw new InsiError({ requestId: requestId, originalError });
       }
     }
     this._soapClient.clearSoapHeaders();
@@ -169,22 +176,28 @@ export class INSiClient {
     return error.toString().length > 0 ? { body: error.toString() } : undefined;
   }
 
-  private _getCR01Response(person: INSiPerson, CustomFirstName?: string): any {
-    const { birthName, firstName, gender, dateOfBirth } = person.getPerson();
-    const lpsContext = this._lpsContext.getSoapHeaderAsJson();
-    const requestAsXML = getCR01XmlRequest({
-      idam: lpsContext.soapHeader.ContexteLPS.LPS.IDAM.$value,
-      version: lpsContext.soapHeader.ContexteLPS.LPS.Version,
-      name: lpsContext.soapHeader.ContexteLPS.LPS.Nom,
-      birthName,
-      firstName: CustomFirstName || firstName,
-      sexe: gender,
-      dateOfBirth,
-    });
-    const rawResponse = {
-      CR: { CodeCR: CRCodes.NO_RESULT, LibelleCR: CRLabels.NO_RESULT },
+  private _overrideHttpClientResponse(fileName: string): void {
+    this._httpClient.handleResponse = function (req, res, body) {
+      if (typeof body === 'string') {
+        body = fs.readFileSync(path.resolve(__dirname, fileName), 'utf-8');
+        // Remove any extra characters that appear before or after the SOAP envelope.
+        var regex = /(?:<\?[^?]*\?>[\s]*)?<([^:]*):Envelope([\S\s]*)<\/\1:Envelope>/i;
+        var match = body.replace(/<!--[\s\S]*?-->/, '').match(regex);
+        if (match) {
+            body = match[0];
+        }
+      }
+      return body;
     };
-    const responseAsXML = fs.readFileSync(path.resolve(__dirname, './fixtures/REP_CR01.xml'), 'utf-8');
-    return [rawResponse, responseAsXML, undefined, requestAsXML];
+  }
+
+  private _manageCndaValidationSpecialCases(firstName: string): void {
+    if (this._fetchMode === FetchMode.STANDARD) { return }
+    if (CR01_STAGING_ENV_CASES.includes(firstName)) {
+      this._overrideHttpClientResponse('./fixtures/REP_CR01.xml');
+    }
+    if (TEST_2_04_STAGING_ENV_CASES.includes(firstName)) {
+      this._overrideHttpClientResponse('./fixtures/TEST_2.04_cas2.xml');
+    }
   }
 }
