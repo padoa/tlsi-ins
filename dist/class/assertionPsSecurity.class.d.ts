@@ -1,20 +1,10 @@
+/// <reference types="node" />
 import { ISecurity } from 'soap';
-export interface AssertionPsInfos {
-    issuer: string;
-    nameQualifier: string;
-    nameId: string;
-    identifiantFacturation: string;
-    codeSpecialiteAMO: string;
-    secteurActivite: string;
-}
-export interface AssertionPsOptions {
-    id?: string;
-    dateTime?: string;
-}
+import https from 'https';
 export declare class AssertionPsSecurityClass implements ISecurity {
-    private _assertionPsInfos;
-    private _publicP12PEM;
-    private _signer;
-    constructor(privatePEM: any, publicP12PEM: any, password: any, assertionPsInfos: AssertionPsInfos);
-    postProcess(xml: string, envelopeKey?: string, options?: AssertionPsOptions): string;
+    private assertionPs;
+    private defaultOptions;
+    constructor(assertionPs: string, defaultOptions?: https.AgentOptions);
+    postProcess(xml: string, envelopeKey?: string): string;
+    addOptions(options: any): void;
 }
