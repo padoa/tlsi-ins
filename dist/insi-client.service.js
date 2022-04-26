@@ -178,6 +178,7 @@ class INSiClient {
     }
     _overrideHttpClientResponse(fileName) {
         const copyOfHttpClient = Object.assign({}, this._httpClient);
+        copyOfHttpClient.handleResponse = this._httpClient.handleResponse;
         this._httpClient.handleResponse = function (req, res, _body) {
             const overriddenBody = fs_1.default.readFileSync(path_1.default.resolve(__dirname, fileName), 'utf-8');
             return copyOfHttpClient.handleResponse(req, res, overriddenBody);
@@ -192,6 +193,15 @@ class INSiClient {
         }
         if (insi_fetch_ins_special_cases_models_1.TEST_2_04_STAGING_ENV_CASES.includes(firstName)) {
             this._overrideHttpClientResponse('./fixtures/TEST_2.04_cas2.xml');
+        }
+        if (insi_fetch_ins_special_cases_models_1.TEST_2_05_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/TEST_2.05.xml');
+        }
+        if (insi_fetch_ins_special_cases_models_1.TEST_2_08_01_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas1.xml');
+        }
+        if (insi_fetch_ins_special_cases_models_1.TEST_2_08_02_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas2.xml');
         }
     }
 }

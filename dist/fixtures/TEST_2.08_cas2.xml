@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+	<S:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope">
+		<RESULTAT xmlns:ns3="http://www.cnamts.fr/INSiRecVit" xmlns:ns2="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiResultat">
+			<CR>
+				<CodeCR>00</CodeCR>
+				<LibelleCR>OK</LibelleCR>
+			</CR>
+			<INDIVIDU>
+				<INSACTIF>
+					<IdIndividu>
+						<NumIdentifiant>1810363220456</NumIdentifiant>
+						<Cle>60</Cle>
+					</IdIndividu>
+					<OID>1.2.250.1.213.1.4.8</OID>
+				</INSACTIF>
+				<INSHISTO>
+					<IdIndividu>
+						<NumIdentifiant>1810363220456</NumIdentifiant>
+						<Cle>60</Cle>
+					</IdIndividu>
+					<OID>1.2.250.1.213.1.4.8</OID>
+				</INSHISTO>
+				<INSHISTO>
+					<IdIndividu>
+						<NumIdentifiant>2810363220456</NumIdentifiant>
+						<Cle>10</Cle>
+					</IdIndividu>
+					<OID>1.2.250.1.213.1.4.8</OID>
+				</INSHISTO>
+				<TIQ>
+					<NomNaissance>HERMANN</NomNaissance>
+					<Prenom>GATIEN</Prenom>
+					<ListePrenom>GATIEN</ListePrenom>
+					<Sexe>M</Sexe>
+					<DateNaissance>1981-03-24</DateNaissance>
+					<LieuNaissance>63220</LieuNaissance>
+				</TIQ>
+			</INDIVIDU>
+		</RESULTAT>
+	</S:Body>
+</soap:Envelope>
