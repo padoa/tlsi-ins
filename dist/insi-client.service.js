@@ -197,6 +197,12 @@ class INSiClient {
         if (insi_fetch_ins_special_cases_models_1.TEST_2_05_STAGING_ENV_CASES.includes(firstName)) {
             this._overrideHttpClientResponse('./fixtures/TEST_2.05.xml');
         }
+        if (insi_fetch_ins_special_cases_models_1.TEST_2_08_01_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas1.xml');
+        }
+        if (insi_fetch_ins_special_cases_models_1.TEST_2_08_02_STAGING_ENV_CASES.includes(firstName)) {
+            this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas2.xml');
+        }
     }
 }
 exports.INSiClient = INSiClient;

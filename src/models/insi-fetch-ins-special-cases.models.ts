@@ -14,3 +14,11 @@ export const TEST_2_04_STAGING_ENV_CASES = [
 export const TEST_2_05_STAGING_ENV_CASES = [
   'MATRICULE',
 ];
+
+export const TEST_2_08_01_STAGING_ENV_CASES = [
+  'ANTHONY',
+];
+
+export const TEST_2_08_02_STAGING_ENV_CASES = [
+  'GATIEN',
+];

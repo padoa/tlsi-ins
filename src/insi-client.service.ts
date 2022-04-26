@@ -11,7 +11,7 @@ import { INSiFetchInsResponse, CRCodes } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
-import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
+import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
 import _ from 'lodash';
 
 interface INSiClientArgs {
@@ -200,6 +200,12 @@ export class INSiClient {
     }
     if (TEST_2_05_STAGING_ENV_CASES.includes(firstName)) {
       this._overrideHttpClientResponse('./fixtures/TEST_2.05.xml');
+    }
+    if (TEST_2_08_01_STAGING_ENV_CASES.includes(firstName)) {
+      this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas1.xml');
+    }
+    if (TEST_2_08_02_STAGING_ENV_CASES.includes(firstName)) {
+      this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas2.xml');
     }
   }
 }
