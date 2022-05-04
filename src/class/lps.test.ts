@@ -18,7 +18,7 @@ describe('LPS class', () => {
       },
       Version: '2022',
       Instance: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-      Nom: 'docto-solution',
+      Nom: 'urn:lps:docto-solution:2022',
     });
   });
 
