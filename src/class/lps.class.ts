@@ -41,7 +41,7 @@ export class LPS {
     if (!name) {
       throw new Error('Fail to create a LPS, you must provide a name');
     }
-    this.softwareName = name;
+    this.softwareName = `urn:lps:${name}:${version}`;
     this.id = id || uuidv4();
   }
 
