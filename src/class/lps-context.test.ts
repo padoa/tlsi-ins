@@ -18,7 +18,6 @@ describe('LPS Context', () => {
       idam: 'GDF1TNF51DK9',
       version: '2022',
       name: 'docto-solution',
-    }, {
       id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
     });
     const lpsContext = new LpsContext({

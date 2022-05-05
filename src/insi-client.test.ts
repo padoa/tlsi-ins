@@ -79,7 +79,6 @@ const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
     idam: IDAM,
     version: SOFTWARE_VERSION,
     name: SOFTWARE_NAME,
-  }, {
     id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
   });
 
@@ -185,6 +184,7 @@ describe('INSi Client', () => {
         idam: 'FAKE-IDAM',
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
+        id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
       });
       const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });

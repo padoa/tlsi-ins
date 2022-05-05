@@ -4,10 +4,7 @@ export interface LpsArgs {
   idam: string;
   version: string;
   name: string;
-}
-
-export interface LpsOptions {
-  id?: string; // UUID
+  id: string; // UUID
 }
 
 export interface LpsSoapHeader {
@@ -27,8 +24,7 @@ export class LPS {
   public id: string; // UUID
 
   constructor(
-    { idam, version, name }: LpsArgs,
-    { id }: LpsOptions = {},
+    { idam, version, name , id }: LpsArgs,
   ) {
     if (!idam) {
       throw new Error('Fail to create a LPS, you must provide an idam');
