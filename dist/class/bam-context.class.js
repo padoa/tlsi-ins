@@ -3,13 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BamContext = void 0;
 const uuid_1 = require("uuid");
 class BamContext {
-    constructor({ emitter }, { id, dateTime } = {}) {
+    constructor({ emitter }) {
         if (!emitter) {
             throw new Error('Fail to create a BamContext, you must provide an emitter');
         }
         this.emitter = emitter;
-        this.id = id || (0, uuid_1.v4)();
-        this.dateTime = dateTime || new Date().toISOString();
     }
     getSoapHeaderAsJson() {
         const soapHeader = {
@@ -17,8 +15,8 @@ class BamContext {
                 attributes: {
                     Version: '01_02',
                 },
-                Id: this.id,
-                Temps: this.dateTime,
+                Id: (0, uuid_1.v4)(),
+                Temps: new Date().toISOString(),
                 Emetteur: this.emitter,
                 COUVERTURE: {},
             },

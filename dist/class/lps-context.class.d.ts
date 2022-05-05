@@ -24,10 +24,8 @@ export interface LpsContextSoapHeader {
     namespace: string;
 }
 export declare class LpsContext {
-    id: string;
-    dateTime: string;
     emitter: string;
     lps: LPS;
-    constructor({ emitter, lps }: LpsContextArgs, { id, dateTime }?: LpsContextOptions);
+    constructor({ emitter, lps }: LpsContextArgs);
     getSoapHeaderAsJson(): LpsContextSoapHeader;
 }

@@ -1,7 +1,7 @@
 import { LPS } from './class/lps.class';
 import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
-import { LpsContext } from './class/lps-context.class';
-import { BamContext } from './class/bam-context.class';
+import { LpsContext, LpsContextSoapHeader } from './class/lps-context.class';
+import { BamContext, BamContextSoapHeader } from './class/bam-context.class';
 import { INSiClient } from './insi-client.service';
 import { Gender, INSiPerson } from './class/insi-person.class';
 import {
@@ -18,32 +18,71 @@ import {
   getPierreAlainRawResponse,
   getPierreAlainXmlResponse,
   getPierreAlainLiveXmlResponse,
+  defaultUuid,
+  defaultDate,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
+
+jest.mock('./class/bam-context.class', () => ({
+  BamContext: jest.fn((config: { emitter: string }) => ({
+    getSoapHeaderAsJson: (): BamContextSoapHeader => {
+      const soapHeader = {
+        ContexteBAM: {
+          attributes: {
+            Version: '01_02',
+          },
+          Id: defaultUuid,
+          Temps: new Date(defaultDate).toISOString(),
+          Emetteur: config.emitter,
+          COUVERTURE: {},
+        },
+      };
+      const name = 'ContexteBAM';
+      const namespace = 'ctxbam';
+      return { soapHeader, name, namespace };
+    },
+  })),
+}));
+
+jest.mock('./class/lps-context.class', () => ({
+  LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
+    getSoapHeaderAsJson: (): LpsContextSoapHeader => {
+      const soapHeader = {
+        ContexteLPS: {
+          attributes: {
+            Nature: 'CTXLPS',
+            Version: '01_00',
+          },
+          Id: defaultUuid,
+          Temps: new Date(defaultDate).toISOString(),
+          Emetteur: config.emitter,
+          LPS: config.lps.getSoapHeaderAsJson(),
+        }
+      };
+      const name = 'ContexteLPS';
+      const namespace = 'ctxlps';
+      return { soapHeader, name, namespace };
+    },
+  })),
+}));
+
 
 const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lps = new LPS({
     idam: IDAM,
     version: SOFTWARE_VERSION,
     name: SOFTWARE_NAME,
-  }, {
     id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
   });
 
   const lpsContext = new LpsContext({
     emitter: 'medecin@yopmail.com',
     lps,
-  }, {
-    id: '1f7425e2-b913-415c-adaa-785ee1076a70',
-    dateTime: '2021-07-05T13:58:27.452Z',
   });
 
   const bamContext = new BamContext({
     emitter: 'medecin@yopmail.com',
-  }, {
-    id: 'c1a2ff23-fc05-4bd1-b500-1ec7d3178f1c',
-    dateTime: '2021-07-05T13:58:27.452Z',
   });
 
   return new INSiClient({
@@ -139,6 +178,7 @@ describe('INSi Client', () => {
         idam: 'FAKE-IDAM',
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
+        id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
       });
       const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });

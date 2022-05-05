@@ -21,6 +21,53 @@ const insi_person_class_1 = require("./class/insi-person.class");
 const insi_client_fixture_1 = require("./fixtures/insi-client.fixture");
 const fs_1 = __importDefault(require("fs"));
 const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
+const uuid_1 = require("uuid");
+jest.mock('uuid', () => ({
+    v4: () => insi_client_fixture_1.defaultUuid,
+    validate: (uuid) => uuid === insi_client_fixture_1.defaultUuid,
+}));
+jest.mock('./class/bam-context.class', () => ({
+    BamContext: jest.fn((config) => ({
+        getSoapHeaderAsJson: () => {
+            const soapHeader = {
+                ContexteBAM: {
+                    attributes: {
+                        Version: '01_02',
+                    },
+                    Id: (0, uuid_1.v4)(),
+                    Temps: new Date(insi_client_fixture_1.defaultDate).toISOString(),
+                    Emetteur: config.emitter,
+                    COUVERTURE: {},
+                },
+            };
+            const name = 'ContexteBAM';
+            const namespace = 'ctxbam';
+            return { soapHeader, name, namespace };
+        },
+    })),
+}));
+jest.mock('./class/lps-context.class', () => ({
+    LpsContext: jest.fn((config) => ({
+        emitter: 'medecin@yopmail.com',
+        getSoapHeaderAsJson: () => {
+            const soapHeader = {
+                ContexteLPS: {
+                    attributes: {
+                        Nature: 'CTXLPS',
+                        Version: '01_00',
+                    },
+                    Id: (0, uuid_1.v4)(),
+                    Temps: new Date(insi_client_fixture_1.defaultDate).toISOString(),
+                    Emetteur: config.emitter,
+                    LPS: config.lps.getSoapHeaderAsJson(),
+                }
+            };
+            const name = 'ContexteLPS';
+            const namespace = 'ctxlps';
+            return { soapHeader, name, namespace };
+        },
+    })),
+}));
 const getClientWithDefinedId = (overrideSpecialCases = true) => {
     const lps = new lps_class_1.LPS({
         idam: env_1.IDAM,
@@ -32,15 +79,9 @@ const getClientWithDefinedId = (overrideSpecialCases = true) => {
     const lpsContext = new lps_context_class_1.LpsContext({
         emitter: 'medecin@yopmail.com',
         lps,
-    }, {
-        id: '1f7425e2-b913-415c-adaa-785ee1076a70',
-        dateTime: '2021-07-05T13:58:27.452Z',
     });
     const bamContext = new bam_context_class_1.BamContext({
         emitter: 'medecin@yopmail.com',
-    }, {
-        id: 'c1a2ff23-fc05-4bd1-b500-1ec7d3178f1c',
-        dateTime: '2021-07-05T13:58:27.452Z',
     });
     return new insi_client_service_1.INSiClient({
         lpsContext,

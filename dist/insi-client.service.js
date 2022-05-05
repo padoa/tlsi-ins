@@ -84,10 +84,6 @@ class INSiClient {
             if (!this._soapClient) {
                 throw new Error('fetchIns ERROR: you must init client security first');
             }
-            const { header } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
-            this._setDefaultHeaders();
-            this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
-            this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
             return this._launchSoapRequestForPerson(person, requestId);
         });
     }
@@ -100,6 +96,7 @@ class INSiClient {
             const { method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
             const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
             for (let i = 0; i < namesToSendRequestFor.length; i++) {
+                this._setSoapHeaders(requestId);
                 try {
                     this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
                     rawSoapResponse = yield this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
@@ -107,6 +104,7 @@ class INSiClient {
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
                     // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
                     if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CRCodes.NO_RESULT) {
+                        this._soapClient.clearSoapHeaders();
                         break;
                     }
                     failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
@@ -118,10 +116,16 @@ class INSiClient {
                     const originalError = this._specificErrorManagement(fetchError) || fetchError;
                     throw new insi_error_1.InsiError({ requestId: requestId, originalError });
                 }
+                this._soapClient.clearSoapHeaders();
             }
-            this._soapClient.clearSoapHeaders();
             return Object.assign(Object.assign({}, this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId)), { failedRequests: failedRequests });
         });
+    }
+    _setSoapHeaders(requestId) {
+        const { header } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+        this._setDefaultHeaders();
+        this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
+        this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
     }
     _getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId) {
         var _a, _b;

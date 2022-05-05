@@ -85,10 +85,6 @@ export class INSiClient {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
-    const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
-    this._setDefaultHeaders();
-    this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
-    this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
     return this._launchSoapRequestForPerson(person, requestId);
   }
 
@@ -99,6 +95,7 @@ export class INSiClient {
     const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
+      this._setSoapHeaders(requestId);
       try {
         this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
         rawSoapResponse = await this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
@@ -106,6 +103,7 @@ export class INSiClient {
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
         // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
         if (rawSoapResponse[0]?.CR?.CodeCR !== CRCodes.NO_RESULT) {
+          this._soapClient.clearSoapHeaders();
           break;
         }
         failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
@@ -116,12 +114,20 @@ export class INSiClient {
         const originalError = this._specificErrorManagement(fetchError) || fetchError;
         throw new InsiError({ requestId: requestId, originalError });
       }
+      this._soapClient.clearSoapHeaders();
     }
-    this._soapClient.clearSoapHeaders();
     return {
       ...this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId),
       failedRequests: failedRequests,
     };
+  }
+
+  private _setSoapHeaders(requestId: string): void {
+    const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+    this._setDefaultHeaders();
+    this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
+    this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
+    
   }
 
   private _getFetchResponseFromRawSoapResponse(rawSoapResponse: any, requestId: string): INSiFetchInsResponse {

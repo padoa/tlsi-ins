@@ -1,5 +1,7 @@
 import { Gender } from '../class/insi-person.class';
 import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+export declare const defaultUuid = "1f7425e2-b913-415c-adaa-785ee1076a70";
+export declare const defaultDate = "2020-01-01";
 export declare const getCR02XmlResponse: () => string;
 export declare const getAdrtroisDominiqueXmlResponse: () => string;
 export declare const getAdrtroisDominiqueXmlRequest: ({ idam, version, name }: {
