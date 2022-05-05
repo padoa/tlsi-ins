@@ -163,7 +163,7 @@ export class INSiClient {
     }));
   }
 
-  private  _setDefaultHeaders(): void {
+  private _setDefaultHeaders(): void {
     const { soapHeader: bamSoapHeader, name: bamName, namespace: bamNamespace } = this._bamContext.getSoapHeaderAsJson();
     this._soapClient.addSoapHeader(bamSoapHeader, bamName, bamNamespace);
     const { soapHeader: lpsSoapHeader, name: lpsName, namespace: lpsNamespace } = this._lpsContext.getSoapHeaderAsJson()
