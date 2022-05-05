@@ -34,16 +34,10 @@ const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lpsContext = new LpsContext({
     emitter: 'medecin@yopmail.com',
     lps,
-  }, {
-    id: '1f7425e2-b913-415c-adaa-785ee1076a70',
-    dateTime: '2021-07-05T13:58:27.452Z',
   });
 
   const bamContext = new BamContext({
     emitter: 'medecin@yopmail.com',
-  }, {
-    id: 'c1a2ff23-fc05-4bd1-b500-1ec7d3178f1c',
-    dateTime: '2021-07-05T13:58:27.452Z',
   });
 
   return new INSiClient({

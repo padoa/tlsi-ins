@@ -16,9 +16,6 @@ describe('LPS Context', () => {
     const lpsContext = new LpsContext({
       emitter: 'medecin@yopmail.com',
       lps,
-    }, {
-      id: '1f7425e2-b913-415c-adaa-785ee1076a70',
-      dateTime: '2021-07-05T13:58:27.452Z',
     });
 
     const { soapHeader, name, namespace } = lpsContext.getSoapHeaderAsJson();
@@ -45,7 +42,7 @@ describe('LPS Context', () => {
       }
     });
   });
-
+/*
   test('should generate a valid UUID as id', () => {
     const myLpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
     expect(validateUUID(myLpsContext.id));
@@ -55,7 +52,7 @@ describe('LPS Context', () => {
     const myLpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
     expect(new Date(myLpsContext.dateTime).toISOString()).toEqual(myLpsContext.dateTime);
   });
-
+*/
   test('should not be able to create an LPS Context if empty emitter', () => {
     expect(() => {
       new LpsContext({ emitter: '', lps });

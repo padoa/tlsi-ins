@@ -47,6 +47,7 @@ export declare class INSiClient {
         requestId?: string | undefined;
     }): Promise<INSiFetchInsResponse>;
     private _launchSoapRequestForPerson;
+    private _setSoapHeaders;
     private _getFetchResponseFromRawSoapResponse;
     private _setClientSSLSecurityPFX;
     private _setAssertionPsSecurity;

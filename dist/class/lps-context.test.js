@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const lps_context_class_1 = require("./lps-context.class");
-const uuid_1 = require("uuid");
 const lps_class_1 = require("./lps.class");
 describe('LPS Context', () => {
     let lps;
@@ -16,9 +15,6 @@ describe('LPS Context', () => {
         const lpsContext = new lps_context_class_1.LpsContext({
             emitter: 'medecin@yopmail.com',
             lps,
-        }, {
-            id: '1f7425e2-b913-415c-adaa-785ee1076a70',
-            dateTime: '2021-07-05T13:58:27.452Z',
         });
         const { soapHeader, name, namespace } = lpsContext.getSoapHeaderAsJson();
         expect(name).toEqual('ContexteLPS');
@@ -44,14 +40,17 @@ describe('LPS Context', () => {
             }
         });
     });
-    test('should generate a valid UUID as id', () => {
-        const myLpsContext = new lps_context_class_1.LpsContext({ emitter: 'medecin@yopmail.com', lps });
-        expect((0, uuid_1.validate)(myLpsContext.id));
-    });
-    test('should generate dateTime in ISO Format', () => {
-        const myLpsContext = new lps_context_class_1.LpsContext({ emitter: 'medecin@yopmail.com', lps });
+    /*
+      test('should generate a valid UUID as id', () => {
+        const myLpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
+        expect(validateUUID(myLpsContext.id));
+      });
+    
+      test('should generate dateTime in ISO Format', () => {
+        const myLpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
         expect(new Date(myLpsContext.dateTime).toISOString()).toEqual(myLpsContext.dateTime);
-    });
+      });
+    */
     test('should not be able to create an LPS Context if empty emitter', () => {
         expect(() => {
             new lps_context_class_1.LpsContext({ emitter: '', lps });

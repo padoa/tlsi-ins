@@ -21,9 +21,7 @@ export interface BamContextSoapHeader {
     namespace: string;
 }
 export declare class BamContext {
-    id: string;
-    dateTime: string;
     emitter: string;
-    constructor({ emitter }: BamContextArgs, { id, dateTime }?: BamContextOptions);
+    constructor({ emitter }: BamContextArgs);
     getSoapHeaderAsJson(): BamContextSoapHeader;
 }

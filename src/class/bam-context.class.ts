@@ -26,20 +26,15 @@ export interface BamContextSoapHeader {
 }
 
 export class BamContext {
-  id: string; // UUID
-  dateTime: string; // YYYY-MM-DDTHH:mm:ss.sssZ
   emitter: string;
 
   constructor(
     { emitter }: BamContextArgs,
-    { id, dateTime }: BamContextOptions = {},
   ) {
     if (!emitter) {
       throw new Error('Fail to create a BamContext, you must provide an emitter');
     }
     this.emitter = emitter;
-    this.id = id || uuidv4();
-    this.dateTime = dateTime || new Date().toISOString();
   }
 
   public getSoapHeaderAsJson(): BamContextSoapHeader {
@@ -48,8 +43,8 @@ export class BamContext {
         attributes: {
           Version: '01_02',
         },
-        Id: this.id,
-        Temps: this.dateTime,
+        Id: uuidv4(),
+        Temps: new Date().toISOString(),
         Emetteur: this.emitter,
         COUVERTURE: {},
       },

@@ -85,10 +85,6 @@ export class INSiClient {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
-    const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
-    this._setDefaultHeaders();
-    this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
-    this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
     return this._launchSoapRequestForPerson(person, requestId);
   }
 
@@ -99,6 +95,7 @@ export class INSiClient {
     const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
+      this._setSoapHeaders(requestId);
       try {
         this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
         rawSoapResponse = await this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
@@ -122,6 +119,14 @@ export class INSiClient {
       ...this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId),
       failedRequests: failedRequests,
     };
+  }
+
+  private _setSoapHeaders(requestId: string): void {
+    const { header } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+    this._setDefaultHeaders();
+    this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
+    this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
+    
   }
 
   private _getFetchResponseFromRawSoapResponse(rawSoapResponse: any, requestId: string): INSiFetchInsResponse {
@@ -157,7 +162,7 @@ export class INSiClient {
     }));
   }
 
-  private _setDefaultHeaders(): void {
+  private  _setDefaultHeaders(): void {
     const { soapHeader: bamSoapHeader, name: bamName, namespace: bamNamespace } = this._bamContext.getSoapHeaderAsJson();
     this._soapClient.addSoapHeader(bamSoapHeader, bamName, bamNamespace);
     const { soapHeader: lpsSoapHeader, name: lpsName, namespace: lpsNamespace } = this._lpsContext.getSoapHeaderAsJson()
