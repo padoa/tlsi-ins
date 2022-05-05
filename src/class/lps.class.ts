@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate as validateUUID } from 'uuid';
 
 export interface LpsArgs {
   idam: string;
@@ -38,7 +38,10 @@ export class LPS {
       throw new Error('Fail to create a LPS, you must provide a name');
     }
     this.softwareName = `urn:lps:${name}:${version}`;
-    this.id = id || uuidv4();
+    this.id = id;
+    if (!validateUUID(id)) {
+      throw new Error('Fail to create a LPS, you must provide a valid id');
+    }
   }
 
   public getSoapHeaderAsJson(): LpsSoapHeader {
