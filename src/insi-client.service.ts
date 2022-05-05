@@ -113,8 +113,8 @@ export class INSiClient {
         const originalError = this._specificErrorManagement(fetchError) || fetchError;
         throw new InsiError({ requestId: requestId, originalError });
       }
+      this._soapClient.clearSoapHeaders();
     }
-    this._soapClient.clearSoapHeaders();
     return {
       ...this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId),
       failedRequests: failedRequests,
