@@ -23,12 +23,6 @@ import {
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
-import { v4 as uuidv4 } from 'uuid';
-
-jest.mock('uuid', () => ({
-  v4: () => defaultUuid,
-  validate: (uuid: string) => uuid === defaultUuid, 
-}));
 
 jest.mock('./class/bam-context.class', () => ({
   BamContext: jest.fn((config: { emitter: string }) => ({
@@ -38,7 +32,7 @@ jest.mock('./class/bam-context.class', () => ({
           attributes: {
             Version: '01_02',
           },
-          Id: uuidv4(),
+          Id: defaultUuid,
           Temps: new Date(defaultDate).toISOString(),
           Emetteur: config.emitter,
           COUVERTURE: {},
@@ -60,7 +54,7 @@ jest.mock('./class/lps-context.class', () => ({
             Nature: 'CTXLPS',
             Version: '01_00',
           },
-          Id: uuidv4(),
+          Id: defaultUuid,
           Temps: new Date(defaultDate).toISOString(),
           Emetteur: config.emitter,
           LPS: config.lps.getSoapHeaderAsJson(),
