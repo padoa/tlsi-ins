@@ -31,16 +31,6 @@ describe('BAM Context', () => {
     });
   });
 
-  test('should generate a valid UUID as id', () => {
-    const myBamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
-    expect(validateUUID(myBamContext.getSoapHeaderAsJson().soapHeader.ContexteBAM.Id));
-  });
-
-  test('should generate dateTime in ISO Format', () => {
-    const myBamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
-    expect(new Date(myBamContext.getSoapHeaderAsJson().soapHeader.ContexteBAM.Temps).toISOString()).toEqual(new Date(defaultDate).toISOString());
-  });
-
   test('should not be able to create an Bam Context if empty emitter', () => {
     expect(() => {
       new BamContext({ emitter: '' });

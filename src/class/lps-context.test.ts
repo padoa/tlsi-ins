@@ -51,16 +51,6 @@ describe('LPS Context', () => {
     });
   });
 
-  test('should generate a valid UUID as id', () => {
-    const myLpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
-    expect(validateUUID(myLpsContext.getSoapHeaderAsJson().soapHeader.ContexteLPS.Id));
-  });
-
-  test('should generate dateTime in ISO Format', () => {
-    const myLpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
-    expect(new Date(myLpsContext.getSoapHeaderAsJson().soapHeader.ContexteLPS.Temps).toISOString()).toEqual(new Date(defaultDate).toISOString());
-  });
-
   test('should not be able to create an LPS Context if empty emitter', () => {
     expect(() => {
       new LpsContext({ emitter: '', lps });
