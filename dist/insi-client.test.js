@@ -21,11 +21,6 @@ const insi_person_class_1 = require("./class/insi-person.class");
 const insi_client_fixture_1 = require("./fixtures/insi-client.fixture");
 const fs_1 = __importDefault(require("fs"));
 const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
-const uuid_1 = require("uuid");
-jest.mock('uuid', () => ({
-    v4: () => insi_client_fixture_1.defaultUuid,
-    validate: (uuid) => uuid === insi_client_fixture_1.defaultUuid,
-}));
 jest.mock('./class/bam-context.class', () => ({
     BamContext: jest.fn((config) => ({
         getSoapHeaderAsJson: () => {
@@ -34,7 +29,7 @@ jest.mock('./class/bam-context.class', () => ({
                     attributes: {
                         Version: '01_02',
                     },
-                    Id: (0, uuid_1.v4)(),
+                    Id: insi_client_fixture_1.defaultUuid,
                     Temps: new Date(insi_client_fixture_1.defaultDate).toISOString(),
                     Emetteur: config.emitter,
                     COUVERTURE: {},
@@ -48,7 +43,6 @@ jest.mock('./class/bam-context.class', () => ({
 }));
 jest.mock('./class/lps-context.class', () => ({
     LpsContext: jest.fn((config) => ({
-        emitter: 'medecin@yopmail.com',
         getSoapHeaderAsJson: () => {
             const soapHeader = {
                 ContexteLPS: {
@@ -56,7 +50,7 @@ jest.mock('./class/lps-context.class', () => ({
                         Nature: 'CTXLPS',
                         Version: '01_00',
                     },
-                    Id: (0, uuid_1.v4)(),
+                    Id: insi_client_fixture_1.defaultUuid,
                     Temps: new Date(insi_client_fixture_1.defaultDate).toISOString(),
                     Emetteur: config.emitter,
                     LPS: config.lps.getSoapHeaderAsJson(),
@@ -73,7 +67,6 @@ const getClientWithDefinedId = (overrideSpecialCases = true) => {
         idam: env_1.IDAM,
         version: env_1.SOFTWARE_VERSION,
         name: env_1.SOFTWARE_NAME,
-    }, {
         id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
     });
     const lpsContext = new lps_context_class_1.LpsContext({
@@ -158,6 +151,7 @@ describe('INSi Client', () => {
                 idam: 'FAKE-IDAM',
                 version: env_1.SOFTWARE_VERSION,
                 name: env_1.SOFTWARE_NAME,
+                id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
             const lpsContext = new lps_context_class_1.LpsContext({ emitter: 'medecin@yopmail.com', lps });
             const bamContext = new bam_context_class_1.BamContext({ emitter: 'medecin@yopmail.com' });

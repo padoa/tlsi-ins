@@ -2,9 +2,7 @@ export interface LpsArgs {
     idam: string;
     version: string;
     name: string;
-}
-export interface LpsOptions {
-    id?: string;
+    id: string;
 }
 export interface LpsSoapHeader {
     IDAM: {
@@ -22,6 +20,6 @@ export declare class LPS {
     softwareVersion: string;
     softwareName: string;
     id: string;
-    constructor({ idam, version, name }: LpsArgs, { id }?: LpsOptions);
+    constructor({ idam, version, name, id }: LpsArgs);
     getSoapHeaderAsJson(): LpsSoapHeader;
 }

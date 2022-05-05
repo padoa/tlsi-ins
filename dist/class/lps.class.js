@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LPS = void 0;
 const uuid_1 = require("uuid");
 class LPS {
-    constructor({ idam, version, name }, { id } = {}) {
+    constructor({ idam, version, name, id }) {
         if (!idam) {
             throw new Error('Fail to create a LPS, you must provide an idam');
         }
@@ -16,7 +16,10 @@ class LPS {
             throw new Error('Fail to create a LPS, you must provide a name');
         }
         this.softwareName = `urn:lps:${name}:${version}`;
-        this.id = id || (0, uuid_1.v4)();
+        this.id = id;
+        if (!(0, uuid_1.validate)(id)) {
+            throw new Error('Fail to create a LPS, you must provide a valid id');
+        }
     }
     getSoapHeaderAsJson() {
         return {

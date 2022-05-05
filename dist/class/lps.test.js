@@ -1,14 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const lps_class_1 = require("./lps.class");
-const uuid_1 = require("uuid");
 describe('LPS class', () => {
     test('should be able to create an LPS and get his header as json', () => {
         const lps = new lps_class_1.LPS({
             idam: 'GDF1TNF51DK9',
             version: '2022',
             name: 'docto-solution',
-        }, {
             id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
         });
         expect(lps.getSoapHeaderAsJson()).toEqual({
@@ -21,13 +19,15 @@ describe('LPS class', () => {
             Nom: 'urn:lps:docto-solution:2022',
         });
     });
-    test('should generate a valid UUID as id', () => {
-        const myLps = new lps_class_1.LPS({
-            idam: 'GDF1TNF51DK9',
-            version: '2022',
-            name: 'docto-solution',
-        });
-        expect((0, uuid_1.validate)(myLps.id));
+    test('should not be able to create an LPS if id is unvalid', () => {
+        expect(() => {
+            new lps_class_1.LPS({
+                idam: 'GDF1TNF51DK9',
+                version: '2022',
+                name: 'docto-solution',
+                id: '',
+            });
+        }).toThrow('Fail to create a LPS, you must provide a valid id');
     });
     test('should not be able to create an LPS if empty IDAM', () => {
         expect(() => {
@@ -35,6 +35,7 @@ describe('LPS class', () => {
                 idam: '',
                 version: '2022',
                 name: 'docto-solution',
+                id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
         }).toThrow('Fail to create a LPS, you must provide an idam');
     });
@@ -44,6 +45,7 @@ describe('LPS class', () => {
                 idam: 'GDF1TNF51DK9',
                 version: '',
                 name: 'docto-solution',
+                id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
         }).toThrow('Fail to create a LPS, you must provide a version');
     });
@@ -53,6 +55,7 @@ describe('LPS class', () => {
                 idam: 'GDF1TNF51DK9',
                 version: '2022',
                 name: '',
+                id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
         }).toThrow('Fail to create a LPS, you must provide a name');
     });
