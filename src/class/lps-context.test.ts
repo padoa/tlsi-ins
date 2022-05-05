@@ -18,7 +18,7 @@ describe('LPS Context', () => {
       idam: 'GDF1TNF51DK9',
       version: '2022',
       name: 'docto-solution',
-      id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+      id: defaultUuid,
     });
     const lpsContext = new LpsContext({
       emitter: 'medecin@yopmail.com',
@@ -43,7 +43,7 @@ describe('LPS Context', () => {
             $value: 'GDF1TNF51DK9',
           },
           Version: '2022',
-          Instance: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+          Instance: defaultUuid,
           Nom: 'urn:lps:docto-solution:2022',
         },
       }
