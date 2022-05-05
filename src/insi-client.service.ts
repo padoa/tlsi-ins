@@ -103,6 +103,7 @@ export class INSiClient {
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
         // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
         if (rawSoapResponse[0]?.CR?.CodeCR !== CRCodes.NO_RESULT) {
+          this._soapClient.clearSoapHeaders();
           break;
         }
         failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));

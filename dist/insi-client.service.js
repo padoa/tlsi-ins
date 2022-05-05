@@ -104,6 +104,7 @@ class INSiClient {
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
                     // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
                     if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CRCodes.NO_RESULT) {
+                        this._soapClient.clearSoapHeaders();
                         break;
                     }
                     failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
@@ -115,8 +116,8 @@ class INSiClient {
                     const originalError = this._specificErrorManagement(fetchError) || fetchError;
                     throw new insi_error_1.InsiError({ requestId: requestId, originalError });
                 }
+                this._soapClient.clearSoapHeaders();
             }
-            this._soapClient.clearSoapHeaders();
             return Object.assign(Object.assign({}, this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId)), { failedRequests: failedRequests });
         });
     }

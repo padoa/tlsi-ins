@@ -1,7 +1,7 @@
 import { LPS } from './class/lps.class';
 import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
-import { LpsContext } from './class/lps-context.class';
-import { BamContext } from './class/bam-context.class';
+import { LpsContext, LpsContextSoapHeader } from './class/lps-context.class';
+import { BamContext, BamContextSoapHeader } from './class/bam-context.class';
 import { INSiClient } from './insi-client.service';
 import { Gender, INSiPerson } from './class/insi-person.class';
 import {
@@ -18,9 +18,62 @@ import {
   getPierreAlainRawResponse,
   getPierreAlainXmlResponse,
   getPierreAlainLiveXmlResponse,
+  defaultUuid,
+  defaultDate,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, INSiFetchInsResponse } from './models/insi-fetch-ins.models';
+import { v4 as uuidv4 } from 'uuid';
+
+jest.mock('uuid', () => ({
+  v4: () => defaultUuid,
+  validate: (uuid: string) => uuid === defaultUuid, 
+}));
+
+jest.mock('./class/bam-context.class', () => ({
+  BamContext: jest.fn((config: { emitter: string }) => ({
+    getSoapHeaderAsJson: (): BamContextSoapHeader => {
+      const soapHeader = {
+        ContexteBAM: {
+          attributes: {
+            Version: '01_02',
+          },
+          Id: uuidv4(),
+          Temps: new Date(defaultDate).toISOString(),
+          Emetteur: config.emitter,
+          COUVERTURE: {},
+        },
+      };
+      const name = 'ContexteBAM';
+      const namespace = 'ctxbam';
+      return { soapHeader, name, namespace };
+    },
+  })),
+}));
+
+jest.mock('./class/lps-context.class', () => ({
+  LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
+    emitter: 'medecin@yopmail.com',
+    getSoapHeaderAsJson: (): LpsContextSoapHeader => {
+      const soapHeader = {
+        ContexteLPS: {
+          attributes: {
+            Nature: 'CTXLPS',
+            Version: '01_00',
+          },
+          Id: uuidv4(),
+          Temps: new Date(defaultDate).toISOString(),
+          Emetteur: config.emitter,
+          LPS: config.lps.getSoapHeaderAsJson(),
+        }
+      };
+      const name = 'ContexteLPS';
+      const namespace = 'ctxlps';
+      return { soapHeader, name, namespace };
+    },
+  })),
+}));
+
 
 const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lps = new LPS({
