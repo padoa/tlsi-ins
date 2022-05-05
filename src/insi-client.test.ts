@@ -53,7 +53,6 @@ jest.mock('./class/bam-context.class', () => ({
 
 jest.mock('./class/lps-context.class', () => ({
   LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
-    emitter: 'medecin@yopmail.com',
     getSoapHeaderAsJson: (): LpsContextSoapHeader => {
       const soapHeader = {
         ContexteLPS: {
