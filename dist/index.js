@@ -11,6 +11,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./class/bam-context.class"), exports);
+__exportStar(require("./class/emitter.helper"), exports);
 __exportStar(require("./class/insi-person.class"), exports);
 __exportStar(require("./class/lps-context.class"), exports);
 __exportStar(require("./class/lps.class"), exports);

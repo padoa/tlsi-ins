@@ -1,4 +1,5 @@
 export * from './class/bam-context.class';
+export * from './class/emitter.helper';
 export * from './class/insi-person.class';
 export * from './class/lps-context.class';
 export * from './class/lps.class';
