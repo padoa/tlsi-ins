@@ -19,4 +19,16 @@ describe('# Emitter Helper', () => {
     const emitter = EmitterHelper.getEmitterFromAssertionPs(assertionPs);
     expect(emitter).toEqual('00B6087510');
   });
+
+  test('should throw error when getting emitter from pfx that doesnt exist', () => {
+    expect(() => {
+      EmitterHelper.getEmitterFromPfx(Buffer.from(''), PASSPHRASE);
+    }).toThrowError();
+  });
+
+  test('should throw error when getting emitter from assertionPs that doesnt exist', () => {
+    expect(() => {
+      EmitterHelper.getEmitterFromAssertionPs('');
+    }).toThrowError();
+  });
 });

@@ -20,5 +20,15 @@ describe('# Emitter Helper', () => {
         const emitter = emitter_helper_1.EmitterHelper.getEmitterFromAssertionPs(assertionPsSecurity_fixture_1.assertionPs);
         expect(emitter).toEqual('00B6087510');
     });
+    test('should throw error when getting emitter from pfx that doesnt exist', () => {
+        expect(() => {
+            emitter_helper_1.EmitterHelper.getEmitterFromPfx(Buffer.from(''), env_1.PASSPHRASE);
+        }).toThrowError();
+    });
+    test('should throw error when getting emitter from assertionPs that doesnt exist', () => {
+        expect(() => {
+            emitter_helper_1.EmitterHelper.getEmitterFromAssertionPs('');
+        }).toThrowError();
+    });
 });
 //# sourceMappingURL=emitter.helper.test.js.map
