@@ -45,12 +45,12 @@ class EmitterHelper {
         return organizationalUnit;
     }
     static getEmitterFromAssertionPs(assertionPs) {
-        var _a, _b;
+        var _a;
         const emitter = (_a = /(?<=">)([^<>]*?)(?=<\/NameID>)/.exec(assertionPs)) === null || _a === void 0 ? void 0 : _a[0];
         if (!emitter) {
             throw new Error(`Failed to get Emitter from assertion`);
         }
-        return (_b = /(?<=">)([^<>]*?)(?=<\/NameID>)/.exec(assertionPs)) === null || _b === void 0 ? void 0 : _b[0];
+        return emitter;
     }
 }
 exports.EmitterHelper = EmitterHelper;

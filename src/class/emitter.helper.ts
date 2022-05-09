@@ -19,11 +19,11 @@ export class EmitterHelper {
     return organizationalUnit;
   }
 
-  public static getEmitterFromAssertionPs(assertionPs: string): string | undefined {
+  public static getEmitterFromAssertionPs(assertionPs: string): string {
     const emitter = /(?<=">)([^<>]*?)(?=<\/NameID>)/.exec(assertionPs)?.[0];
     if (!emitter) {
       throw new Error(`Failed to get Emitter from assertion`);
     }
-    return /(?<=">)([^<>]*?)(?=<\/NameID>)/.exec(assertionPs)?.[0];
+    return emitter;
   }
 }
