@@ -29,6 +29,6 @@ describe('# Emitter Helper', () => {
   test('should throw error when getting emitter from assertionPs that doesnt exist', () => {
     expect(() => {
       EmitterHelper.getEmitterFromAssertionPs('');
-    }).toThrowError();
+    }).toThrowError(`Failed to get Emitter from assertion`);
   });
 });
