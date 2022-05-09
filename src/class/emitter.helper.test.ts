@@ -19,4 +19,4 @@ describe('# Emitter Helper', () => {
     const emitter = EmitterHelper.getEmitterFromAssertionPs(assertionPs);
     expect(emitter).toEqual('00B6087510');
   });
-})
+});
