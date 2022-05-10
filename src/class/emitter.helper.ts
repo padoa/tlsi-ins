@@ -11,7 +11,7 @@ export class EmitterHelper {
     if (!certBag) { throw new Error('Unable to find certBag'); }
     const { cert } = certBag[0];
     if (!cert) { throw new Error('Unable to find a cert in the certBag'); }
-    organizationalUnit = cert.issuer.getField('OU').value;
+    organizationalUnit = cert.subject.getField('OU').value;
     return organizationalUnit;
   }
 

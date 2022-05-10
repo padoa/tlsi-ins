@@ -24,24 +24,19 @@ const forge = __importStar(require("node-forge"));
 class EmitterHelper {
     static getEmitterFromPfx(pfx, passphrase) {
         let organizationalUnit;
-        try {
-            const p12Der = forge.util.decode64(pfx.toString('base64'));
-            const p12Asn1 = forge.asn1.fromDer(p12Der);
-            const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, passphrase);
-            const bags = p12.getBags({ bagType: forge.pki.oids.certBag });
-            const certBag = bags[forge.pki.oids.certBag];
-            if (!certBag) {
-                throw 'Unable to find certBag';
-            }
-            const { cert } = certBag[0];
-            if (!cert) {
-                throw 'Unable to find a cert in the certBag';
-            }
-            organizationalUnit = cert.issuer.getField('OU').value;
+        const p12Der = forge.util.decode64(pfx.toString('base64'));
+        const p12Asn1 = forge.asn1.fromDer(p12Der);
+        const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, passphrase);
+        const bags = p12.getBags({ bagType: forge.pki.oids.certBag });
+        const certBag = bags[forge.pki.oids.certBag];
+        if (!certBag) {
+            throw new Error('Unable to find certBag');
         }
-        catch (error) {
-            throw new Error(`Failed to get Emitter from pfx: ${JSON.stringify(error)}`);
+        const { cert } = certBag[0];
+        if (!cert) {
+            throw new Error('Unable to find a cert in the certBag');
         }
+        organizationalUnit = cert.subject.getField('OU').value;
         return organizationalUnit;
     }
     static getEmitterFromAssertionPs(assertionPs) {

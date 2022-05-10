@@ -12,7 +12,7 @@ describe('# Emitter Helper', () => {
 
   test('should be able to get emitter from pfx', () => {
     const emitter = EmitterHelper.getEmitterFromPfx(pfx, PASSPHRASE);
-    expect(emitter).toEqual('0002 187512751');
+    expect(emitter).toEqual('10B0152872');
   });
 
   test('should be able to get emitter from assertionPs', () => {

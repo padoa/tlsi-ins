@@ -14,7 +14,7 @@ describe('# Emitter Helper', () => {
     });
     test('should be able to get emitter from pfx', () => {
         const emitter = emitter_helper_1.EmitterHelper.getEmitterFromPfx(pfx, env_1.PASSPHRASE);
-        expect(emitter).toEqual('0002 187512751');
+        expect(emitter).toEqual('10B0152872');
     });
     test('should be able to get emitter from assertionPs', () => {
         const emitter = emitter_helper_1.EmitterHelper.getEmitterFromAssertionPs(assertionPsSecurity_fixture_1.assertionPs);
@@ -23,12 +23,17 @@ describe('# Emitter Helper', () => {
     test('should throw error when getting emitter from pfx that doesnt exist', () => {
         expect(() => {
             emitter_helper_1.EmitterHelper.getEmitterFromPfx(Buffer.from(''), env_1.PASSPHRASE);
-        }).toThrowError();
+        }).toThrowError('Too few bytes to parse DER.');
+    });
+    test('should throw error when getting emitter from pfx with a wrong passphrase', () => {
+        expect(() => {
+            emitter_helper_1.EmitterHelper.getEmitterFromPfx(pfx, 'wrong passphrase');
+        }).toThrowError('PKCS#12 MAC could not be verified. Invalid password?');
     });
     test('should throw error when getting emitter from assertionPs that doesnt exist', () => {
         expect(() => {
             emitter_helper_1.EmitterHelper.getEmitterFromAssertionPs('');
-        }).toThrowError();
+        }).toThrowError(`Failed to get Emitter from assertion`);
     });
 });
 //# sourceMappingURL=emitter.helper.test.js.map
