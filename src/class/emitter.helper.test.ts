@@ -23,7 +23,13 @@ describe('# Emitter Helper', () => {
   test('should throw error when getting emitter from pfx that doesnt exist', () => {
     expect(() => {
       EmitterHelper.getEmitterFromPfx(Buffer.from(''), PASSPHRASE);
-    }).toThrowError();
+    }).toThrowError('Too few bytes to parse DER.');
+  });
+
+  test('should throw error when getting emitter from pfx with a wrong passphrase', () => {
+    expect(() => {
+      EmitterHelper.getEmitterFromPfx(pfx, 'wrong passphrase');
+    }).toThrowError('PKCS#12 MAC could not be verified. Invalid password?');
   });
 
   test('should throw error when getting emitter from assertionPs that doesnt exist', () => {
