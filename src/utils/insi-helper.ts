@@ -8,7 +8,7 @@ export class InsiHelper {
     const { NumIdentifiant, Cle } = rawResponse.INDIVIDU.INSACTIF.IdIndividu;
     return {
       birthName: rawResponse.INDIVIDU.TIQ.NomNaissance,
-      firstName: rawResponse.INDIVIDU.TIQ.Prenom,
+      // firstName: rawResponse.INDIVIDU.TIQ.Prenom,
       allFirstNames: rawResponse.INDIVIDU.TIQ.ListePrenom,
       gender: rawResponse.INDIVIDU.TIQ.Sexe,
       dateOfBirth: rawResponse.INDIVIDU.TIQ.DateNaissance,

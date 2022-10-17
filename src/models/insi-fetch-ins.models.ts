@@ -52,7 +52,7 @@ export interface FetchInsRawBody {
     INSHISTO?: InsHisto[],
     TIQ: {
       NomNaissance: string;
-      Prenom: string;
+      // Prenom: string;
       ListePrenom: string;
       Sexe: Gender;
       DateNaissance: string; // YYYY-MM-DD
@@ -63,7 +63,7 @@ export interface FetchInsRawBody {
 
 export interface FetchInsBody {
   birthName: string;
-  firstName: string;
+  // firstName: string;
   allFirstNames: string;
   gender: Gender;
   // Date of birth of the subject as YYYY-MM-DD (ex: 1997-02-26)
