@@ -196,7 +196,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPIERRE',
-                Prenom: 'ERIC',
+                // Prenom: 'ERIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
                 LieuNaissance: '20020',
@@ -211,7 +211,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPIERRE',
-                Prenom: 'ERIC',
+                // Prenom: 'ERIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -225,7 +225,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPI-ERRE',
-                Prenom: 'ERIC',
+                // Prenom: 'ERIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -239,7 +239,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPI--ERRE',
-                Prenom: 'ERIC',
+                // Prenom: 'ERIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -253,7 +253,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'D\'AMPIERRE',
-                Prenom: 'ERIC',
+                // Prenom: 'ERIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -267,7 +267,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPI ERRE',
-                Prenom: 'ERIC',
+                // Prenom: 'ERIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -325,7 +325,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPIERRE',
-                Prenom: 'ER-IC',
+                // Prenom: 'ER-IC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -339,7 +339,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPIERRE',
-                Prenom: 'ER--IC',
+                // Prenom: 'ER--IC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -353,7 +353,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPIERRE',
-                Prenom: 'E\'RIC',
+                // Prenom: 'E\'RIC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });
@@ -367,7 +367,7 @@ describe('INSi client', () => {
             });
             expect(insiPerson.getSoapBodyAsJson()).toEqual({
                 NomNaissance: 'DAMPIERRE',
-                Prenom: 'ER IC',
+                // Prenom: 'ER IC',
                 Sexe: insi_person_class_1.Gender.Male,
                 DateNaissance: '1990-01-01',
             });

@@ -106,7 +106,7 @@ export const getAdrtroisDominiqueRawResponse = (): FetchInsRawBody => ({
     },
     TIQ: {
       NomNaissance: 'ADRTROIS',
-      Prenom: 'DOMINIQUE',
+      // Prenom: 'DOMINIQUE',
       ListePrenom: 'DOMINIQUE',
       Sexe: Gender.Female,
       DateNaissance: '1997-02-26',
@@ -174,7 +174,7 @@ export const getTchitchiRawResponse = (): FetchInsRawBody => ({
     },
     TIQ: {
       NomNaissance: 'TCHITCHI',
-      Prenom: 'CATARINA',
+      // Prenom: 'CATARINA',
       ListePrenom: 'CATARINA BELLA',
       Sexe: Gender.Female,
       DateNaissance: '1936-06-21',
@@ -354,7 +354,7 @@ export const getPierreAlainRawResponse = ({ liveVersion = false } = {}): FetchIn
   ],
     TIQ: {
       NomNaissance: 'ECETINSI',
-      Prenom: 'PIERRE-ALAIN',
+      // Prenom: 'PIERRE-ALAIN',
       ListePrenom: 'PIERRE-ALAIN MURIEL FLORIANT',
       Sexe: Gender.Male,
       DateNaissance: '2009-07-14',

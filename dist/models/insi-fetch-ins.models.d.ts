@@ -47,7 +47,7 @@ export interface FetchInsRawBody {
         INSHISTO?: InsHisto[];
         TIQ: {
             NomNaissance: string;
-            Prenom: string;
+            // Prenom: string;
             ListePrenom: string;
             Sexe: Gender;
             DateNaissance: string;
