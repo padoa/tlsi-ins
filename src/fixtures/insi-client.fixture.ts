@@ -299,9 +299,10 @@ export const getPierreAlainLiveXmlResponse = ():string => {
     '<IdIndividu>',
     '<NumIdentifiant>2090763220834</NumIdentifiant>',
     '<Cle>39</Cle>',
-    '<TypeMatricule>NIR</TypeMatricule>',
     '</IdIndividu>',
     '<OID>1.2.250.1.213.1.4.8</OID>',
+    '<DateDeb>2019-03-01</DateDeb>',
+    '<DateFin>2019-02-28</DateFin>',
     '</INSHISTO>',
     '<TIQ>',
     '<NomNaissance>ECETINSI</NomNaissance>',
@@ -332,10 +333,15 @@ export const getPierreAlainRawResponse = ({ liveVersion = false } = {}): FetchIn
     },
     INSHISTO: [
       {
+        ...(liveVersion ? {
+          DateDeb: "2019-03-01",
+          DateFin: "2019-02-28",
+        } : {}),
         IdIndividu: {
           Cle: '39',
           NumIdentifiant: '2090763220834',
-          TypeMatricule: 'NIR',
+          ...(liveVersion ? {}
+           : {TypeMatricule: 'NIR'}),
         },
         OID: '1.2.250.1.213.1.4.8',
       },
@@ -350,7 +356,6 @@ export const getPierreAlainRawResponse = ({ liveVersion = false } = {}): FetchIn
   ],
     TIQ: {
       NomNaissance: 'ECETINSI',
-      // Prenom: 'PIERRE-ALAIN',
       ListePrenom: 'PIERRE-ALAIN MURIEL FLORIANT',
       Sexe: Gender.Male,
       DateNaissance: '2009-07-14',

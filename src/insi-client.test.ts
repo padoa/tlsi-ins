@@ -455,7 +455,7 @@ describe('INSi Client', () => {
         dateOfBirth: '1997-02-26',
       });
 
-      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('L\'appel au service de recherche avec la carte vitale renvoie une erreur technique.');
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('L appel au service de recherche avec les traits d identité renvoie une erreur technique.');
     });
 
     test('should respond with a CR01 code when the person is in the CR01 special case', async () => {

@@ -22,10 +22,12 @@ export enum CRLabels {
 }
 
 interface InsHisto {
+  DateDeb?: string,
+  DateFin?: string,
   IdIndividu: {
     Cle: string,
     NumIdentifiant: string,
-    TypeMatricule: string,
+    TypeMatricule?: string,
   },
   OID: string,
 }
