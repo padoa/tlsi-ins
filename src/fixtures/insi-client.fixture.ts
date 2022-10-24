@@ -43,7 +43,7 @@ export const getAdrtroisDominiqueXmlResponse = ():string => {
     '<ListePrenom>DOMINIQUE</ListePrenom>',
     '<Sexe>F</Sexe>',
     '<DateNaissance>1997-02-26</DateNaissance>',
-    '<LieuNaissance>20020</LieuNaissance>',
+    '<LieuNaissance>2A020</LieuNaissance>',
     '</TIQ>',
     '</INDIVIDU>',
     '</RESULTAT>',
@@ -109,7 +109,7 @@ export const getAdrtroisDominiqueRawResponse = (): FetchInsRawBody => ({
       ListePrenom: 'DOMINIQUE',
       Sexe: Gender.Female,
       DateNaissance: '1997-02-26',
-      LieuNaissance: '20020'
+      LieuNaissance: '2A020'
     }
   }
 });
@@ -120,7 +120,7 @@ export const getAdrtroisDominiqueFormattedResponse = (): FetchInsBody => ({
   allFirstNames: 'DOMINIQUE',
   gender: Gender.Female,
   dateOfBirth: '1997-02-26',
-  placeOfBirthCode: '20020',
+  placeOfBirthCode: '2A020',
   socialSecurityNumber: '297022A02077878',
   oid: '1.2.250.1.213.1.4.8',
 });
