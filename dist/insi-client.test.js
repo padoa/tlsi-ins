@@ -349,7 +349,7 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1997-02-26',
             });
-            yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow('L\'appel au service de recherche avec la carte vitale renvoie une erreur technique.');
+            yield expect(() => __awaiter(void 0, void 0, void 0, function* () { return insiClient.fetchIns(person); })).rejects.toThrow('L appel au service de recherche avec les traits d identité renvoie une erreur technique.');
         }));
         test('should respond with a CR01 code when the person is in the CR01 special case', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
