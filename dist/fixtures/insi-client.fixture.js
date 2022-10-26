@@ -103,7 +103,6 @@ const getAdrtroisDominiqueRawResponse = () => ({
         },
         TIQ: {
             NomNaissance: 'ADRTROIS',
-            // Prenom: 'DOMINIQUE',
             ListePrenom: 'DOMINIQUE',
             Sexe: insi_person_class_1.Gender.Female,
             DateNaissance: '1997-02-26',
@@ -170,7 +169,6 @@ const getTchitchiRawResponse = () => ({
         },
         TIQ: {
             NomNaissance: 'TCHITCHI',
-            // Prenom: 'CATARINA',
             ListePrenom: 'CATARINA BELLA',
             Sexe: insi_person_class_1.Gender.Female,
             DateNaissance: '1936-06-21',
@@ -244,10 +242,11 @@ const getPierreAlainXmlResponse = () => {
         '<OID>1.2.250.1.213.1.4.8</OID>',
         '</INSACTIF>',
         '<INSHISTO>',
+        '<DateDeb>2019-03-01</DateDeb>',
+        '<DateFin>2019-02-28</DateFin>',
         '<IdIndividu>',
         '<NumIdentifiant>2090763220834</NumIdentifiant>',
         '<Cle>39</Cle>',
-        '<TypeMatricule>NIR</TypeMatricule>',
         '</IdIndividu>',
         '<OID>1.2.250.1.213.1.4.8</OID>',
         '</INSHISTO>',
@@ -255,7 +254,6 @@ const getPierreAlainXmlResponse = () => {
         '<IdIndividu>',
         '<NumIdentifiant>2090663220123</NumIdentifiant>',
         '<Cle>55</Cle>',
-        '<TypeMatricule>NIR</TypeMatricule>',
         '</IdIndividu>',
         '<OID>1.2.250.1.213.1.4.8</OID>',
         '</INSHISTO>',
@@ -328,16 +326,19 @@ const getPierreAlainRawResponse = ({ liveVersion = false } = {}) => ({
             OID: '1.2.250.1.213.1.4.8'
         },
         INSHISTO: [
-            Object.assign(Object.assign({}, (liveVersion ? {
+            {
                 DateDeb: "2019-03-01",
                 DateFin: "2019-02-28",
-            } : {})), { IdIndividu: Object.assign({ Cle: '39', NumIdentifiant: '2090763220834' }, (liveVersion ? {}
-                    : { TypeMatricule: 'NIR' })), OID: '1.2.250.1.213.1.4.8' }),
+                IdIndividu: {
+                    Cle: '39',
+                    NumIdentifiant: '2090763220834',
+                },
+                OID: '1.2.250.1.213.1.4.8',
+            },
             ...(liveVersion ? [] : [{
                     IdIndividu: {
                         Cle: '55',
                         NumIdentifiant: '2090663220123',
-                        TypeMatricule: 'NIR',
                     },
                     OID: '1.2.250.1.213.1.4.8',
                 }]),

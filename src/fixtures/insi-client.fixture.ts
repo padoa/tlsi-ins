@@ -105,7 +105,6 @@ export const getAdrtroisDominiqueRawResponse = (): FetchInsRawBody => ({
     },
     TIQ: {
       NomNaissance: 'ADRTROIS',
-      // Prenom: 'DOMINIQUE',
       ListePrenom: 'DOMINIQUE',
       Sexe: Gender.Female,
       DateNaissance: '1997-02-26',
@@ -172,7 +171,6 @@ export const getTchitchiRawResponse = (): FetchInsRawBody => ({
     },
     TIQ: {
       NomNaissance: 'TCHITCHI',
-      // Prenom: 'CATARINA',
       ListePrenom: 'CATARINA BELLA',
       Sexe: Gender.Female,
       DateNaissance: '1936-06-21',
@@ -248,10 +246,11 @@ export const getPierreAlainXmlResponse = ():string => {
     '<OID>1.2.250.1.213.1.4.8</OID>',
     '</INSACTIF>',
     '<INSHISTO>',
+    '<DateDeb>2019-03-01</DateDeb>',
+    '<DateFin>2019-02-28</DateFin>',
     '<IdIndividu>',
     '<NumIdentifiant>2090763220834</NumIdentifiant>',
     '<Cle>39</Cle>',
-    '<TypeMatricule>NIR</TypeMatricule>',
     '</IdIndividu>',
     '<OID>1.2.250.1.213.1.4.8</OID>',
     '</INSHISTO>',
@@ -259,7 +258,6 @@ export const getPierreAlainXmlResponse = ():string => {
     '<IdIndividu>',
     '<NumIdentifiant>2090663220123</NumIdentifiant>',
     '<Cle>55</Cle>',
-    '<TypeMatricule>NIR</TypeMatricule>',
     '</IdIndividu>',
     '<OID>1.2.250.1.213.1.4.8</OID>',
     '</INSHISTO>',
@@ -333,15 +331,11 @@ export const getPierreAlainRawResponse = ({ liveVersion = false } = {}): FetchIn
     },
     INSHISTO: [
       {
-        ...(liveVersion ? {
-          DateDeb: "2019-03-01",
-          DateFin: "2019-02-28",
-        } : {}),
+        DateDeb: "2019-03-01",
+        DateFin: "2019-02-28",
         IdIndividu: {
           Cle: '39',
           NumIdentifiant: '2090763220834',
-          ...(liveVersion ? {}
-           : {TypeMatricule: 'NIR'}),
         },
         OID: '1.2.250.1.213.1.4.8',
       },
@@ -349,7 +343,6 @@ export const getPierreAlainRawResponse = ({ liveVersion = false } = {}): FetchIn
         IdIndividu: {
           Cle: '55',
           NumIdentifiant: '2090663220123',
-          TypeMatricule: 'NIR',
         },
         OID: '1.2.250.1.213.1.4.8',
       }]),
