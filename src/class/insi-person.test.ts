@@ -7,7 +7,7 @@ describe('INSi Person', () => {
       firstName: 'ERIC',
       gender: Gender.Male,
       dateOfBirth: '1990-01-01',
-      placeOfBirthCode: '20020',
+      placeOfBirthCode: '2A020',
     });
 
     expect(insiPerson.getSoapBodyAsJson()).toEqual([{
@@ -15,7 +15,7 @@ describe('INSi Person', () => {
       Prenom: 'ERIC',
       Sexe: Gender.Male,
       DateNaissance: '1990-01-01',
-      LieuNaissance: '20020',
+      LieuNaissance: '2A020',
     }]);
   });
 
@@ -106,7 +106,7 @@ describe('INSi Person', () => {
         firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, you must provide a birthName');
   });
@@ -118,7 +118,7 @@ describe('INSi Person', () => {
         firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
   });
@@ -130,7 +130,7 @@ describe('INSi Person', () => {
         firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
   });
@@ -142,7 +142,7 @@ describe('INSi Person', () => {
         firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, the birthName you provided is not in the correct format');
   });
@@ -202,7 +202,7 @@ describe('INSi Person', () => {
         firstName: '',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, you must provide a firstName');
   });
@@ -214,7 +214,7 @@ describe('INSi Person', () => {
         firstName: 'Eric',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
   });
@@ -226,7 +226,7 @@ describe('INSi Person', () => {
         firstName: ' ERIC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
   });
@@ -238,7 +238,7 @@ describe('INSi Person', () => {
         firstName: 'ER_IC',
         gender: Gender.Male,
         dateOfBirth: '1990-01-01',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, the firstName you provided is not in the correct format');
   });
@@ -250,7 +250,7 @@ describe('INSi Person', () => {
         firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
   });
@@ -262,7 +262,7 @@ describe('INSi Person', () => {
         firstName: 'ERIC',
         gender: Gender.Male,
         dateOfBirth: '2021-56-12',
-        placeOfBirthCode: '20020',
+        placeOfBirthCode: '2A020',
       });
     }).toThrow('Fail to create an INSiPerson, you must provide a valid dateOfBirth');
   });

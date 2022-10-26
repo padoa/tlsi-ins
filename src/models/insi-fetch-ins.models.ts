@@ -22,10 +22,12 @@ export enum CRLabels {
 }
 
 interface InsHisto {
+  DateDeb?: string,
+  DateFin?: string,
   IdIndividu: {
     Cle: string,
     NumIdentifiant: string,
-    TypeMatricule: string,
+    TypeMatricule?: string,
   },
   OID: string,
 }
@@ -52,7 +54,6 @@ export interface FetchInsRawBody {
     INSHISTO?: InsHisto[],
     TIQ: {
       NomNaissance: string;
-      Prenom: string;
       ListePrenom: string;
       Sexe: Gender;
       DateNaissance: string; // YYYY-MM-DD
