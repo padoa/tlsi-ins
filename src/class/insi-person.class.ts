@@ -11,7 +11,7 @@ export interface INSiPersonArgs {
   placeOfBirthCode?: string;
 }
 
-interface INSiPersonSoapBody {
+export interface INSiPersonSoapBody {
   NomNaissance: string;
   Prenom: string;
   Sexe: Gender;

@@ -9,7 +9,7 @@ export interface INSiPersonArgs {
     dateOfBirth: string;
     placeOfBirthCode?: string;
 }
-interface INSiPersonSoapBody {
+export interface INSiPersonSoapBody {
     NomNaissance: string;
     Prenom: string;
     Sexe: Gender;
@@ -24,4 +24,3 @@ export declare class INSiPerson {
     _isValidBirthDate(dateOfBirth: string): boolean;
     _isValidName(name: string): boolean;
 }
-export {};

@@ -41,14 +41,15 @@ export declare class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
-     * @returns Promise<INSiFetchInsResponse>
+     * @returns Promise<INSiFetchInsResponse[]>
      */
     fetchIns(person: INSiPerson, { requestId }?: {
         requestId?: string | undefined;
-    }): Promise<INSiFetchInsResponse>;
+    }): Promise<INSiFetchInsResponse[]>;
     private _launchSoapRequestForPerson;
+    private _callFetchFromIdentityTraits;
     private _setSoapHeaders;
-    private _getFetchResponseFromRawSoapResponse;
+    private _getServiceErrorFromXML;
     private _setClientSSLSecurityPFX;
     private _setAssertionPsSecurity;
     private _setDefaultHeaders;

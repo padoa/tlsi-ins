@@ -1,20 +1,28 @@
 import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+import _ from 'lodash';
 
 export class InsiHelper {
-  public static formatFetchINSRawResponse(rawResponse: FetchInsRawBody): FetchInsBody | null {
-    if (!rawResponse.INDIVIDU) {
+  public static formatFetchINSResult(result: FetchInsRawBody): FetchInsBody | null {
+    if (!result.INDIVIDU) {
       return null;
     }
-    const { NumIdentifiant, Cle } = rawResponse.INDIVIDU.INSACTIF.IdIndividu;
+    const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
     return {
-      birthName: rawResponse.INDIVIDU.TIQ.NomNaissance,
-      firstName: rawResponse.INDIVIDU.TIQ.ListePrenom.split(' ')?.[0],
-      allFirstNames: rawResponse.INDIVIDU.TIQ.ListePrenom,
-      gender: rawResponse.INDIVIDU.TIQ.Sexe,
-      dateOfBirth: rawResponse.INDIVIDU.TIQ.DateNaissance,
-      placeOfBirthCode: rawResponse.INDIVIDU.TIQ.LieuNaissance,
+      birthName: result.INDIVIDU.TIQ.NomNaissance,
+      firstName: result.INDIVIDU.TIQ.ListePrenom.split(' ')?.[0],
+      allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
+      gender: result.INDIVIDU.TIQ.Sexe,
+      dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,
+      placeOfBirthCode: result.INDIVIDU.TIQ.LieuNaissance,
       socialSecurityNumber: `${NumIdentifiant}${Cle}`,
-      oid: rawResponse.INDIVIDU.INSACTIF.OID,
+      oid: result.INDIVIDU.INSACTIF.OID,
     }
+  }
+
+  public static changeInsHistoToArray(result: FetchInsRawBody): FetchInsRawBody {
+    if (result?.INDIVIDU?.INSHISTO && !_.isArray(result?.INDIVIDU?.INSHISTO)) {
+      result.INDIVIDU.INSHISTO = [result.INDIVIDU.INSHISTO];
+    }
+    return result;
   }
 }

@@ -1,11 +1,22 @@
 import { Gender } from '../class/insi-person.class';
 export interface INSiFetchInsResponse {
+    status: INSiServiceRequestStatus;
     requestId: string;
-    body: FetchInsBody | null;
-    rawBody: FetchInsRawBody;
-    bodyAsXMl: string;
+    response: FetchInsBody | null;
+    responseBodyAsJson: FetchInsRawBody | null;
+    responseBodyAsXml: string;
     requestBodyAsXML: string;
-    failedRequests?: INSiFetchInsResponse[];
+    error: INSiServiceError | null;
+}
+export interface INSiServiceError {
+    siramCode: string;
+    text: string;
+    desirCode: string;
+    error: string;
+}
+export declare enum INSiServiceRequestStatus {
+    SUCCESS = "SUCCESS",
+    FAIL = "FAIL"
 }
 export declare enum CRCodes {
     OK = "00",

@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CRLabels = exports.CRCodes = void 0;
+exports.CRLabels = exports.CRCodes = exports.INSiServiceRequestStatus = void 0;
+var INSiServiceRequestStatus;
+(function (INSiServiceRequestStatus) {
+    INSiServiceRequestStatus["SUCCESS"] = "SUCCESS";
+    INSiServiceRequestStatus["FAIL"] = "FAIL";
+})(INSiServiceRequestStatus = exports.INSiServiceRequestStatus || (exports.INSiServiceRequestStatus = {}));
 var CRCodes;
 (function (CRCodes) {
     CRCodes["OK"] = "00";

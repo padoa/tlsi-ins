@@ -4,15 +4,18 @@ import { Client, ClientSSLSecurityPFX, createClientAsync, HttpClient } from 'soa
 import { v4 as uuidv4 } from 'uuid';
 import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
-import { INSiPerson } from './class/insi-person.class';
+import { INSiPerson, INSiPersonSoapBody } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
-import { INSiFetchInsResponse, CRCodes } from './models/insi-fetch-ins.models';
+import {
+  INSiFetchInsResponse,
+  CRCodes,
+  INSiServiceRequestStatus,
+} from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
-import _ from 'lodash';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -79,34 +82,31 @@ export class INSiClient {
    * Fetches INS information of a person
    * @param  {INSiPerson} person the person who's information are about to be fetched
    * @param  {string} requestId of the current request to Ins
-   * @returns Promise<INSiFetchInsResponse>
+   * @returns Promise<INSiFetchInsResponse[]>
    */
-  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse> {
+  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse[]> {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
     return this._launchSoapRequestForPerson(person, requestId);
   }
 
-  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiFetchInsResponse> {
-    let rawSoapResponse;
-    const failedRequests = [];
+  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiFetchInsResponse[]> {
+    const responses: INSiFetchInsResponse[] = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
-    const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
       this._setSoapHeaders(requestId);
       try {
         this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
-        rawSoapResponse = await this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
+        const serviceResponse = await this._callFetchFromIdentityTraits(requestId, namesToSendRequestFor[i]);
+        responses.push(serviceResponse);
         // reset the httpClient to the original one
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-        // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
-        if (rawSoapResponse[0]?.CR?.CodeCR !== CRCodes.NO_RESULT) {
+        if (serviceResponse.responseBodyAsJson?.CR?.CodeCR !== CRCodes.NO_RESULT) {
           this._soapClient.clearSoapHeaders();
           break;
         }
-        failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
       } catch (fetchError) {
         // reset the httpClient to the original one
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
@@ -116,10 +116,39 @@ export class INSiClient {
       }
       this._soapClient.clearSoapHeaders();
     }
-    return {
-      ...this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId),
-      failedRequests: failedRequests,
-    };
+    return responses;
+  }
+
+  private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiFetchInsResponse> {
+    const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+    return new Promise<INSiFetchInsResponse>(async (resolve, reject) => {
+      this._soapClient[`${method}`](soapBody, (err: any, result: any, rawResponse: string, soapHeader: any, rawRequest: string) => {
+        if (err?.response?.status === 500 && err.body) {
+          this._getServiceErrorFromXML(rawResponse);
+          resolve({
+            status: INSiServiceRequestStatus.FAIL,
+            requestId,
+            response: null,
+            responseBodyAsJson: null,
+            responseBodyAsXml: rawResponse,
+            requestBodyAsXML: rawRequest,
+            error: this._getServiceErrorFromXML(rawResponse),
+          });
+        } else if (err) {
+          reject(err);
+        } else {
+          resolve({
+            status: INSiServiceRequestStatus.SUCCESS,
+            requestId,
+            response: InsiHelper.formatFetchINSResult(result),
+            responseBodyAsJson: InsiHelper.changeInsHistoToArray(result),
+            responseBodyAsXml: rawResponse,
+            requestBodyAsXML: rawRequest,
+            error: null,
+          });
+        }
+      });
+    });
   }
 
   private _setSoapHeaders(requestId: string): void {
@@ -127,20 +156,14 @@ export class INSiClient {
     this._setDefaultHeaders();
     this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
     this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
-    
   }
 
-  private _getFetchResponseFromRawSoapResponse(rawSoapResponse: any, requestId: string): INSiFetchInsResponse {
-    const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
-    if (rawResponse?.INDIVIDU?.INSHISTO && !_.isArray(rawResponse?.INDIVIDU?.INSHISTO)) {
-      rawResponse.INDIVIDU.INSHISTO = [rawResponse.INDIVIDU.INSHISTO];
-    }
+  private _getServiceErrorFromXML(xml: any): any {
     return {
-      requestId,
-      rawBody: rawResponse,
-      body: InsiHelper.formatFetchINSRawResponse(rawResponse),
-      bodyAsXMl: responseAsXMl,
-      requestBodyAsXML: requestAsXML,
+      siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)[2],
+      text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)[2],
+      desirCode: xml.match(/(code=")(.*?)(")/)[2],
+      error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)[3],
     };
   }
 
