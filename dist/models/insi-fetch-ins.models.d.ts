@@ -1,5 +1,5 @@
 import { Gender } from '../class/insi-person.class';
-export interface INSiFetchInsResponse {
+export interface INSiServiceFetchRequest {
     status: INSiServiceRequestStatus;
     requestId: string;
     response: FetchInsBody | null;

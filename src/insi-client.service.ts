@@ -8,7 +8,7 @@ import { INSiPerson, INSiPersonSoapBody } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
 import {
-  INSiFetchInsResponse,
+  INSiServiceFetchRequest,
   CRCodes,
   INSiServiceRequestStatus, INSiServiceError,
 } from './models/insi-fetch-ins.models';
@@ -82,17 +82,17 @@ export class INSiClient {
    * Fetches INS information of a person
    * @param  {INSiPerson} person the person who's information are about to be fetched
    * @param  {string} requestId of the current request to Ins
-   * @returns Promise<INSiFetchInsResponse[]>
+   * @returns Promise<INSiServiceFetchRequest[]>
    */
-  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiFetchInsResponse[]> {
+  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiServiceFetchRequest[]> {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
     return this._launchSoapRequestForPerson(person, requestId);
   }
 
-  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiFetchInsResponse[]> {
-    const responses: INSiFetchInsResponse[] = [];
+  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiServiceFetchRequest[]> {
+    const responses: INSiServiceFetchRequest[] = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
@@ -119,9 +119,9 @@ export class INSiClient {
     return responses;
   }
 
-  private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiFetchInsResponse> {
+  private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiServiceFetchRequest> {
     const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
-    return new Promise<INSiFetchInsResponse>(async (resolve, reject) => {
+    return new Promise<INSiServiceFetchRequest>(async (resolve, reject) => {
       this._soapClient[`${method}`](soapBody, (err: any, result: any, rawResponse: string, soapHeader: any, rawRequest: string) => {
         if (err?.response?.status === 500 && err.body) {
           resolve({

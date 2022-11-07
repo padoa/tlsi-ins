@@ -76,7 +76,7 @@ class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
-     * @returns Promise<INSiFetchInsResponse[]>
+     * @returns Promise<INSiServiceFetchRequest[]>
      */
     fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
