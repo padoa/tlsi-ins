@@ -10,7 +10,7 @@ import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.
 import {
   INSiFetchInsResponse,
   CRCodes,
-  INSiServiceRequestStatus,
+  INSiServiceRequestStatus, INSiServiceError,
 } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
@@ -124,7 +124,6 @@ export class INSiClient {
     return new Promise<INSiFetchInsResponse>(async (resolve, reject) => {
       this._soapClient[`${method}`](soapBody, (err: any, result: any, rawResponse: string, soapHeader: any, rawRequest: string) => {
         if (err?.response?.status === 500 && err.body) {
-          this._getServiceErrorFromXML(rawResponse);
           resolve({
             status: INSiServiceRequestStatus.FAIL,
             requestId,
@@ -132,7 +131,7 @@ export class INSiClient {
             responseBodyAsJson: null,
             responseBodyAsXml: rawResponse,
             requestBodyAsXML: rawRequest,
-            error: this._getServiceErrorFromXML(rawResponse),
+            error: InsiHelper.getServiceErrorFromXML(rawResponse),
           });
         } else if (err) {
           reject(err);
@@ -158,12 +157,12 @@ export class INSiClient {
     this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
   }
 
-  private _getServiceErrorFromXML(xml: any): any {
+  private _getServiceErrorFromXML(xml: string): INSiServiceError {
     return {
-      siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)[2],
-      text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)[2],
-      desirCode: xml.match(/(code=")(.*?)(")/)[2],
-      error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)[3],
+      siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)?.[2],
+      text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)?.[2],
+      desirCode: xml.match(/(code=")(.*?)(")/)?.[2],
+      error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)?.[3],
     };
   }
 

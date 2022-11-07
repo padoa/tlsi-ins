@@ -281,12 +281,16 @@ describe('INSi Client', () => {
                 sexe: insi_person_class_1.Gender.Male,
                 dateOfBirth: '1993-01-27',
             };
+            expect(pierreResponse.status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
             expect(pierreResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
             expect(pierreResponse.requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE' })));
+            expect(paulResponse.status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
             expect(paulResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
             expect(paulResponse.requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PAUL' })));
+            expect(jaquesResponse.status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
             expect(jaquesResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
             expect(jaquesResponse.requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'JACQUES' })));
+            expect(allNamesResponse.status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
             expect(allNamesResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } });
             expect(allNamesResponse.requestBodyAsXML).toEqual((0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE PAUL JACQUES' })));
         }));

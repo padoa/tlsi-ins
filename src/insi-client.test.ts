@@ -336,24 +336,28 @@ describe('INSi Client', () => {
         dateOfBirth: '1993-01-27',
       };
 
+      expect(pierreResponse.status).toEqual(INSiServiceRequestStatus.SUCCESS);
       expect(pierreResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
       expect(pierreResponse.requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'PIERRE',
       }));
 
+      expect(paulResponse.status).toEqual(INSiServiceRequestStatus.SUCCESS);
       expect(paulResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
       expect(paulResponse.requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'PAUL',
       }));
 
+      expect(jaquesResponse.status).toEqual(INSiServiceRequestStatus.SUCCESS);
       expect(jaquesResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
       expect(jaquesResponse.requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,
         firstName: 'JACQUES',
       }));
 
+      expect(allNamesResponse.status).toEqual(INSiServiceRequestStatus.SUCCESS);
       expect(allNamesResponse.responseBodyAsJson).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
       expect(allNamesResponse.requestBodyAsXML).toEqual(getCNDAValidationXmlRequest({
         ...defaultExpectedResponseForHouilles,

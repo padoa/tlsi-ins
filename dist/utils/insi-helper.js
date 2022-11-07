@@ -30,6 +30,20 @@ class InsiHelper {
         }
         return result;
     }
+    static getServiceErrorFromXML(xml) {
+        var _a, _b, _c, _d;
+        try {
+            return {
+                siramCode: (_a = xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)) === null || _a === void 0 ? void 0 : _a[2],
+                text: (_b = xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)) === null || _b === void 0 ? void 0 : _b[2],
+                desirCode: (_c = xml.match(/(code=")(.*?)(")/)) === null || _c === void 0 ? void 0 : _c[2],
+                error: (_d = xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)) === null || _d === void 0 ? void 0 : _d[3],
+            };
+        }
+        catch (_e) {
+            return null;
+        }
+    }
 }
 exports.InsiHelper = InsiHelper;
 //# sourceMappingURL=insi-helper.js.map

@@ -1,4 +1,4 @@
-import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+import { FetchInsBody, FetchInsRawBody, INSiServiceError } from '../models/insi-fetch-ins.models';
 import _ from 'lodash';
 
 export class InsiHelper {
@@ -24,5 +24,18 @@ export class InsiHelper {
       result.INDIVIDU.INSHISTO = [result.INDIVIDU.INSHISTO];
     }
     return result;
+  }
+
+  public static getServiceErrorFromXML(xml: string): INSiServiceError | null {
+    try {
+      return {
+        siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)?.[2],
+        text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)?.[2],
+        desirCode: xml.match(/(code=")(.*?)(")/)?.[2],
+        error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)?.[3],
+      };
+    } catch {
+      return null;
+    }
   }
 }

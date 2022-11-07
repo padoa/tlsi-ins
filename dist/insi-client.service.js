@@ -123,7 +123,6 @@ class INSiClient {
             this._soapClient[`${method}`](soapBody, (err, result, rawResponse, soapHeader, rawRequest) => {
                 var _a;
                 if (((_a = err === null || err === void 0 ? void 0 : err.response) === null || _a === void 0 ? void 0 : _a.status) === 500 && err.body) {
-                    this._getServiceErrorFromXML(rawResponse);
                     resolve({
                         status: insi_fetch_ins_models_1.INSiServiceRequestStatus.FAIL,
                         requestId,
@@ -131,7 +130,7 @@ class INSiClient {
                         responseBodyAsJson: null,
                         responseBodyAsXml: rawResponse,
                         requestBodyAsXML: rawRequest,
-                        error: this._getServiceErrorFromXML(rawResponse),
+                        error: insi_helper_1.InsiHelper.getServiceErrorFromXML(rawResponse),
                     });
                 }
                 else if (err) {
@@ -158,11 +157,12 @@ class INSiClient {
         this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
     }
     _getServiceErrorFromXML(xml) {
+        var _a, _b, _c, _d;
         return {
-            siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)[2],
-            text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)[2],
-            desirCode: xml.match(/(code=")(.*?)(")/)[2],
-            error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)[3],
+            siramCode: (_a = xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)) === null || _a === void 0 ? void 0 : _a[2],
+            text: (_b = xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)) === null || _b === void 0 ? void 0 : _b[2],
+            desirCode: (_c = xml.match(/(code=")(.*?)(")/)) === null || _c === void 0 ? void 0 : _c[2],
+            error: (_d = xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)) === null || _d === void 0 ? void 0 : _d[3],
         };
     }
     _setClientSSLSecurityPFX(pfx, passphrase) {

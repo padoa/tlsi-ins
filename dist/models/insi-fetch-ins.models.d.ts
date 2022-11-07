@@ -9,10 +9,10 @@ export interface INSiFetchInsResponse {
     error: INSiServiceError | null;
 }
 export interface INSiServiceError {
-    siramCode: string;
-    text: string;
-    desirCode: string;
-    error: string;
+    siramCode: string | undefined;
+    text: string | undefined;
+    desirCode: string | undefined;
+    error: string | undefined;
 }
 export declare enum INSiServiceRequestStatus {
     SUCCESS = "SUCCESS",
