@@ -1,8 +1,8 @@
-import { FetchInsBody, FetchInsRawBody, INSiServiceError } from '../models/insi-fetch-ins.models';
+import { INSiServiceFormattedResponse, INSiServiceJsonResponse, INSiServiceError } from '../models/insi-fetch-ins.models';
 import _ from 'lodash';
 
 export class InsiHelper {
-  public static formatFetchINSResult(result: FetchInsRawBody): FetchInsBody | null {
+  public static formatFetchINSResult(result: INSiServiceJsonResponse): INSiServiceFormattedResponse | null {
     if (!result.INDIVIDU) {
       return null;
     }
@@ -19,7 +19,7 @@ export class InsiHelper {
     }
   }
 
-  public static changeInsHistoToArray(result: FetchInsRawBody): FetchInsRawBody {
+  public static changeInsHistoToArray(result: INSiServiceJsonResponse): INSiServiceJsonResponse {
     if (result?.INDIVIDU?.INSHISTO && !_.isArray(result?.INDIVIDU?.INSHISTO)) {
       result.INDIVIDU.INSHISTO = [result.INDIVIDU.INSHISTO];
     }

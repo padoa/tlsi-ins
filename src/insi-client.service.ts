@@ -10,7 +10,8 @@ import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.
 import {
   INSiServiceFetchRequest,
   CRCodes,
-  INSiServiceRequestStatus, INSiServiceError,
+  INSiServiceRequestStatus,
+  INSiServiceError,
 } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
@@ -92,18 +93,20 @@ export class INSiClient {
   }
 
   private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiServiceFetchRequest[]> {
-    const responses: INSiServiceFetchRequest[] = [];
+    const fetchRequests: INSiServiceFetchRequest[] = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
+    // Try for each person name, stop if technical error or perfect match
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
       this._setSoapHeaders(requestId);
       try {
         this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
-        const serviceResponse = await this._callFetchFromIdentityTraits(requestId, namesToSendRequestFor[i]);
-        responses.push(serviceResponse);
+        const fetchRequest = await this._callFetchFromIdentityTraits(requestId, namesToSendRequestFor[i]);
+        fetchRequests.push(fetchRequest);
         // reset the httpClient to the original one
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-        if (serviceResponse.responseBodyAsJson?.CR?.CodeCR !== CRCodes.NO_RESULT) {
+        // If we find a result we stop the loop
+        if (fetchRequest.response?.json?.CR?.CodeCR === CRCodes.OK || fetchRequest.response.error) {
           this._soapClient.clearSoapHeaders();
           break;
         }
@@ -116,7 +119,7 @@ export class INSiClient {
       }
       this._soapClient.clearSoapHeaders();
     }
-    return responses;
+    return fetchRequests;
   }
 
   private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiServiceFetchRequest> {
@@ -126,24 +129,32 @@ export class INSiClient {
         if (err?.response?.status === 500 && err.body) {
           resolve({
             status: INSiServiceRequestStatus.FAIL,
-            requestId,
-            response: null,
-            responseBodyAsJson: null,
-            responseBodyAsXml: rawResponse,
-            requestBodyAsXML: rawRequest,
-            error: InsiHelper.getServiceErrorFromXML(rawResponse),
+            request: {
+              id: requestId,
+              xml: rawRequest,
+            },
+            response: {
+              formatted: null,
+              json: null,
+              xml: rawResponse,
+              error: InsiHelper.getServiceErrorFromXML(rawResponse),
+            },
           });
         } else if (err) {
           reject(err);
         } else {
           resolve({
             status: INSiServiceRequestStatus.SUCCESS,
-            requestId,
-            response: InsiHelper.formatFetchINSResult(result),
-            responseBodyAsJson: InsiHelper.changeInsHistoToArray(result),
-            responseBodyAsXml: rawResponse,
-            requestBodyAsXML: rawRequest,
-            error: null,
+            request: {
+              id: requestId,
+              xml: rawRequest,
+            },
+            response: {
+              formatted: InsiHelper.formatFetchINSResult(result),
+              json: InsiHelper.changeInsHistoToArray(result),
+              xml: rawResponse,
+              error: null,
+            },
           });
         }
       });

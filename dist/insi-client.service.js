@@ -87,20 +87,22 @@ class INSiClient {
         });
     }
     _launchSoapRequestForPerson(person, requestId) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
-            const responses = [];
+            const fetchRequests = [];
             const namesToSendRequestFor = person.getSoapBodyAsJson();
             const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
+            // Try for each person name, stop if technical error or perfect match
             for (let i = 0; i < namesToSendRequestFor.length; i++) {
                 this._setSoapHeaders(requestId);
                 try {
                     this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
-                    const serviceResponse = yield this._callFetchFromIdentityTraits(requestId, namesToSendRequestFor[i]);
-                    responses.push(serviceResponse);
+                    const fetchRequest = yield this._callFetchFromIdentityTraits(requestId, namesToSendRequestFor[i]);
+                    fetchRequests.push(fetchRequest);
                     // reset the httpClient to the original one
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-                    if (((_b = (_a = serviceResponse.responseBodyAsJson) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CRCodes.NO_RESULT) {
+                    // If we find a result we stop the loop
+                    if (((_c = (_b = (_a = fetchRequest.response) === null || _a === void 0 ? void 0 : _a.json) === null || _b === void 0 ? void 0 : _b.CR) === null || _c === void 0 ? void 0 : _c.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK || fetchRequest.response.error) {
                         this._soapClient.clearSoapHeaders();
                         break;
                     }
@@ -114,7 +116,7 @@ class INSiClient {
                 }
                 this._soapClient.clearSoapHeaders();
             }
-            return responses;
+            return fetchRequests;
         });
     }
     _callFetchFromIdentityTraits(requestId, soapBody) {
@@ -125,12 +127,16 @@ class INSiClient {
                 if (((_a = err === null || err === void 0 ? void 0 : err.response) === null || _a === void 0 ? void 0 : _a.status) === 500 && err.body) {
                     resolve({
                         status: insi_fetch_ins_models_1.INSiServiceRequestStatus.FAIL,
-                        requestId,
-                        response: null,
-                        responseBodyAsJson: null,
-                        responseBodyAsXml: rawResponse,
-                        requestBodyAsXML: rawRequest,
-                        error: insi_helper_1.InsiHelper.getServiceErrorFromXML(rawResponse),
+                        request: {
+                            id: requestId,
+                            xml: rawRequest,
+                        },
+                        response: {
+                            formatted: null,
+                            json: null,
+                            xml: rawResponse,
+                            error: insi_helper_1.InsiHelper.getServiceErrorFromXML(rawResponse),
+                        },
                     });
                 }
                 else if (err) {
@@ -139,12 +145,16 @@ class INSiClient {
                 else {
                     resolve({
                         status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
-                        requestId,
-                        response: insi_helper_1.InsiHelper.formatFetchINSResult(result),
-                        responseBodyAsJson: insi_helper_1.InsiHelper.changeInsHistoToArray(result),
-                        responseBodyAsXml: rawResponse,
-                        requestBodyAsXML: rawRequest,
-                        error: null,
+                        request: {
+                            id: requestId,
+                            xml: rawRequest,
+                        },
+                        response: {
+                            formatted: insi_helper_1.InsiHelper.formatFetchINSResult(result),
+                            json: insi_helper_1.InsiHelper.changeInsHistoToArray(result),
+                            xml: rawResponse,
+                            error: null,
+                        },
                     });
                 }
             });

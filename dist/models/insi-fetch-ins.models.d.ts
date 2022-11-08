@@ -1,11 +1,17 @@
 import { Gender } from '../class/insi-person.class';
 export interface INSiServiceFetchRequest {
     status: INSiServiceRequestStatus;
-    requestId: string;
-    response: FetchInsBody | null;
-    responseBodyAsJson: FetchInsRawBody | null;
-    responseBodyAsXml: string;
-    requestBodyAsXML: string;
+    request: INSiServiceRequest;
+    response: INSiServiceResponse;
+}
+export interface INSiServiceRequest {
+    id: string;
+    xml: string;
+}
+export interface INSiServiceResponse {
+    formatted: INSiServiceFormattedResponse | null;
+    json: INSiServiceJsonResponse | null;
+    xml: string;
     error: INSiServiceError | null;
 }
 export interface INSiServiceError {
@@ -38,7 +44,7 @@ interface InsHisto {
     };
     OID: string;
 }
-export interface FetchInsRawBody {
+export interface INSiServiceJsonResponse {
     CR: {
         CodeCR: CRCodes.OK;
         LibelleCR: CRLabels.OK;
@@ -67,7 +73,7 @@ export interface FetchInsRawBody {
         };
     };
 }
-export interface FetchInsBody {
+export interface INSiServiceFormattedResponse {
     birthName: string;
     firstName: string;
     allFirstNames: string;
