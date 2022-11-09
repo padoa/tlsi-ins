@@ -1,20 +1,41 @@
-import { FetchInsBody, FetchInsRawBody } from '../models/insi-fetch-ins.models';
+import { INSiServiceFormattedResponse, INSiServiceJsonResponse, INSiServiceError } from '../models/insi-fetch-ins.models';
+import _ from 'lodash';
 
 export class InsiHelper {
-  public static formatFetchINSRawResponse(rawResponse: FetchInsRawBody): FetchInsBody | null {
-    if (!rawResponse.INDIVIDU) {
+  public static formatFetchINSResult(result: INSiServiceJsonResponse): INSiServiceFormattedResponse | null {
+    if (!result.INDIVIDU) {
       return null;
     }
-    const { NumIdentifiant, Cle } = rawResponse.INDIVIDU.INSACTIF.IdIndividu;
+    const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
     return {
-      birthName: rawResponse.INDIVIDU.TIQ.NomNaissance,
-      firstName: rawResponse.INDIVIDU.TIQ.ListePrenom.split(' ')?.[0],
-      allFirstNames: rawResponse.INDIVIDU.TIQ.ListePrenom,
-      gender: rawResponse.INDIVIDU.TIQ.Sexe,
-      dateOfBirth: rawResponse.INDIVIDU.TIQ.DateNaissance,
-      placeOfBirthCode: rawResponse.INDIVIDU.TIQ.LieuNaissance,
+      birthName: result.INDIVIDU.TIQ.NomNaissance,
+      firstName: result.INDIVIDU.TIQ.ListePrenom.split(' ')?.[0],
+      allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
+      gender: result.INDIVIDU.TIQ.Sexe,
+      dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,
+      placeOfBirthCode: result.INDIVIDU.TIQ.LieuNaissance,
       socialSecurityNumber: `${NumIdentifiant}${Cle}`,
-      oid: rawResponse.INDIVIDU.INSACTIF.OID,
+      oid: result.INDIVIDU.INSACTIF.OID,
+    }
+  }
+
+  public static changeInsHistoToArray(result: INSiServiceJsonResponse): INSiServiceJsonResponse {
+    if (result?.INDIVIDU?.INSHISTO && !_.isArray(result?.INDIVIDU?.INSHISTO)) {
+      result.INDIVIDU.INSHISTO = [result.INDIVIDU.INSHISTO];
+    }
+    return result;
+  }
+
+  public static getServiceErrorFromXML(xml: string): INSiServiceError | null {
+    try {
+      return {
+        siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)?.[2],
+        text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)?.[2],
+        desirCode: xml.match(/(code=")(.*?)(")/)?.[2],
+        error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)?.[3],
+      };
+    } catch {
+      return null;
     }
   }
 }

@@ -1,11 +1,32 @@
 import { Gender } from '../class/insi-person.class';
-export interface INSiFetchInsResponse {
-    requestId: string;
-    body: FetchInsBody | null;
-    rawBody: FetchInsRawBody;
-    bodyAsXMl: string;
-    requestBodyAsXML: string;
-    failedRequests?: INSiFetchInsResponse[];
+export interface INSiServiceFetchInsResult {
+    successRequest: INSiServiceFetchInsRequest | null;
+    failedRequests: INSiServiceFetchInsRequest[];
+}
+export interface INSiServiceFetchInsRequest {
+    status: INSiServiceRequestStatus;
+    request: INSiServiceRequest;
+    response: INSiServiceResponse;
+}
+export interface INSiServiceRequest {
+    id: string;
+    xml: string;
+}
+export interface INSiServiceResponse {
+    formatted: INSiServiceFormattedResponse | null;
+    json: INSiServiceJsonResponse | null;
+    xml: string;
+    error: INSiServiceError | null;
+}
+export interface INSiServiceError {
+    siramCode: string | undefined;
+    text: string | undefined;
+    desirCode: string | undefined;
+    error: string | undefined;
+}
+export declare enum INSiServiceRequestStatus {
+    SUCCESS = "SUCCESS",
+    FAIL = "FAIL"
 }
 export declare enum CRCodes {
     OK = "00",
@@ -27,7 +48,7 @@ interface InsHisto {
     };
     OID: string;
 }
-export interface FetchInsRawBody {
+export interface INSiServiceJsonResponse {
     CR: {
         CodeCR: CRCodes.OK;
         LibelleCR: CRLabels.OK;
@@ -38,7 +59,7 @@ export interface FetchInsRawBody {
         CodeCR: CRCodes.MULTIPLE_MATCHES;
         LibelleCR: CRLabels.MULTIPLE_MATCHES;
     };
-    INDIVIDU: {
+    INDIVIDU?: {
         INSACTIF: {
             IdIndividu: {
                 NumIdentifiant: string;
@@ -56,7 +77,7 @@ export interface FetchInsRawBody {
         };
     };
 }
-export interface FetchInsBody {
+export interface INSiServiceFormattedResponse {
     birthName: string;
     firstName: string;
     allFirstNames: string;

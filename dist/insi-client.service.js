@@ -77,69 +77,98 @@ class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
-     * @returns Promise<INSiFetchInsResponse>
+     * @returns Promise<INSiServiceFetchInsResult>
      */
     fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._soapClient) {
                 throw new Error('fetchIns ERROR: you must init client security first');
             }
-            return this._launchSoapRequestForPerson(person, requestId);
+            const fetchInsRequests = yield this._launchSoapRequestForPerson(person, requestId);
+            const [[successFetchRequest], failedFetchRequests] = lodash_1.default.partition(fetchInsRequests, ({ response }) => { var _a, _b; return ((_b = (_a = response.json) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK; });
+            return {
+                successRequest: successFetchRequest || null,
+                failedRequests: failedFetchRequests,
+            };
         });
     }
     _launchSoapRequestForPerson(person, requestId) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
-            let rawSoapResponse;
-            const failedRequests = [];
+            const fetchRequests = [];
             const namesToSendRequestFor = person.getSoapBodyAsJson();
-            const { method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
             const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
+            // Try for each person name, stop if technical error or perfect match
             for (let i = 0; i < namesToSendRequestFor.length; i++) {
+                this._soapClient.clearSoapHeaders();
                 this._setSoapHeaders(requestId);
                 try {
                     this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
-                    rawSoapResponse = yield this._soapClient[`${method}Async`](namesToSendRequestFor[i]);
+                    const fetchRequest = yield this._callFetchFromIdentityTraits(requestId, namesToSendRequestFor[i]);
+                    fetchRequests.push(fetchRequest);
                     // reset the httpClient to the original one
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-                    // in production environnement this error will not be thrown, but it will be a normal response, so we add it to the failed requests
-                    if (((_b = (_a = rawSoapResponse[0]) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) !== insi_fetch_ins_models_1.CRCodes.NO_RESULT) {
-                        this._soapClient.clearSoapHeaders();
+                    // If we find a result we stop the loop
+                    if (((_c = (_b = (_a = fetchRequest.response) === null || _a === void 0 ? void 0 : _a.json) === null || _b === void 0 ? void 0 : _b.CR) === null || _c === void 0 ? void 0 : _c.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK || fetchRequest.response.error) {
                         break;
                     }
-                    failedRequests.push(this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId));
                 }
                 catch (fetchError) {
                     // reset the httpClient to the original one
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-                    this._soapClient.clearSoapHeaders();
                     const originalError = this._specificErrorManagement(fetchError) || fetchError;
                     throw new insi_error_1.InsiError({ requestId: requestId, originalError });
                 }
-                this._soapClient.clearSoapHeaders();
             }
-            return Object.assign(Object.assign({}, this._getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId)), { failedRequests: failedRequests });
+            return fetchRequests;
         });
+    }
+    _callFetchFromIdentityTraits(requestId, soapBody) {
+        const { method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            this._soapClient[`${method}`](soapBody, (err, result, rawResponse, soapHeader, rawRequest) => {
+                var _a;
+                if (((_a = err === null || err === void 0 ? void 0 : err.response) === null || _a === void 0 ? void 0 : _a.status) === 500 && err.body) {
+                    resolve({
+                        status: insi_fetch_ins_models_1.INSiServiceRequestStatus.FAIL,
+                        request: {
+                            id: requestId,
+                            xml: rawRequest,
+                        },
+                        response: {
+                            formatted: null,
+                            json: null,
+                            xml: rawResponse,
+                            error: insi_helper_1.InsiHelper.getServiceErrorFromXML(rawResponse),
+                        },
+                    });
+                }
+                else if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve({
+                        status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                        request: {
+                            id: requestId,
+                            xml: rawRequest,
+                        },
+                        response: {
+                            formatted: insi_helper_1.InsiHelper.formatFetchINSResult(result),
+                            json: insi_helper_1.InsiHelper.changeInsHistoToArray(result),
+                            xml: rawResponse,
+                            error: null,
+                        },
+                    });
+                }
+            });
+        }));
     }
     _setSoapHeaders(requestId) {
         const { header } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
         this._setDefaultHeaders();
         this._soapClient.addSoapHeader(header, 'Action', 'wsa', 'http://www.w3.org/2005/08/addressing');
         this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
-    }
-    _getFetchResponseFromRawSoapResponse(rawSoapResponse, requestId) {
-        var _a, _b;
-        const [rawResponse, responseAsXMl, , requestAsXML] = rawSoapResponse;
-        if (((_a = rawResponse === null || rawResponse === void 0 ? void 0 : rawResponse.INDIVIDU) === null || _a === void 0 ? void 0 : _a.INSHISTO) && !lodash_1.default.isArray((_b = rawResponse === null || rawResponse === void 0 ? void 0 : rawResponse.INDIVIDU) === null || _b === void 0 ? void 0 : _b.INSHISTO)) {
-            rawResponse.INDIVIDU.INSHISTO = [rawResponse.INDIVIDU.INSHISTO];
-        }
-        return {
-            requestId,
-            rawBody: rawResponse,
-            body: insi_helper_1.InsiHelper.formatFetchINSRawResponse(rawResponse),
-            bodyAsXMl: responseAsXMl,
-            requestBodyAsXML: requestAsXML,
-        };
     }
     _setClientSSLSecurityPFX(pfx, passphrase) {
         this._soapClient.setSecurity(new soap_1.ClientSSLSecurityPFX(pfx, {
