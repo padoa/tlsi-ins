@@ -49,7 +49,6 @@ export declare class INSiClient {
     private _launchSoapRequestForPerson;
     private _callFetchFromIdentityTraits;
     private _setSoapHeaders;
-    private _getServiceErrorFromXML;
     private _setClientSSLSecurityPFX;
     private _setAssertionPsSecurity;
     private _setDefaultHeaders;

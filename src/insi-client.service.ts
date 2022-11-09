@@ -170,15 +170,6 @@ export class INSiClient {
     this._soapClient.addSoapHeader({ MessageID: `uuid:${requestId}` }, 'MessageID', 'wsa', 'http://www.w3.org/2005/08/addressing');
   }
 
-  private _getServiceErrorFromXML(xml: string): INSiServiceError {
-    return {
-      siramCode: xml.match(/(<S:Subcode><S:Value>S:)(.*)(<\/S:Value>)/)?.[2],
-      text: xml.match(/(<S:Text xml:lang="en">)([\S\s]*?)(<\/S:Text>)/)?.[2],
-      desirCode: xml.match(/(code=")(.*?)(")/)?.[2],
-      error: xml.match(/(<siram:Erreur(.*)>)([\S\s]*)(<\/siram:Erreur>)/)?.[3],
-    };
-  }
-
   private _setClientSSLSecurityPFX(pfx: Buffer, passphrase?: string): void {
     this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
       passphrase,
