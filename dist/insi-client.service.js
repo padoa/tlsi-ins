@@ -24,6 +24,7 @@ const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
 const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
+const lodash_1 = __importDefault(require("lodash"));
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 /**
@@ -76,14 +77,19 @@ class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
-     * @returns Promise<INSiServiceFetchRequest[]>
+     * @returns Promise<INSiServiceFetchInsResult>
      */
     fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._soapClient) {
                 throw new Error('fetchIns ERROR: you must init client security first');
             }
-            return this._launchSoapRequestForPerson(person, requestId);
+            const fetchInsRequests = yield this._launchSoapRequestForPerson(person, requestId);
+            const [[successFetchRequest], failedFetchRequests] = lodash_1.default.partition(fetchInsRequests, ({ response }) => { var _a, _b; return ((_b = (_a = response.json) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK; });
+            return {
+                successRequest: successFetchRequest || null,
+                failedRequests: failedFetchRequests,
+            };
         });
     }
     _launchSoapRequestForPerson(person, requestId) {
@@ -94,6 +100,7 @@ class INSiClient {
             const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
             // Try for each person name, stop if technical error or perfect match
             for (let i = 0; i < namesToSendRequestFor.length; i++) {
+                this._soapClient.clearSoapHeaders();
                 this._setSoapHeaders(requestId);
                 try {
                     this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
@@ -103,18 +110,15 @@ class INSiClient {
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
                     // If we find a result we stop the loop
                     if (((_c = (_b = (_a = fetchRequest.response) === null || _a === void 0 ? void 0 : _a.json) === null || _b === void 0 ? void 0 : _b.CR) === null || _c === void 0 ? void 0 : _c.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK || fetchRequest.response.error) {
-                        this._soapClient.clearSoapHeaders();
                         break;
                     }
                 }
                 catch (fetchError) {
                     // reset the httpClient to the original one
                     this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-                    this._soapClient.clearSoapHeaders();
                     const originalError = this._specificErrorManagement(fetchError) || fetchError;
                     throw new insi_error_1.InsiError({ requestId: requestId, originalError });
                 }
-                this._soapClient.clearSoapHeaders();
             }
             return fetchRequests;
         });

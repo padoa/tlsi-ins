@@ -2,7 +2,7 @@
 import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
-import { INSiServiceFetchRequest } from './models/insi-fetch-ins.models';
+import { INSiServiceFetchInsResult } from './models/insi-fetch-ins.models';
 interface INSiClientArgs {
     lpsContext: LpsContext;
     bamContext: BamContext;
@@ -41,11 +41,11 @@ export declare class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
-     * @returns Promise<INSiServiceFetchRequest[]>
+     * @returns Promise<INSiServiceFetchInsResult>
      */
     fetchIns(person: INSiPerson, { requestId }?: {
         requestId?: string | undefined;
-    }): Promise<INSiServiceFetchRequest[]>;
+    }): Promise<INSiServiceFetchInsResult>;
     private _launchSoapRequestForPerson;
     private _callFetchFromIdentityTraits;
     private _setSoapHeaders;

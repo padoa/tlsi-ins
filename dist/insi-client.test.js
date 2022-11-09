@@ -119,10 +119,10 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1997-02-26',
             });
-            const [fetchRequest] = yield insiClient.fetchIns(person, {
+            const { successRequest } = yield insiClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
-            expect(fetchRequest).toEqual({
+            expect(successRequest).toEqual({
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
@@ -171,7 +171,7 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1997-02-26',
             });
-            const [{ status, response }] = yield client.fetchIns(person);
+            const { failedRequests: [{ status, response }] } = yield client.fetchIns(person);
             expect(status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.FAIL);
             expect(response.error).toEqual({
                 siramCode: 'siram_100',
@@ -200,12 +200,12 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1997-02-26',
             });
-            const [{ status, request, response }] = yield insiCpxClient.fetchIns(person, {
+            const { successRequest } = yield insiCpxClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
-            expect(status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
-            expect(request.id).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-            expect(response).toEqual((0, adrtrois_dominique_fixture_1.getAdrtroisDominiqueResponse)());
+            expect(successRequest === null || successRequest === void 0 ? void 0 : successRequest.status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
+            expect(successRequest === null || successRequest === void 0 ? void 0 : successRequest.request.id).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
+            expect(successRequest === null || successRequest === void 0 ? void 0 : successRequest.response).toEqual((0, adrtrois_dominique_fixture_1.getAdrtroisDominiqueResponse)());
         }));
     });
     describe('Use case and INS-i Errors (PfxSecurity Used)', () => {
@@ -216,26 +216,29 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Male,
                 dateOfBirth: '2014-02-01',
             });
-            const [fetchRequest] = yield insiClient.fetchIns(person, {
+            const fetchInsResponse = yield insiClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
-            expect(fetchRequest).toEqual({
-                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
-                request: {
-                    id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-                    xml: (0, de_vinci_leonardo_fixture_1.getDeVinciLeonardoXmlRequest)(padoaConf),
-                },
-                response: {
-                    error: null,
-                    formatted: null,
-                    json: {
-                        CR: {
-                            CodeCR: insi_fetch_ins_models_1.CRCodes.MULTIPLE_MATCHES,
-                            LibelleCR: insi_fetch_ins_models_1.CRLabels.MULTIPLE_MATCHES,
-                        }
-                    },
-                    xml: (0, insi_client_fixture_1.getCR02XmlResponse)(),
-                },
+            expect(fetchInsResponse).toEqual({
+                successRequest: null,
+                failedRequests: [{
+                        status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                        request: {
+                            id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+                            xml: (0, de_vinci_leonardo_fixture_1.getDeVinciLeonardoXmlRequest)(padoaConf),
+                        },
+                        response: {
+                            error: null,
+                            formatted: null,
+                            json: {
+                                CR: {
+                                    CodeCR: insi_fetch_ins_models_1.CRCodes.MULTIPLE_MATCHES,
+                                    LibelleCR: insi_fetch_ins_models_1.CRLabels.MULTIPLE_MATCHES,
+                                }
+                            },
+                            xml: (0, insi_client_fixture_1.getCR02XmlResponse)(),
+                        },
+                    }],
             });
         }));
         test('should be able to call fetchIns with multiple names even if the first name fails (OLA CATARINA BELLA)', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -246,28 +249,30 @@ describe('INSi Client', () => {
                 dateOfBirth: '1936-06-21',
             });
             const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
-            const [firstFetchRequest, secondFetchRequest] = yield insiClient.fetchIns(person, { requestId });
+            const fetchInsResponse = yield insiClient.fetchIns(person, { requestId });
             const cr01XmlResponse = fs_1.default.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
-            expect(firstFetchRequest).toEqual({
-                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
-                request: {
-                    id: requestId,
-                    xml: (0, tchitchi_ola_catarina_fixture_1.getTchitchiOlaXmlRequest)(padoaConf),
+            expect(fetchInsResponse).toEqual({
+                successRequest: {
+                    status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                    request: {
+                        id: requestId,
+                        xml: (0, tchitchi_ola_catarina_fixture_1.getTchitchiCatarinaXmlRequest)(padoaConf),
+                    },
+                    response: (0, tchitchi_ola_catarina_fixture_1.getTchitchiCatarinaResponse)(),
                 },
-                response: {
-                    formatted: null,
-                    json: { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } },
-                    xml: cr01XmlResponse,
-                    error: null,
-                }
-            });
-            expect(secondFetchRequest).toEqual({
-                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
-                request: {
-                    id: requestId,
-                    xml: (0, tchitchi_ola_catarina_fixture_1.getTchitchiCatarinaXmlRequest)(padoaConf),
-                },
-                response: (0, tchitchi_ola_catarina_fixture_1.getTchitchiCatarinaResponse)(),
+                failedRequests: [{
+                        status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                        request: {
+                            id: requestId,
+                            xml: (0, tchitchi_ola_catarina_fixture_1.getTchitchiOlaXmlRequest)(padoaConf),
+                        },
+                        response: {
+                            formatted: null,
+                            json: { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } },
+                            xml: cr01XmlResponse,
+                            error: null,
+                        }
+                    }],
             });
         }));
         test('should attempt all first names separately and all together at the end (PIERRE PAUL JACQUES)', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -278,7 +283,7 @@ describe('INSi Client', () => {
                 dateOfBirth: '1993-01-27',
             });
             const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
-            const [pierreFetchRequest, paulFetchRequest, jaquesFetchRequest, allNamesFetchRequest] = yield insiClient.fetchIns(person, { requestId });
+            const { failedRequests: [pierreFetchRequest, paulFetchRequest, jaquesFetchRequest, allNamesFetchRequest] } = yield insiClient.fetchIns(person, { requestId });
             const defaultExpectedResponseForHouilles = {
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
@@ -307,10 +312,10 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Male,
                 dateOfBirth: '2009-07-14',
             });
-            const [fetchRequest] = yield insiClient.fetchIns(person, {
+            const { successRequest } = yield insiClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
-            expect(fetchRequest).toEqual({
+            expect(successRequest).toEqual({
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
@@ -333,8 +338,8 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Male,
                 dateOfBirth: '2009-07-14',
             });
-            const [fetchRequest] = yield client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
-            expect(fetchRequest).toEqual({
+            const { successRequest } = yield client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
+            expect(successRequest).toEqual({
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
@@ -356,7 +361,7 @@ describe('INSi Client', () => {
                 gender: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1997-02-26',
             });
-            const [fetchRequest] = yield insiClient.fetchIns(person, { requestId });
+            const { successRequest, failedRequests: [fetchRequest] } = yield insiClient.fetchIns(person, { requestId });
             const requestBodyAsXML = (0, insi_client_fixture_1.getCNDAValidationXmlRequest)({
                 idam: env_1.IDAM,
                 version: env_1.SOFTWARE_VERSION,
@@ -366,6 +371,7 @@ describe('INSi Client', () => {
                 sexe: insi_person_class_1.Gender.Female,
                 dateOfBirth: '1997-02-26',
             });
+            expect(successRequest).toBeNull();
             expect(fetchRequest).toEqual({
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.FAIL,
                 request: {

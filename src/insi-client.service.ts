@@ -11,12 +11,13 @@ import {
   INSiServiceFetchRequest,
   CRCodes,
   INSiServiceRequestStatus,
-  INSiServiceError,
+  INSiServiceError, INSiServiceFetchInsResult,
 } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
+import _ from 'lodash';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -83,13 +84,18 @@ export class INSiClient {
    * Fetches INS information of a person
    * @param  {INSiPerson} person the person who's information are about to be fetched
    * @param  {string} requestId of the current request to Ins
-   * @returns Promise<INSiServiceFetchRequest[]>
+   * @returns Promise<INSiServiceFetchInsResult>
    */
-  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiServiceFetchRequest[]> {
+  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}): Promise<INSiServiceFetchInsResult> {
     if (!this._soapClient) {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
-    return this._launchSoapRequestForPerson(person, requestId);
+    const fetchInsRequests = await this._launchSoapRequestForPerson(person, requestId);
+    const [[successFetchRequest], failedFetchRequests] = _.partition(fetchInsRequests, ({ response }) => response.json?.CR?.CodeCR === CRCodes.OK);
+    return {
+      successRequest: successFetchRequest || null,
+      failedRequests: failedFetchRequests,
+    };
   }
 
   private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiServiceFetchRequest[]> {
@@ -98,6 +104,7 @@ export class INSiClient {
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     // Try for each person name, stop if technical error or perfect match
     for (let i = 0; i < namesToSendRequestFor.length; i++) {
+      this._soapClient.clearSoapHeaders();
       this._setSoapHeaders(requestId);
       try {
         this._manageCndaValidationSpecialCases(namesToSendRequestFor[i].Prenom);
@@ -106,18 +113,13 @@ export class INSiClient {
         // reset the httpClient to the original one
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
         // If we find a result we stop the loop
-        if (fetchRequest.response?.json?.CR?.CodeCR === CRCodes.OK || fetchRequest.response.error) {
-          this._soapClient.clearSoapHeaders();
-          break;
-        }
+        if (fetchRequest.response?.json?.CR?.CodeCR === CRCodes.OK || fetchRequest.response.error) { break; }
       } catch (fetchError) {
         // reset the httpClient to the original one
         this._httpClient.handleResponse = savedOverriddenHttpClientResponseHandler;
-        this._soapClient.clearSoapHeaders();
         const originalError = this._specificErrorManagement(fetchError) || fetchError;
         throw new InsiError({ requestId: requestId, originalError });
       }
-      this._soapClient.clearSoapHeaders();
     }
     return fetchRequests;
   }
