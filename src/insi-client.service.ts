@@ -8,7 +8,7 @@ import { INSiPerson, INSiPersonSoapBody } from './class/insi-person.class';
 import { combineCertAsPem } from './utils/certificates';
 import { INSiSoapActions, INSiSoapActionsName } from './models/insi-soap-action.models';
 import {
-  INSiServiceFetchRequest,
+  INSiServiceFetchInsRequest,
   CRCodes,
   INSiServiceRequestStatus,
   INSiServiceError, INSiServiceFetchInsResult,
@@ -98,8 +98,8 @@ export class INSiClient {
     };
   }
 
-  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiServiceFetchRequest[]> {
-    const fetchRequests: INSiServiceFetchRequest[] = [];
+  private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
+    const fetchRequests: INSiServiceFetchInsRequest[] = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
     const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
     // Try for each person name, stop if technical error or perfect match
@@ -124,9 +124,9 @@ export class INSiClient {
     return fetchRequests;
   }
 
-  private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiServiceFetchRequest> {
+  private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiServiceFetchInsRequest> {
     const { method } = INSiSoapActions[INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];
-    return new Promise<INSiServiceFetchRequest>(async (resolve, reject) => {
+    return new Promise<INSiServiceFetchInsRequest>(async (resolve, reject) => {
       this._soapClient[`${method}`](soapBody, (err: any, result: any, rawResponse: string, soapHeader: any, rawRequest: string) => {
         if (err?.response?.status === 500 && err.body) {
           resolve({

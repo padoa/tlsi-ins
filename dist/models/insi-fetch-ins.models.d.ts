@@ -1,9 +1,9 @@
 import { Gender } from '../class/insi-person.class';
 export interface INSiServiceFetchInsResult {
-    successRequest: INSiServiceFetchRequest | null;
-    failedRequests: INSiServiceFetchRequest[];
+    successRequest: INSiServiceFetchInsRequest | null;
+    failedRequests: INSiServiceFetchInsRequest[];
 }
-export interface INSiServiceFetchRequest {
+export interface INSiServiceFetchInsRequest {
     status: INSiServiceRequestStatus;
     request: INSiServiceRequest;
     response: INSiServiceResponse;
