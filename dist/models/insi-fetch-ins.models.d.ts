@@ -59,7 +59,7 @@ export interface INSiServiceJsonResponse {
         CodeCR: CRCodes.MULTIPLE_MATCHES;
         LibelleCR: CRLabels.MULTIPLE_MATCHES;
     };
-    INDIVIDU: {
+    INDIVIDU?: {
         INSACTIF: {
             IdIndividu: {
                 NumIdentifiant: string;
