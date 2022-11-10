@@ -10,7 +10,7 @@ const getPierreAlainXmlRequest = ({ idam, version, name }) => (0, insi_client_fi
     name,
     birthName: 'ECETINSI',
     firstName: 'PIERRE-ALAIN',
-    sexe: insi_person_class_1.Gender.Male,
+    gender: insi_person_class_1.Gender.Male,
     dateOfBirth: '2009-07-14',
 });
 exports.getPierreAlainXmlRequest = getPierreAlainXmlRequest;

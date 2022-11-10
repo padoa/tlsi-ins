@@ -20,7 +20,7 @@ export const getCR02XmlResponse = (): string => {
 };
 
 export const getCNDAValidationXmlRequest = (
-  { idam, version, name, birthName, firstName, sexe, dateOfBirth }: { idam: string, version: string, name: string, birthName: string, firstName: string, sexe: Gender, dateOfBirth: string },
+  { idam, version, name, birthName, firstName, gender, dateOfBirth }: { idam: string, version: string, name: string, birthName: string, firstName: string, gender: Gender, dateOfBirth: string },
 ): string => {
   return [
     '<?xml version="1.0" encoding="utf-8"?>',
@@ -48,7 +48,7 @@ export const getCNDAValidationXmlRequest = (
     '<insi_recsans_ins:RECSANSVITALE xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans">',
     `<insi_recsans_ins:NomNaissance>${birthName}</insi_recsans_ins:NomNaissance>`,
     `<insi_recsans_ins:Prenom>${firstName}</insi_recsans_ins:Prenom>`,
-    `<insi_recsans_ins:Sexe>${sexe}</insi_recsans_ins:Sexe>`,
+    `<insi_recsans_ins:Sexe>${gender}</insi_recsans_ins:Sexe>`,
     `<insi_recsans_ins:DateNaissance>${dateOfBirth}</insi_recsans_ins:DateNaissance>`,
     '</insi_recsans_ins:RECSANSVITALE>',
     '</soap:Body>',

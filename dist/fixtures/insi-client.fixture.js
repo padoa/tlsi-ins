@@ -19,7 +19,7 @@ const getCR02XmlResponse = () => {
     ].join('');
 };
 exports.getCR02XmlResponse = getCR02XmlResponse;
-const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName, sexe, dateOfBirth }) => {
+const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName, gender, dateOfBirth }) => {
     return [
         '<?xml version="1.0" encoding="utf-8"?>',
         '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
@@ -46,7 +46,7 @@ const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName
         '<insi_recsans_ins:RECSANSVITALE xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans">',
         `<insi_recsans_ins:NomNaissance>${birthName}</insi_recsans_ins:NomNaissance>`,
         `<insi_recsans_ins:Prenom>${firstName}</insi_recsans_ins:Prenom>`,
-        `<insi_recsans_ins:Sexe>${sexe}</insi_recsans_ins:Sexe>`,
+        `<insi_recsans_ins:Sexe>${gender}</insi_recsans_ins:Sexe>`,
         `<insi_recsans_ins:DateNaissance>${dateOfBirth}</insi_recsans_ins:DateNaissance>`,
         '</insi_recsans_ins:RECSANSVITALE>',
         '</soap:Body>',

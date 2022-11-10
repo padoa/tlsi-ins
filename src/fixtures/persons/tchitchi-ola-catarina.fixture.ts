@@ -14,7 +14,7 @@ export const getTchitchiOlaXmlRequest = ({ idam, version, name }: { idam: string
   name,
   birthName: 'TCHITCHI',
   firstName: 'OLA',
-  sexe: Gender.Female,
+  gender: Gender.Female,
   dateOfBirth: '1936-06-21',
 });
 
@@ -24,7 +24,7 @@ export const getTchitchiCatarinaXmlRequest = ({ idam, version, name }: { idam: s
   name,
   birthName: 'TCHITCHI',
   firstName: 'CATARINA',
-  sexe: Gender.Female,
+  gender: Gender.Female,
   dateOfBirth: '1936-06-21',
 });
 

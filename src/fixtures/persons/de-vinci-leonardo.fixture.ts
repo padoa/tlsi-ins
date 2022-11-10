@@ -7,6 +7,6 @@ export const getDeVinciLeonardoXmlRequest = ({ idam, version, name }: { idam: st
   name,
   birthName: 'DE VINCI',
   firstName: 'LEONARDO',
-  sexe: Gender.Male,
+  gender: Gender.Male,
   dateOfBirth: '2014-02-01',
 });

@@ -13,7 +13,7 @@ export const getPierreAlainXmlRequest = ({ idam, version, name }: { idam: string
   name,
   birthName: 'ECETINSI',
   firstName: 'PIERRE-ALAIN',
-  sexe: Gender.Male,
+  gender: Gender.Male,
   dateOfBirth: '2009-07-14',
 })
 

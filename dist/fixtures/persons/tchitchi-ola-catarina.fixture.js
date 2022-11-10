@@ -10,7 +10,7 @@ const getTchitchiOlaXmlRequest = ({ idam, version, name }) => (0, insi_client_fi
     name,
     birthName: 'TCHITCHI',
     firstName: 'OLA',
-    sexe: insi_person_class_1.Gender.Female,
+    gender: insi_person_class_1.Gender.Female,
     dateOfBirth: '1936-06-21',
 });
 exports.getTchitchiOlaXmlRequest = getTchitchiOlaXmlRequest;
@@ -20,7 +20,7 @@ const getTchitchiCatarinaXmlRequest = ({ idam, version, name }) => (0, insi_clie
     name,
     birthName: 'TCHITCHI',
     firstName: 'CATARINA',
-    sexe: insi_person_class_1.Gender.Female,
+    gender: insi_person_class_1.Gender.Female,
     dateOfBirth: '1936-06-21',
 });
 exports.getTchitchiCatarinaXmlRequest = getTchitchiCatarinaXmlRequest;
