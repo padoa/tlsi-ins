@@ -26,6 +26,7 @@ const tchitchi_ola_catarina_fixture_1 = require("./fixtures/persons/tchitchi-ola
 const de_vinci_leonardo_fixture_1 = require("./fixtures/persons/de-vinci-leonardo.fixture");
 const pierre_alain_fixture_1 = require("./fixtures/persons/pierre-alain.fixture");
 const siram_100_desir_500_fake_idam_fixtures_1 = require("./fixtures/service-errors/siram_100-desir_500-fake-idam.fixtures");
+const adrtrois_toussaint_fixture_1 = require("./fixtures/persons/adrtrois-toussaint.fixture");
 jest.mock('./class/bam-context.class', () => ({
     BamContext: jest.fn((config) => ({
         getSoapHeaderAsJson: () => {
@@ -117,9 +118,9 @@ describe('INSi Client', () => {
             const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
             const person = new insi_person_class_1.INSiPerson({
                 birthName: 'ADRTROIS',
-                firstName: 'DOMINIQUE',
-                gender: insi_person_class_1.Gender.Female,
-                dateOfBirth: '1997-02-26',
+                firstName: 'TOUSSAINT',
+                gender: insi_person_class_1.Gender.Male,
+                dateOfBirth: '1960-01-01',
             });
             const fetchInsResult = yield insiClient.fetchIns(person, { requestId });
             expect(fetchInsResult).toEqual({
@@ -127,9 +128,9 @@ describe('INSi Client', () => {
                     status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                     request: {
                         id: requestId,
-                        xml: (0, adrtrois_dominique_fixture_1.getAdrtroisDominiqueXmlRequest)(padoaConf),
+                        xml: (0, adrtrois_toussaint_fixture_1.getAdrtroisToussaintXmlRequest)(padoaConf),
                     },
-                    response: (0, adrtrois_dominique_fixture_1.getAdrtroisDominiqueResponse)(),
+                    response: (0, adrtrois_toussaint_fixture_1.getAdrtroisToussaintResponse)(),
                 },
                 failedRequests: [],
             });
@@ -444,7 +445,7 @@ describe('INSi Client', () => {
      * You can test it locally by putting a valid assertion
      * */
     describe.skip('Security: Cpx', () => {
-        const assertionPs = `PUT ASSERTION HERE`;
+        const assertionPs = `PUT YOUR ASSERTION PS HERE`;
         let insiCpxClient;
         test('should create an insiClient with an AssertionPsSecurityClass', () => __awaiter(void 0, void 0, void 0, function* () {
             insiCpxClient = getClientWithDefinedId();
@@ -453,16 +454,24 @@ describe('INSi Client', () => {
         test('should be able to call fetchIns', () => __awaiter(void 0, void 0, void 0, function* () {
             const person = new insi_person_class_1.INSiPerson({
                 birthName: 'ADRTROIS',
-                firstName: 'DOMINIQUE',
-                gender: insi_person_class_1.Gender.Female,
-                dateOfBirth: '1997-02-26',
+                firstName: 'TOUSSAINT',
+                gender: insi_person_class_1.Gender.Male,
+                dateOfBirth: '1960-01-01',
             });
-            const { successRequest } = yield insiCpxClient.fetchIns(person, {
+            const fetchInsResult = yield insiCpxClient.fetchIns(person, {
                 requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
             });
-            expect(successRequest === null || successRequest === void 0 ? void 0 : successRequest.status).toEqual(insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS);
-            expect(successRequest === null || successRequest === void 0 ? void 0 : successRequest.request.id).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-            expect(successRequest === null || successRequest === void 0 ? void 0 : successRequest.response).toEqual((0, adrtrois_dominique_fixture_1.getAdrtroisDominiqueResponse)());
+            expect(fetchInsResult).toEqual({
+                successRequest: {
+                    status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                    request: {
+                        id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+                        xml: (0, adrtrois_toussaint_fixture_1.getAdrtroisToussaintXmlRequest)(Object.assign(Object.assign({}, padoaConf), { assertionPs })),
+                    },
+                    response: (0, adrtrois_toussaint_fixture_1.getAdrtroisToussaintResponse)(),
+                },
+                failedRequests: [],
+            });
         }));
     });
 });

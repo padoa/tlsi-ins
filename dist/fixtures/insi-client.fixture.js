@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCNDAValidationXmlRequest = exports.getCR02XmlResponse = exports.defaultDate = exports.defaultUuid = void 0;
+exports.getSecurityXmlForRequest = exports.getCNDAValidationXmlRequest = exports.getCR02XmlResponse = exports.defaultDate = exports.defaultUuid = void 0;
 exports.defaultUuid = '1f7425e2-b913-415c-adaa-785ee1076a70';
 exports.defaultDate = '2020-01-01';
 const getCR02XmlResponse = () => {
@@ -19,7 +19,7 @@ const getCR02XmlResponse = () => {
     ].join('');
 };
 exports.getCR02XmlResponse = getCR02XmlResponse;
-const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName, gender, dateOfBirth }) => {
+const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName, gender, dateOfBirth, assertionPs }) => {
     return [
         '<?xml version="1.0" encoding="utf-8"?>',
         '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
@@ -41,8 +41,9 @@ const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName
         `<ctxlps:Nom>urn:lps:${name}:${version}</ctxlps:Nom>`,
         '</ctxlps:LPS>',
         '</ctxlps:ContexteLPS> <wsa:Action xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns="http://www.w3.org/2005/08/addressing">urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecTraitsIdentite</wsa:Action> <wsa:MessageID xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns="http://www.w3.org/2005/08/addressing">uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f</wsa:MessageID>',
+        assertionPs ? (0, exports.getSecurityXmlForRequest)(assertionPs) : '',
         '</soap:Header>',
-        '<soap:Body>',
+        assertionPs ? '<soap:Body Id="_0">' : '<soap:Body>',
         '<insi_recsans_ins:RECSANSVITALE xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans">',
         `<insi_recsans_ins:NomNaissance>${birthName}</insi_recsans_ins:NomNaissance>`,
         `<insi_recsans_ins:Prenom>${firstName}</insi_recsans_ins:Prenom>`,
@@ -54,4 +55,10 @@ const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName
     ].join('');
 };
 exports.getCNDAValidationXmlRequest = getCNDAValidationXmlRequest;
+const getSecurityXmlForRequest = (assertionPs) => [
+    '<wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">',
+    assertionPs,
+    '</wsse:Security>',
+].join('');
+exports.getSecurityXmlForRequest = getSecurityXmlForRequest;
 //# sourceMappingURL=insi-client.fixture.js.map

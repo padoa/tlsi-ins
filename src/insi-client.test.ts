@@ -12,7 +12,7 @@ import {
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, INSiServiceRequestStatus } from './models/insi-fetch-ins.models';
-import { getAdrtroisDominiqueResponse, getAdrtroisDominiqueXmlRequest } from './fixtures/persons/adrtrois-dominique.fixture';
+import { getAdrtroisDominiqueXmlRequest } from './fixtures/persons/adrtrois-dominique.fixture';
 import {
   getTchitchiCatarinaResponse,
   getTchitchiCatarinaXmlRequest,
@@ -20,11 +20,17 @@ import {
 } from './fixtures/persons/tchitchi-ola-catarina.fixture';
 import { getDeVinciLeonardoXmlRequest } from './fixtures/persons/de-vinci-leonardo.fixture';
 import {
-  getPierreAlainFormattedResponse, getPierreAlainLiveXmlResponse,
-  getPierreAlainRawResponse, getPierreAlainXmlRequest,
+  getPierreAlainFormattedResponse,
+  getPierreAlainLiveXmlResponse,
+  getPierreAlainRawResponse,
+  getPierreAlainXmlRequest,
   getPierreAlainXmlResponse,
 } from './fixtures/persons/pierre-alain.fixture';
 import { fakeIdamXmlResponse } from './fixtures/service-errors/siram_100-desir_500-fake-idam.fixtures';
+import {
+  getAdrtroisToussaintResponse,
+  getAdrtroisToussaintXmlRequest,
+} from './fixtures/persons/adrtrois-toussaint.fixture';
 
 jest.mock('./class/bam-context.class', () => ({
   BamContext: jest.fn((config: { emitter: string }) => ({
@@ -128,9 +134,9 @@ describe('INSi Client', () => {
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
-        firstName: 'DOMINIQUE',
-        gender: Gender.Female,
-        dateOfBirth: '1997-02-26',
+        firstName: 'TOUSSAINT',
+        gender: Gender.Male,
+        dateOfBirth: '1960-01-01',
       });
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId });
@@ -140,9 +146,9 @@ describe('INSi Client', () => {
           status: INSiServiceRequestStatus.SUCCESS,
           request: {
             id: requestId,
-            xml: getAdrtroisDominiqueXmlRequest(padoaConf),
+            xml: getAdrtroisToussaintXmlRequest(padoaConf),
           },
-          response: getAdrtroisDominiqueResponse(),
+          response: getAdrtroisToussaintResponse(),
         },
         failedRequests: [],
       });
@@ -486,7 +492,7 @@ describe('INSi Client', () => {
    * You can test it locally by putting a valid assertion
    * */
   describe.skip('Security: Cpx', () => {
-    const assertionPs = `PUT ASSERTION HERE`;
+    const assertionPs = `PUT YOUR ASSERTION PS HERE`;
     let insiCpxClient: INSiClient;
     test('should create an insiClient with an AssertionPsSecurityClass', async () => {
       insiCpxClient = getClientWithDefinedId();
@@ -496,18 +502,26 @@ describe('INSi Client', () => {
     test('should be able to call fetchIns', async () => {
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
-        firstName: 'DOMINIQUE',
-        gender: Gender.Female,
-        dateOfBirth: '1997-02-26',
+        firstName: 'TOUSSAINT',
+        gender: Gender.Male,
+        dateOfBirth: '1960-01-01',
       });
 
-      const { successRequest } = await insiCpxClient.fetchIns(person, {
+      const fetchInsResult = await insiCpxClient.fetchIns(person, {
         requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
       });
 
-      expect(successRequest?.status).toEqual(INSiServiceRequestStatus.SUCCESS);
-      expect(successRequest?.request.id).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-      expect(successRequest?.response).toEqual(getAdrtroisDominiqueResponse());
+      expect(fetchInsResult).toEqual({
+        successRequest: {
+          status: INSiServiceRequestStatus.SUCCESS,
+          request: {
+            id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+            xml: getAdrtroisToussaintXmlRequest({ ...padoaConf, assertionPs }),
+          },
+          response: getAdrtroisToussaintResponse(),
+        },
+        failedRequests: [],
+      });
     });
   });
 });
