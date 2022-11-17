@@ -10,7 +10,7 @@ const getAdrtroisDominiqueXmlRequest = ({ idam, version, name }) => (0, insi_cli
     name,
     birthName: 'ADRTROIS',
     firstName: 'DOMINIQUE',
-    sexe: insi_person_class_1.Gender.Female,
+    gender: insi_person_class_1.Gender.Female,
     dateOfBirth: '1997-02-26',
 });
 exports.getAdrtroisDominiqueXmlRequest = getAdrtroisDominiqueXmlRequest;

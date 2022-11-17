@@ -14,7 +14,7 @@ export const getAdrtroisDominiqueXmlRequest = ({ idam, version, name }: { idam: 
   name,
   birthName: 'ADRTROIS',
   firstName: 'DOMINIQUE',
-  sexe: Gender.Female,
+  gender: Gender.Female,
   dateOfBirth: '1997-02-26',
 })
 

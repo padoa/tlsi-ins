@@ -12,7 +12,7 @@ import {
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
 import { CRCodes, CRLabels, INSiServiceRequestStatus } from './models/insi-fetch-ins.models';
-import { getAdrtroisDominiqueResponse, getAdrtroisDominiqueXmlRequest } from './fixtures/persons/adrtrois-dominique.fixture';
+import { getAdrtroisDominiqueXmlRequest } from './fixtures/persons/adrtrois-dominique.fixture';
 import {
   getTchitchiCatarinaResponse,
   getTchitchiCatarinaXmlRequest,
@@ -20,10 +20,17 @@ import {
 } from './fixtures/persons/tchitchi-ola-catarina.fixture';
 import { getDeVinciLeonardoXmlRequest } from './fixtures/persons/de-vinci-leonardo.fixture';
 import {
-  getPierreAlainFormattedResponse, getPierreAlainLiveXmlResponse,
-  getPierreAlainRawResponse, getPierreAlainXmlRequest,
+  getPierreAlainFormattedResponse,
+  getPierreAlainLiveXmlResponse,
+  getPierreAlainRawResponse,
+  getPierreAlainXmlRequest,
   getPierreAlainXmlResponse,
 } from './fixtures/persons/pierre-alain.fixture';
+import { fakeIdamXmlResponse } from './fixtures/service-errors/siram_100-desir_500-fake-idam.fixtures';
+import {
+  getAdrtroisToussaintResponse,
+  getAdrtroisToussaintXmlRequest,
+} from './fixtures/persons/adrtrois-toussaint.fixture';
 
 jest.mock('./class/bam-context.class', () => ({
   BamContext: jest.fn((config: { emitter: string }) => ({
@@ -124,24 +131,26 @@ describe('INSi Client', () => {
 
   describe('Security: Pfx', () => {
     test('should be able to call fetchIns', async () => {
+      const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
-        firstName: 'DOMINIQUE',
-        gender: Gender.Female,
-        dateOfBirth: '1997-02-26',
+        firstName: 'TOUSSAINT',
+        gender: Gender.Male,
+        dateOfBirth: '1960-01-01',
       });
 
-      const { successRequest } = await insiClient.fetchIns(person, {
-        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
-      });
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId });
 
-      expect(successRequest).toEqual({
-        status: INSiServiceRequestStatus.SUCCESS,
-        request: {
-          id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-          xml: getAdrtroisDominiqueXmlRequest(padoaConf),
+      expect(fetchInsResult).toEqual({
+        successRequest: {
+          status: INSiServiceRequestStatus.SUCCESS,
+          request: {
+            id: requestId,
+            xml: getAdrtroisToussaintXmlRequest(padoaConf),
+          },
+          response: getAdrtroisToussaintResponse(),
         },
-        response: getAdrtroisDominiqueResponse(),
+        failedRequests: [],
       });
     });
 
@@ -173,16 +182,17 @@ describe('INSi Client', () => {
     });
 
     test('should have a failed request if the software is not allowed', async () => {
-      const lps = new LPS({
-        idam: 'FAKE-IDAM',
-        version: SOFTWARE_VERSION,
-        name: SOFTWARE_NAME,
-        id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-      });
+      const lpsId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
+      const idam = 'FAKE-IDAM';
+      const version = SOFTWARE_VERSION;
+      const name = SOFTWARE_NAME;
+      const lps = new LPS({ idam, version, name, id: lpsId });
       const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
       const client = new INSiClient({ lpsContext, bamContext, });
       await client.initClientPfx(pfx, PASSPHRASE);
+
+      const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
         firstName: 'DOMINIQUE',
@@ -190,45 +200,28 @@ describe('INSi Client', () => {
         dateOfBirth: '1997-02-26',
       });
 
-      const { failedRequests: [{ status, response }] } = await client.fetchIns(person);
-      expect(status).toEqual(INSiServiceRequestStatus.FAIL);
-      expect(response.error).toEqual({
-        siramCode: 'siram_100',
-        text: "L'accès par ce progiciel au service n'est pas autorisé. Contactez l'éditeur du progiciel ou votre responsable informatique.",
-        desirCode: 'desir_550',
-        error: "Numéro d'autorisation du logiciel inconnu."
+      const fetchInsResult = await client.fetchIns(person, { requestId });
+      expect(fetchInsResult).toEqual({
+        successRequest: null,
+        failedRequests: [{
+          status: INSiServiceRequestStatus.FAIL,
+          request: {
+            id: requestId,
+            xml: getAdrtroisDominiqueXmlRequest({ idam, version, name }),
+          },
+          response: {
+            formatted: null,
+            json: null,
+            xml: fakeIdamXmlResponse,
+            error: {
+              siramCode: 'siram_100',
+              text: "L'accès par ce progiciel au service n'est pas autorisé. Contactez l'éditeur du progiciel ou votre responsable informatique.",
+              desirCode: 'desir_550',
+              error: "Numéro d'autorisation du logiciel inconnu.",
+            }
+          },
+        }],
       });
-    });
-  });
-
-  /**
-   * KEEP IT SKIPPED
-   * It cannot be a live test as the assertion expires after 1h
-   * You can test it locally by putting a valid assertion
-   * */
-  describe.skip('Security: Cpx', () => {
-    const assertionPs = `PUT ASSERTION HERE`;
-    let insiCpxClient: INSiClient;
-    test('should create an insiClient with an AssertionPsSecurityClass', async () => {
-      insiCpxClient = getClientWithDefinedId();
-      await insiCpxClient.initClientCpx(assertionPs);
-    });
-
-    test('should be able to call fetchIns', async () => {
-      const person = new INSiPerson({
-        birthName: 'ADRTROIS',
-        firstName: 'DOMINIQUE',
-        gender: Gender.Female,
-        dateOfBirth: '1997-02-26',
-      });
-
-      const { successRequest } = await insiCpxClient.fetchIns(person, {
-        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
-      });
-
-      expect(successRequest?.status).toEqual(INSiServiceRequestStatus.SUCCESS);
-      expect(successRequest?.request.id).toEqual('b3549edd-4ae9-472a-b26f-fd2fb4ef397f');
-      expect(successRequest?.response).toEqual(getAdrtroisDominiqueResponse());
     });
   });
 
@@ -241,11 +234,11 @@ describe('INSi Client', () => {
         dateOfBirth: '2014-02-01',
       });
 
-      const fetchInsResponse = await insiClient.fetchIns(person, {
+      const fetchInsResult = await insiClient.fetchIns(person, {
         requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
       });
 
-      expect(fetchInsResponse).toEqual({
+      expect(fetchInsResult).toEqual({
         successRequest: null,
         failedRequests: [{
           status: INSiServiceRequestStatus.SUCCESS,
@@ -276,10 +269,11 @@ describe('INSi Client', () => {
         dateOfBirth: '1936-06-21',
       });
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
-      const fetchInsResponse = await insiClient.fetchIns(person, { requestId });
       const cr01XmlResponse = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
 
-      expect(fetchInsResponse).toEqual({
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId });
+
+      expect(fetchInsResult).toEqual({
         successRequest: {
           status: INSiServiceRequestStatus.SUCCESS,
           request: {
@@ -312,45 +306,63 @@ describe('INSi Client', () => {
         dateOfBirth: '1993-01-27',
       });
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
+      const cr01XmlResponse = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
 
-      const { failedRequests: [pierreFetchRequest, paulFetchRequest, jaquesFetchRequest, allNamesFetchRequest] } = await insiClient.fetchIns(person, { requestId });
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId });
 
       const defaultExpectedResponseForHouilles = {
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
         birthName: 'HOUILLES',
-        sexe: Gender.Male,
+        gender: Gender.Male,
         dateOfBirth: '1993-01-27',
       };
 
-      expect(pierreFetchRequest.status).toEqual(INSiServiceRequestStatus.SUCCESS);
-      expect(pierreFetchRequest.response.json).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(pierreFetchRequest.request.xml).toEqual(getCNDAValidationXmlRequest({
-        ...defaultExpectedResponseForHouilles,
-        firstName: 'PIERRE',
-      }));
+      const CR01Response = {
+        formatted: null,
+        json: { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } },
+        xml: cr01XmlResponse,
+        error: null,
+      };
 
-      expect(paulFetchRequest.status).toEqual(INSiServiceRequestStatus.SUCCESS);
-      expect(paulFetchRequest.response.json).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(paulFetchRequest.request.xml).toEqual(getCNDAValidationXmlRequest({
-        ...defaultExpectedResponseForHouilles,
-        firstName: 'PAUL',
-      }));
+      const pierreFetchRequest = {
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: {
+          id: requestId,
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE' })
+        },
+        response: CR01Response,
+      };
+      const paulFetchRequest = {
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: {
+          id: requestId,
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PAUL' })
+        },
+        response: CR01Response,
+      };
+      const jaquesFetchRequest = {
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: {
+          id: requestId,
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'JACQUES' })
+        },
+        response: CR01Response,
+      };
+      const allNamesFetchRequest = {
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: {
+          id: requestId,
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE PAUL JACQUES' })
+        },
+        response: CR01Response,
+      };
 
-      expect(jaquesFetchRequest.status).toEqual(INSiServiceRequestStatus.SUCCESS);
-      expect(jaquesFetchRequest.response.json).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(jaquesFetchRequest.request.xml).toEqual(getCNDAValidationXmlRequest({
-        ...defaultExpectedResponseForHouilles,
-        firstName: 'JACQUES',
-      }));
-
-      expect(allNamesFetchRequest.status).toEqual(INSiServiceRequestStatus.SUCCESS);
-      expect(allNamesFetchRequest.response.json).toEqual({ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' }});
-      expect(allNamesFetchRequest.request.xml).toEqual(getCNDAValidationXmlRequest({
-        ...defaultExpectedResponseForHouilles,
-        firstName: 'PIERRE PAUL JACQUES',
-      }));
+      expect(fetchInsResult).toEqual({
+        successRequest: null,
+        failedRequests: [pierreFetchRequest, paulFetchRequest, jaquesFetchRequest, allNamesFetchRequest],
+      });
     });
 
     test('should be able to call fetchIns when its overridden for test_2.04 INSHISTO', async () => {
@@ -361,22 +373,25 @@ describe('INSi Client', () => {
         dateOfBirth: '2009-07-14',
       });
 
-      const { successRequest } = await insiClient.fetchIns(person, {
+      const fetchInsResult = await insiClient.fetchIns(person, {
         requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
       });
 
-      expect(successRequest).toEqual({
-        status: INSiServiceRequestStatus.SUCCESS,
-        request: {
-          id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-          xml: getPierreAlainXmlRequest(padoaConf),
+      expect(fetchInsResult).toEqual({
+        successRequest: {
+          status: INSiServiceRequestStatus.SUCCESS,
+          request: {
+            id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+            xml: getPierreAlainXmlRequest(padoaConf),
+          },
+          response: {
+            formatted: getPierreAlainFormattedResponse(),
+            json: getPierreAlainRawResponse(),
+            xml: getPierreAlainXmlResponse(),
+            error: null,
+          },
         },
-        response: {
-          formatted: getPierreAlainFormattedResponse(),
-          json: getPierreAlainRawResponse(),
-          xml: getPierreAlainXmlResponse(),
-          error: null,
-        },
+        failedRequests: [],
       });
     });
 
@@ -390,61 +405,122 @@ describe('INSi Client', () => {
         dateOfBirth: '2009-07-14',
       });
 
-      const { successRequest } = await client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
+      const fetchInsResult = await client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
 
-      expect(successRequest).toEqual({
-        status: INSiServiceRequestStatus.SUCCESS,
-        request: {
-          id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-          xml: getPierreAlainXmlRequest(padoaConf),
+      expect(fetchInsResult).toEqual({
+        successRequest: {
+          status: INSiServiceRequestStatus.SUCCESS,
+          request: {
+            id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+            xml: getPierreAlainXmlRequest(padoaConf),
+          },
+          response: {
+            formatted: getPierreAlainFormattedResponse(),
+            json: getPierreAlainRawResponse({ liveVersion: true }),
+            xml: getPierreAlainLiveXmlResponse(),
+            error: null,
+          },
         },
-        response: {
-          formatted: getPierreAlainFormattedResponse(),
-          json: getPierreAlainRawResponse({ liveVersion: true }),
-          xml: getPierreAlainLiveXmlResponse(),
-          error: null,
-        },
+        failedRequests: [],
       });
     });
 
-    test('should throw an INSi error if the person does not exist', async () => {
+    test('should throw an INSi error if the person does not exist that stop the loop', async () => {
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const person = new INSiPerson({
-        birthName: 'ADRTROIS-DOES-NOT-EXIST',
-        firstName: 'DOMINIQUE',
-        gender: Gender.Female,
-        dateOfBirth: '1997-02-26',
+        birthName: 'DE VINCI',
+        firstName: 'LEONARDO DICAPRIO BUFFALO',
+        gender: Gender.Male,
+        dateOfBirth: '2014-02-01',
       });
 
-      const { successRequest, failedRequests: [fetchRequest] } = await insiClient.fetchIns(person, { requestId });
-      const requestBodyAsXML = getCNDAValidationXmlRequest({
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId });
+      const dicaprioDevinciXmlRequest = getCNDAValidationXmlRequest({
         idam: IDAM,
         version: SOFTWARE_VERSION,
         name: SOFTWARE_NAME,
-        birthName: 'ADRTROIS-DOES-NOT-EXIST',
-        firstName: 'DOMINIQUE',
-        sexe: Gender.Female,
-        dateOfBirth: '1997-02-26',
+        birthName: 'DE VINCI',
+        firstName: 'DICAPRIO',
+        gender: Gender.Male,
+        dateOfBirth: '2014-02-01',
       })
 
-      expect(successRequest).toBeNull();
-      expect(fetchRequest).toEqual({
-        status: INSiServiceRequestStatus.FAIL,
-        request: {
-          id: requestId,
-          xml: requestBodyAsXML,
-        },
-        response: {
-          formatted: null,
-          json: null,
-          xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><S:Fault xmlns:ns4=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang=\"en\">Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite=\"fatal\" code=\"insi_102\" xmlns:siram=\"urn:siram\">L appel au service de recherche avec les traits d identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>",
-          error: {
-            desirCode: 'insi_102',
-            error: 'L appel au service de recherche avec les traits d identité renvoie une erreur technique.',
-            siramCode: 'siram_40',
-            text: 'Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
+      expect(fetchInsResult).toEqual({
+        successRequest: null,
+        failedRequests: [{
+          status: INSiServiceRequestStatus.SUCCESS,
+          request: {
+            id: requestId,
+            xml: getDeVinciLeonardoXmlRequest(padoaConf),
           },
+          response: {
+            error: null,
+            formatted: null,
+            json: {
+              CR: {
+                CodeCR: CRCodes.MULTIPLE_MATCHES,
+                LibelleCR: CRLabels.MULTIPLE_MATCHES,
+              }
+            },
+            xml: getCR02XmlResponse(),
+          },
+        }, {
+          status: INSiServiceRequestStatus.FAIL,
+          request: {
+            id: requestId,
+            xml: dicaprioDevinciXmlRequest,
+          },
+          response: {
+            formatted: null,
+            json: null,
+            xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><S:Fault xmlns:ns4=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang=\"en\">Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite=\"fatal\" code=\"insi_102\" xmlns:siram=\"urn:siram\">L appel au service de recherche avec les traits d identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>",
+            error: {
+              desirCode: 'insi_102',
+              error: 'L appel au service de recherche avec les traits d identité renvoie une erreur technique.',
+              siramCode: 'siram_40',
+              text: 'Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
+            },
+          },
+        }],
+      });
+    });
+  });
+
+  /**
+   * KEEP IT SKIPPED
+   * It cannot be a live test as the assertion expires after 1h
+   * You can test it locally by putting a valid assertion
+   * */
+  describe.skip('Security: Cpx', () => {
+    const assertionPs = `PUT YOUR ASSERTION PS HERE`;
+    let insiCpxClient: INSiClient;
+    test('should create an insiClient with an AssertionPsSecurityClass', async () => {
+      insiCpxClient = getClientWithDefinedId();
+      await insiCpxClient.initClientCpx(assertionPs);
+    });
+
+    test('should be able to call fetchIns', async () => {
+      const person = new INSiPerson({
+        birthName: 'ADRTROIS',
+        firstName: 'TOUSSAINT',
+        gender: Gender.Male,
+        dateOfBirth: '1960-01-01',
+      });
+
+      const fetchInsResult = await insiCpxClient.fetchIns(person, {
+        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+      });
+
+      expect(fetchInsResult).toEqual({
+        successRequest: {
+          status: INSiServiceRequestStatus.SUCCESS,
+          request: {
+            id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+            xml: getAdrtroisToussaintXmlRequest({ ...padoaConf, assertionPs }),
+          },
+          response: getAdrtroisToussaintResponse(),
         },
+        failedRequests: [],
       });
     });
   });

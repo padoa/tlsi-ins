@@ -9,7 +9,7 @@ const getDeVinciLeonardoXmlRequest = ({ idam, version, name }) => (0, insi_clien
     name,
     birthName: 'DE VINCI',
     firstName: 'LEONARDO',
-    sexe: insi_person_class_1.Gender.Male,
+    gender: insi_person_class_1.Gender.Male,
     dateOfBirth: '2014-02-01',
 });
 exports.getDeVinciLeonardoXmlRequest = getDeVinciLeonardoXmlRequest;
