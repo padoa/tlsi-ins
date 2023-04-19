@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/padoa/tlsi-ins",
   "dependencies": {
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.3",
     "lodash": "^4.17.21",
     "node-forge": "^1.2.0",
     "soap": "^0.43.0",
