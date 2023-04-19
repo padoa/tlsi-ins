@@ -9,7 +9,7 @@ export class InsiHelper {
     const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
     return {
       birthName: result.INDIVIDU.TIQ.NomNaissance,
-      firstName: result.INDIVIDU.TIQ.ListePrenom.split(' ')?.[0],
+      firstName: result.INDIVIDU.TIQ.ListePrenom?.split(' ')?.[0],
       allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
       gender: result.INDIVIDU.TIQ.Sexe,
       dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,
