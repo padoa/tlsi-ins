@@ -60,7 +60,7 @@ jest.mock('./class/lps-context.class', () => ({
                     Temps: new Date(insi_client_fixture_1.defaultDate).toISOString(),
                     Emetteur: config.emitter,
                     LPS: config.lps.getSoapHeaderAsJson(),
-                }
+                },
             };
             const name = 'ContexteLPS';
             const namespace = 'ctxlps';
@@ -166,7 +166,7 @@ describe('INSi Client', () => {
             const lps = new lps_class_1.LPS({ idam, version, name, id: lpsId });
             const lpsContext = new lps_context_class_1.LpsContext({ emitter: 'medecin@yopmail.com', lps });
             const bamContext = new bam_context_class_1.BamContext({ emitter: 'medecin@yopmail.com' });
-            const client = new insi_client_service_1.INSiClient({ lpsContext, bamContext, });
+            const client = new insi_client_service_1.INSiClient({ lpsContext, bamContext });
             yield client.initClientPfx(pfx, env_1.PASSPHRASE);
             const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
             const person = new insi_person_class_1.INSiPerson({
@@ -190,10 +190,10 @@ describe('INSi Client', () => {
                             xml: siram_100_desir_500_fake_idam_fixtures_1.fakeIdamXmlResponse,
                             error: {
                                 siramCode: 'siram_100',
-                                text: "L'accès par ce progiciel au service n'est pas autorisé. Contactez l'éditeur du progiciel ou votre responsable informatique.",
+                                text: 'L\'accès par ce progiciel au service n\'est pas autorisé. Contactez l\'éditeur du progiciel ou votre responsable informatique.',
                                 desirCode: 'desir_550',
-                                error: "Numéro d'autorisation du logiciel inconnu.",
-                            }
+                                error: 'Numéro d\'autorisation du logiciel inconnu.',
+                            },
                         },
                     }],
             });
@@ -208,7 +208,7 @@ describe('INSi Client', () => {
                 dateOfBirth: '2014-02-01',
             });
             const fetchInsResult = yield insiClient.fetchIns(person, {
-                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
             expect(fetchInsResult).toEqual({
                 successRequest: null,
@@ -225,7 +225,7 @@ describe('INSi Client', () => {
                                 CR: {
                                     CodeCR: insi_fetch_ins_models_1.CRCodes.MULTIPLE_MATCHES,
                                     LibelleCR: insi_fetch_ins_models_1.CRLabels.MULTIPLE_MATCHES,
-                                }
+                                },
                             },
                             xml: (0, insi_client_fixture_1.getCR02XmlResponse)(),
                         },
@@ -262,7 +262,7 @@ describe('INSi Client', () => {
                             json: { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } },
                             xml: cr01XmlResponse,
                             error: null,
-                        }
+                        },
                     }],
             });
         }));
@@ -294,7 +294,7 @@ describe('INSi Client', () => {
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: requestId,
-                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE' }))
+                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE' })),
                 },
                 response: CR01Response,
             };
@@ -302,7 +302,7 @@ describe('INSi Client', () => {
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: requestId,
-                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PAUL' }))
+                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PAUL' })),
                 },
                 response: CR01Response,
             };
@@ -310,7 +310,7 @@ describe('INSi Client', () => {
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: requestId,
-                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'JACQUES' }))
+                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'JACQUES' })),
                 },
                 response: CR01Response,
             };
@@ -318,7 +318,7 @@ describe('INSi Client', () => {
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: requestId,
-                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE PAUL JACQUES' }))
+                    xml: (0, insi_client_fixture_1.getCNDAValidationXmlRequest)(Object.assign(Object.assign({}, defaultExpectedResponseForHouilles), { firstName: 'PIERRE PAUL JACQUES' })),
                 },
                 response: CR01Response,
             };
@@ -335,7 +335,7 @@ describe('INSi Client', () => {
                 dateOfBirth: '2009-07-14',
             });
             const fetchInsResult = yield insiClient.fetchIns(person, {
-                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
             expect(fetchInsResult).toEqual({
                 successRequest: {
@@ -414,7 +414,7 @@ describe('INSi Client', () => {
                                 CR: {
                                     CodeCR: insi_fetch_ins_models_1.CRCodes.MULTIPLE_MATCHES,
                                     LibelleCR: insi_fetch_ins_models_1.CRLabels.MULTIPLE_MATCHES,
-                                }
+                                },
                             },
                             xml: (0, insi_client_fixture_1.getCR02XmlResponse)(),
                         },
@@ -425,15 +425,15 @@ describe('INSi Client', () => {
                             xml: dicaprioDevinciXmlRequest,
                         },
                         response: {
-                            formatted: null,
-                            json: null,
-                            xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><S:Fault xmlns:ns4=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang=\"en\">Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite=\"fatal\" code=\"insi_102\" xmlns:siram=\"urn:siram\">L appel au service de recherche avec les traits d identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>",
                             error: {
                                 desirCode: 'insi_102',
-                                error: 'L appel au service de recherche avec les traits d identité renvoie une erreur technique.',
+                                error: 'L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.',
                                 siramCode: 'siram_40',
-                                text: 'Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
+                                text: 'Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
                             },
+                            formatted: null,
+                            json: null,
+                            xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope"><S:Fault xmlns:ns4="http://schemas.xmlsoap.org/soap/envelope/"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang="en">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite="fatal" code="insi_102" xmlns:siram="urn:siram">L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>',
                         },
                     }],
             });
@@ -459,7 +459,7 @@ describe('INSi Client', () => {
                 dateOfBirth: '1960-01-01',
             });
             const fetchInsResult = yield insiCpxClient.fetchIns(person, {
-                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+                requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
             });
             expect(fetchInsResult).toEqual({
                 successRequest: {

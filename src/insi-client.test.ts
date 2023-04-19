@@ -66,7 +66,7 @@ jest.mock('./class/lps-context.class', () => ({
           Temps: new Date(defaultDate).toISOString(),
           Emetteur: config.emitter,
           LPS: config.lps.getSoapHeaderAsJson(),
-        }
+        },
       };
       const name = 'ContexteLPS';
       const namespace = 'ctxlps';
@@ -189,7 +189,7 @@ describe('INSi Client', () => {
       const lps = new LPS({ idam, version, name, id: lpsId });
       const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
-      const client = new INSiClient({ lpsContext, bamContext, });
+      const client = new INSiClient({ lpsContext, bamContext });
       await client.initClientPfx(pfx, PASSPHRASE);
 
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
@@ -215,10 +215,10 @@ describe('INSi Client', () => {
             xml: fakeIdamXmlResponse,
             error: {
               siramCode: 'siram_100',
-              text: "L'accès par ce progiciel au service n'est pas autorisé. Contactez l'éditeur du progiciel ou votre responsable informatique.",
+              text: 'L\'accès par ce progiciel au service n\'est pas autorisé. Contactez l\'éditeur du progiciel ou votre responsable informatique.',
               desirCode: 'desir_550',
-              error: "Numéro d'autorisation du logiciel inconnu.",
-            }
+              error: 'Numéro d\'autorisation du logiciel inconnu.',
+            },
           },
         }],
       });
@@ -235,7 +235,7 @@ describe('INSi Client', () => {
       });
 
       const fetchInsResult = await insiClient.fetchIns(person, {
-        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
       });
 
       expect(fetchInsResult).toEqual({
@@ -253,7 +253,7 @@ describe('INSi Client', () => {
               CR: {
                 CodeCR: CRCodes.MULTIPLE_MATCHES,
                 LibelleCR: CRLabels.MULTIPLE_MATCHES,
-              }
+              },
             },
             xml: getCR02XmlResponse(),
           },
@@ -268,7 +268,7 @@ describe('INSi Client', () => {
         gender: Gender.Female,
         dateOfBirth: '1936-06-21',
       });
-      const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+      const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const cr01XmlResponse = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId });
@@ -293,7 +293,7 @@ describe('INSi Client', () => {
             json: { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } },
             xml: cr01XmlResponse,
             error: null,
-          }
+          },
         }],
       });
     });
@@ -330,7 +330,7 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE' })
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE' }),
         },
         response: CR01Response,
       };
@@ -338,7 +338,7 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PAUL' })
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PAUL' }),
         },
         response: CR01Response,
       };
@@ -346,7 +346,7 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'JACQUES' })
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'JACQUES' }),
         },
         response: CR01Response,
       };
@@ -354,7 +354,7 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE PAUL JACQUES' })
+          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE PAUL JACQUES' }),
         },
         response: CR01Response,
       };
@@ -374,7 +374,7 @@ describe('INSi Client', () => {
       });
 
       const fetchInsResult = await insiClient.fetchIns(person, {
-        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
       });
 
       expect(fetchInsResult).toEqual({
@@ -443,7 +443,7 @@ describe('INSi Client', () => {
         firstName: 'DICAPRIO',
         gender: Gender.Male,
         dateOfBirth: '2014-02-01',
-      })
+      });
 
       expect(fetchInsResult).toEqual({
         successRequest: null,
@@ -460,7 +460,7 @@ describe('INSi Client', () => {
               CR: {
                 CodeCR: CRCodes.MULTIPLE_MATCHES,
                 LibelleCR: CRLabels.MULTIPLE_MATCHES,
-              }
+              },
             },
             xml: getCR02XmlResponse(),
           },
@@ -471,15 +471,15 @@ describe('INSi Client', () => {
             xml: dicaprioDevinciXmlRequest,
           },
           response: {
-            formatted: null,
-            json: null,
-            xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><S:Fault xmlns:ns4=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang=\"en\">Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite=\"fatal\" code=\"insi_102\" xmlns:siram=\"urn:siram\">L appel au service de recherche avec les traits d identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>",
             error: {
               desirCode: 'insi_102',
-              error: 'L appel au service de recherche avec les traits d identité renvoie une erreur technique.',
+              error: 'L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.',
               siramCode: 'siram_40',
-              text: 'Le service est temporairement inaccessible.\nVeuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
+              text: 'Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
             },
+            formatted: null,
+            json: null,
+            xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope"><S:Fault xmlns:ns4="http://schemas.xmlsoap.org/soap/envelope/"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang="en">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite="fatal" code="insi_102" xmlns:siram="urn:siram">L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>',
           },
         }],
       });
@@ -508,7 +508,7 @@ describe('INSi Client', () => {
       });
 
       const fetchInsResult = await insiCpxClient.fetchIns(person, {
-        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f'
+        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
       });
 
       expect(fetchInsResult).toEqual({

@@ -19,7 +19,7 @@ class InsiHelper {
             gender: result.INDIVIDU.TIQ.Sexe,
             dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,
             placeOfBirthCode: result.INDIVIDU.TIQ.LieuNaissance,
-            socialSecurityNumber: `${NumIdentifiant}${Cle}`,
+            registrationNumber: `${NumIdentifiant}${Cle}`,
             oid: result.INDIVIDU.INSACTIF.OID,
         };
     }

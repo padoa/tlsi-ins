@@ -84,7 +84,7 @@ export interface INSiServiceFormattedResponse {
     gender: Gender;
     dateOfBirth: string;
     placeOfBirthCode: string;
-    socialSecurityNumber: string;
+    registrationNumber: string;
     oid: string;
 }
 export {};
