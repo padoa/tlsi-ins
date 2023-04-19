@@ -96,6 +96,6 @@ export interface INSiServiceFormattedResponse {
   // Date of birth of the subject as YYYY-MM-DD (ex: 1997-02-26)
   dateOfBirth: string;
   placeOfBirthCode: string;
-  socialSecurityNumber: string;
+  registrationNumber: string;
   oid: string;
 }
