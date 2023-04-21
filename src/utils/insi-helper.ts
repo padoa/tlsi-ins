@@ -6,17 +6,18 @@ export class InsiHelper {
     if (!result.INDIVIDU) {
       return null;
     }
-    const { ListePrenom } = result.INDIVIDU.TIQ;
-    const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
+    const ListePrenom = result.INDIVIDU?.TIQ?.ListePrenom;
+    const NumIdentifiant = result.INDIVIDU?.INSACTIF?.IdIndividu?.NumIdentifiant;
+    const Cle = result.INDIVIDU?.INSACTIF?.IdIndividu?.Cle;
     return {
-      birthName: result.INDIVIDU.TIQ.NomNaissance,
+      birthName: result.INDIVIDU?.TIQ?.NomNaissance,
       firstName: ListePrenom ? ListePrenom.split(' ')?.[0] : undefined,
-      allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
-      gender: result.INDIVIDU.TIQ.Sexe,
-      dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,
-      placeOfBirthCode: result.INDIVIDU.TIQ.LieuNaissance,
-      registrationNumber: `${NumIdentifiant}${Cle}`,
-      oid: result.INDIVIDU.INSACTIF.OID,
+      allFirstNames: result.INDIVIDU?.TIQ?.ListePrenom,
+      gender: result.INDIVIDU?.TIQ?.Sexe,
+      dateOfBirth: result.INDIVIDU?.TIQ?.DateNaissance,
+      placeOfBirthCode: result.INDIVIDU?.TIQ?.LieuNaissance,
+      registrationNumber: NumIdentifiant && Cle ? `${NumIdentifiant}${Cle}` : undefined,
+      oid: result.INDIVIDU?.INSACTIF?.OID,
     }
   }
 

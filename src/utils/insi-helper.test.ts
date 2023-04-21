@@ -51,7 +51,7 @@ describe('INSi Helper - ', () => {
       expect(formattedResult).toStrictEqual(null);
     });
 
-    test('should not fail if ListePrenom is missing', () => {
+    test('should not fail if TIQ is missing', () => {
       const missingListePrenomResult: INSiServiceJsonResponse = {
         CR: {
           CodeCR: CRCodes.OK,
@@ -65,8 +65,34 @@ describe('INSi Helper - ', () => {
             },
             OID: '1.2.250.1.213.1.4.8'
           },
+        }
+      };
+      const formattedResult = InsiHelper.formatFetchINSResult(missingListePrenomResult);
+      expect(formattedResult).toStrictEqual({
+        birthName: undefined,
+        firstName: undefined,
+        allFirstNames: undefined,
+        gender: undefined,
+        dateOfBirth: undefined,
+        placeOfBirthCode: undefined,
+        registrationNumber: '297022A02077878',
+        oid: '1.2.250.1.213.1.4.8',
+      });
+    });
+
+    test('should not fail if IdIndividu is missing', () => {
+      const missingListePrenomResult: INSiServiceJsonResponse = {
+        CR: {
+          CodeCR: CRCodes.OK,
+          LibelleCR: CRLabels.OK,
+        },
+        INDIVIDU: {
+          INSACTIF: {
+            OID: '1.2.250.1.213.1.4.8'
+          },
           TIQ: {
             NomNaissance: 'ADRTROIS',
+            ListePrenom: 'DOMINIQUE',
             Sexe: Gender.Female,
             DateNaissance: '1997-02-26',
             LieuNaissance: '2A020'
@@ -75,14 +101,47 @@ describe('INSi Helper - ', () => {
       };
       const formattedResult = InsiHelper.formatFetchINSResult(missingListePrenomResult);
       expect(formattedResult).toStrictEqual({
+        allFirstNames: 'DOMINIQUE',
         birthName: 'ADRTROIS',
-        firstName: undefined,
-        allFirstNames: undefined,
-        gender: Gender.Female,
         dateOfBirth: '1997-02-26',
-        placeOfBirthCode: '2A020',
-        registrationNumber: '297022A02077878',
+        firstName: 'DOMINIQUE',
+        gender: 'F',
         oid: '1.2.250.1.213.1.4.8',
+        registrationNumber: undefined,
+        placeOfBirthCode: '2A020',
+      });
+    });
+
+    test('should not fail if some field is missing', () => {
+      const missingListePrenomResult: INSiServiceJsonResponse = {
+        CR: {
+          CodeCR: CRCodes.OK,
+          LibelleCR: CRLabels.OK,
+        },
+        INDIVIDU: {
+          INSACTIF: {
+            IdIndividu: {
+              Cle: '78'
+            },
+            OID: '1.2.250.1.213.1.4.8'
+          },
+          TIQ: {
+            NomNaissance: 'ADRTROIS',
+            DateNaissance: '1997-02-26',
+            LieuNaissance: '2A020'
+          }
+        }
+      };
+      const formattedResult = InsiHelper.formatFetchINSResult(missingListePrenomResult);
+      expect(formattedResult).toStrictEqual({
+        allFirstNames: undefined,
+        birthName: 'ADRTROIS',
+        dateOfBirth: '1997-02-26',
+        firstName: undefined,
+        gender: undefined,
+        oid: '1.2.250.1.213.1.4.8',
+        registrationNumber: undefined,
+        placeOfBirthCode: '2A020',
       });
     });
   });

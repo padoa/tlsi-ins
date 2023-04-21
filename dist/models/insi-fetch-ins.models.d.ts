@@ -60,31 +60,31 @@ export interface INSiServiceJsonResponse {
         LibelleCR: CRLabels.MULTIPLE_MATCHES;
     };
     INDIVIDU?: {
-        INSACTIF: {
-            IdIndividu: {
-                NumIdentifiant: string;
-                Cle: string;
+        INSACTIF?: {
+            IdIndividu?: {
+                NumIdentifiant?: string;
+                Cle?: string;
             };
-            OID: string;
+            OID?: string;
         };
         INSHISTO?: InsHisto[];
-        TIQ: {
-            NomNaissance: string;
+        TIQ?: {
+            NomNaissance?: string;
             ListePrenom?: string;
-            Sexe: Gender;
-            DateNaissance: string;
-            LieuNaissance: string;
+            Sexe?: Gender;
+            DateNaissance?: string;
+            LieuNaissance?: string;
         };
     };
 }
 export interface INSiServiceFormattedResponse {
-    birthName: string;
+    birthName?: string;
     firstName?: string;
     allFirstNames?: string;
-    gender: Gender;
-    dateOfBirth: string;
-    placeOfBirthCode: string;
-    registrationNumber: string;
-    oid: string;
+    gender?: Gender;
+    dateOfBirth?: string;
+    placeOfBirthCode?: string;
+    registrationNumber?: string;
+    oid?: string;
 }
 export {};
