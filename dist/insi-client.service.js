@@ -85,7 +85,7 @@ class INSiClient {
                 throw new Error('fetchIns ERROR: you must init client security first');
             }
             const fetchInsRequests = yield this._launchSoapRequestForPerson(person, requestId);
-            const [[successFetchRequest], failedFetchRequests] = lodash_1.default.partition(fetchInsRequests, ({ response }) => { var _a, _b; return ((_b = (_a = response.json) === null || _a === void 0 ? void 0 : _a.CR) === null || _b === void 0 ? void 0 : _b.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK; });
+            const [[successFetchRequest], failedFetchRequests] = lodash_1.default.partition(fetchInsRequests, (req) => insi_helper_1.InsiHelper.checkIfRequestIsValid(req));
             return {
                 successRequest: successFetchRequest || null,
                 failedRequests: failedFetchRequests,

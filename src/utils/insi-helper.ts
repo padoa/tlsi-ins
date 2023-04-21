@@ -1,4 +1,11 @@
-import { INSiServiceFormattedResponse, INSiServiceJsonResponse, INSiServiceError } from '../models/insi-fetch-ins.models';
+import {
+  CRCodes,
+  INSiServiceError,
+  INSiServiceFetchInsRequest,
+  INSiServiceFormattedResponse,
+  INSiServiceJsonResponse,
+  INSiServiceRequestStatus,
+} from '../models/insi-fetch-ins.models';
 import _ from 'lodash';
 
 export class InsiHelper {
@@ -39,5 +46,12 @@ export class InsiHelper {
     } catch {
       return null;
     }
+  }
+
+  public static checkIfRequestIsValid(request: INSiServiceFetchInsRequest): boolean {
+    const requestIsSuccessful = request.status === INSiServiceRequestStatus.SUCCESS;
+    const requestReturnData = request.response.json?.CR.CodeCR === CRCodes.OK;
+    const requestDataIsComplete = _.compact(_.values(request.response.formatted)).length === 8;
+    return requestIsSuccessful && requestReturnData && requestDataIsComplete;
   }
 }

@@ -154,5 +154,88 @@ describe('INSi Helper - ', () => {
             });
         });
     });
+    describe('checkIfRequestIsValid - ', () => {
+        test('should return false if request failed', () => {
+            expect(insi_helper_1.InsiHelper.checkIfRequestIsValid({
+                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.FAIL,
+                request: { id: 'request id', xml: 'xml send' },
+                response: {
+                    formatted: null,
+                    json: null,
+                    xml: 'Raw response',
+                    error: null,
+                }
+            })).toStrictEqual(false);
+        });
+        test('should return false if request succeed but CR Code is not OK', () => {
+            expect(insi_helper_1.InsiHelper.checkIfRequestIsValid({
+                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                request: { id: 'request id', xml: 'xml send' },
+                response: {
+                    formatted: null,
+                    json: {
+                        CR: {
+                            CodeCR: insi_fetch_ins_models_1.CRCodes.NO_RESULT,
+                            LibelleCR: insi_fetch_ins_models_1.CRLabels.NO_RESULT,
+                        }
+                    },
+                    xml: 'Raw response',
+                    error: null,
+                }
+            })).toStrictEqual(false);
+        });
+        test('should return false if request succeed, CR CODE is OK but data are incomplete', () => {
+            expect(insi_helper_1.InsiHelper.checkIfRequestIsValid({
+                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                request: { id: 'request id', xml: 'xml send' },
+                response: {
+                    formatted: {
+                        birthName: 'ADRTROIS',
+                        firstName: undefined,
+                        allFirstNames: undefined,
+                        gender: insi_person_class_1.Gender.Female,
+                        dateOfBirth: '1997-02-26',
+                        placeOfBirthCode: '2A020',
+                        registrationNumber: '297022A02077878',
+                        oid: '1.2.250.1.213.1.4.8',
+                    },
+                    json: {
+                        CR: {
+                            CodeCR: insi_fetch_ins_models_1.CRCodes.OK,
+                            LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
+                        }
+                    },
+                    xml: 'Raw response',
+                    error: null,
+                }
+            })).toStrictEqual(false);
+        });
+        test('should return true if request is valid', () => {
+            expect(insi_helper_1.InsiHelper.checkIfRequestIsValid({
+                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                request: { id: 'request id', xml: 'xml send' },
+                response: {
+                    formatted: {
+                        birthName: 'ADRTROIS',
+                        firstName: 'DOMINIQUE',
+                        allFirstNames: 'DOMINIQUE',
+                        gender: insi_person_class_1.Gender.Female,
+                        dateOfBirth: '1997-02-26',
+                        placeOfBirthCode: '2A020',
+                        registrationNumber: '297022A02077878',
+                        oid: '1.2.250.1.213.1.4.8',
+                    },
+                    json: {
+                        CR: {
+                            CodeCR: insi_fetch_ins_models_1.CRCodes.OK,
+                            LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
+                        }
+                    },
+                    xml: 'Raw response',
+                    error: null,
+                }
+            })).toStrictEqual(true);
+        });
+    });
 });
 //# sourceMappingURL=insi-helper.test.js.map

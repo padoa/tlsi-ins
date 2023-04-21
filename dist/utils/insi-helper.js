@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsiHelper = void 0;
+const insi_fetch_ins_models_1 = require("../models/insi-fetch-ins.models");
 const lodash_1 = __importDefault(require("lodash"));
 class InsiHelper {
     static formatFetchINSResult(result) {
@@ -45,6 +46,13 @@ class InsiHelper {
         catch (_e) {
             return null;
         }
+    }
+    static checkIfRequestIsValid(request) {
+        var _a;
+        const requestIsSuccessful = request.status === insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS;
+        const requestReturnData = ((_a = request.response.json) === null || _a === void 0 ? void 0 : _a.CR.CodeCR) === insi_fetch_ins_models_1.CRCodes.OK;
+        const requestDataIsComplete = lodash_1.default.compact(lodash_1.default.values(request.response.formatted)).length === 8;
+        return requestIsSuccessful && requestReturnData && requestDataIsComplete;
     }
 }
 exports.InsiHelper = InsiHelper;

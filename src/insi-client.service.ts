@@ -91,7 +91,7 @@ export class INSiClient {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
     const fetchInsRequests = await this._launchSoapRequestForPerson(person, requestId);
-    const [[successFetchRequest], failedFetchRequests] = _.partition<INSiServiceFetchInsRequest>(fetchInsRequests, ({ response }) => response.json?.CR?.CodeCR === CRCodes.OK);
+    const [[successFetchRequest], failedFetchRequests] = _.partition<INSiServiceFetchInsRequest>(fetchInsRequests, (req) => InsiHelper.checkIfRequestIsValid(req));
     return {
       successRequest: successFetchRequest || null,
       failedRequests: failedFetchRequests,

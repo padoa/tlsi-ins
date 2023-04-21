@@ -1,5 +1,10 @@
 import { InsiHelper } from './insi-helper';
-import { CRCodes, CRLabels, INSiServiceJsonResponse } from '../models/insi-fetch-ins.models';
+import {
+  CRCodes,
+  CRLabels,
+  INSiServiceJsonResponse,
+  INSiServiceRequestStatus,
+} from '../models/insi-fetch-ins.models';
 import { Gender } from '../class/insi-person.class';
 
 describe('INSi Helper - ', () => {
@@ -156,6 +161,93 @@ describe('INSi Helper - ', () => {
         siramCode: 'siram_40',
         text: 'Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
       });
+    });
+  });
+
+  describe('checkIfRequestIsValid - ', () => {
+    test('should return false if request failed', () => {
+      expect(InsiHelper.checkIfRequestIsValid({
+        status: INSiServiceRequestStatus.FAIL,
+        request: { id: 'request id', xml: 'xml send' },
+        response: {
+          formatted: null,
+          json: null,
+          xml: 'Raw response',
+          error: null,
+        }
+      })).toStrictEqual(false);
+    });
+
+    test('should return false if request succeed but CR Code is not OK', () => {
+      expect(InsiHelper.checkIfRequestIsValid({
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: { id: 'request id', xml: 'xml send' },
+        response: {
+          formatted: null,
+          json: {
+            CR: {
+              CodeCR: CRCodes.NO_RESULT,
+              LibelleCR: CRLabels.NO_RESULT,
+            }
+          },
+          xml: 'Raw response',
+          error: null,
+        }
+      })).toStrictEqual(false);
+    });
+
+    test('should return false if request succeed, CR CODE is OK but data are incomplete', () => {
+      expect(InsiHelper.checkIfRequestIsValid({
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: { id: 'request id', xml: 'xml send' },
+        response: {
+          formatted: {
+            birthName: 'ADRTROIS',
+            firstName: undefined,
+            allFirstNames: undefined,
+            gender: Gender.Female,
+            dateOfBirth: '1997-02-26',
+            placeOfBirthCode: '2A020',
+            registrationNumber: '297022A02077878',
+            oid: '1.2.250.1.213.1.4.8',
+          },
+          json: {
+            CR: {
+              CodeCR: CRCodes.OK,
+              LibelleCR: CRLabels.OK,
+            }
+          },
+          xml: 'Raw response',
+          error: null,
+        }
+      })).toStrictEqual(false);
+    });
+
+    test('should return true if request is valid', () => {
+      expect(InsiHelper.checkIfRequestIsValid({
+        status: INSiServiceRequestStatus.SUCCESS,
+        request: { id: 'request id', xml: 'xml send' },
+        response: {
+          formatted: {
+            birthName: 'ADRTROIS',
+            firstName: 'DOMINIQUE',
+            allFirstNames: 'DOMINIQUE',
+            gender: Gender.Female,
+            dateOfBirth: '1997-02-26',
+            placeOfBirthCode: '2A020',
+            registrationNumber: '297022A02077878',
+            oid: '1.2.250.1.213.1.4.8',
+          },
+          json: {
+            CR: {
+              CodeCR: CRCodes.OK,
+              LibelleCR: CRLabels.OK,
+            }
+          },
+          xml: 'Raw response',
+          error: null,
+        }
+      })).toStrictEqual(true);
     });
   });
 });
