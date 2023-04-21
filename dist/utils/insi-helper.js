@@ -7,14 +7,15 @@ exports.InsiHelper = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 class InsiHelper {
     static formatFetchINSResult(result) {
-        var _a, _b;
+        var _a;
         if (!result.INDIVIDU) {
             return null;
         }
+        const { ListePrenom } = result.INDIVIDU.TIQ;
         const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
         return {
             birthName: result.INDIVIDU.TIQ.NomNaissance,
-            firstName: (_b = (_a = result.INDIVIDU.TIQ.ListePrenom) === null || _a === void 0 ? void 0 : _a.split(' ')) === null || _b === void 0 ? void 0 : _b[0],
+            firstName: ListePrenom ? (_a = ListePrenom.split(' ')) === null || _a === void 0 ? void 0 : _a[0] : undefined,
             allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
             gender: result.INDIVIDU.TIQ.Sexe,
             dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,

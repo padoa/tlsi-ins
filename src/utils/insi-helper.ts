@@ -6,10 +6,11 @@ export class InsiHelper {
     if (!result.INDIVIDU) {
       return null;
     }
+    const { ListePrenom } = result.INDIVIDU.TIQ;
     const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
     return {
       birthName: result.INDIVIDU.TIQ.NomNaissance,
-      firstName: result.INDIVIDU.TIQ.ListePrenom?.split(' ')?.[0],
+      firstName: ListePrenom ? ListePrenom.split(' ')?.[0] : undefined,
       allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
       gender: result.INDIVIDU.TIQ.Sexe,
       dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,

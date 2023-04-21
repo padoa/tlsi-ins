@@ -80,7 +80,7 @@ export interface INSiServiceJsonResponse {
     INSHISTO?: InsHisto[],
     TIQ: {
       NomNaissance: string;
-      ListePrenom: string;
+      ListePrenom?: string;
       Sexe: Gender;
       DateNaissance: string; // YYYY-MM-DD
       LieuNaissance: string;
@@ -90,8 +90,8 @@ export interface INSiServiceJsonResponse {
 
 export interface INSiServiceFormattedResponse {
   birthName: string;
-  firstName: string;
-  allFirstNames: string;
+  firstName?: string;
+  allFirstNames?: string;
   gender: Gender;
   // Date of birth of the subject as YYYY-MM-DD (ex: 1997-02-26)
   dateOfBirth: string;

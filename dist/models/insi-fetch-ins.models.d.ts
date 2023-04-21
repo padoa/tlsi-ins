@@ -70,7 +70,7 @@ export interface INSiServiceJsonResponse {
         INSHISTO?: InsHisto[];
         TIQ: {
             NomNaissance: string;
-            ListePrenom: string;
+            ListePrenom?: string;
             Sexe: Gender;
             DateNaissance: string;
             LieuNaissance: string;
@@ -79,8 +79,8 @@ export interface INSiServiceJsonResponse {
 }
 export interface INSiServiceFormattedResponse {
     birthName: string;
-    firstName: string;
-    allFirstNames: string;
+    firstName?: string;
+    allFirstNames?: string;
     gender: Gender;
     dateOfBirth: string;
     placeOfBirthCode: string;
