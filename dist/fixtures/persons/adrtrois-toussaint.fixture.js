@@ -76,7 +76,7 @@ const getAdrtroisToussaintFormattedResponse = () => ({
     dateOfBirth: '1960-01-01',
     allFirstNames: 'TOUSSAINT',
     placeOfBirthCode: '2B020',
-    socialSecurityNumber: '160012B02077713',
+    registrationNumber: '160012B02077713',
 });
 exports.getAdrtroisToussaintFormattedResponse = getAdrtroisToussaintFormattedResponse;
 const getAdrtroisToussaintResponse = () => ({

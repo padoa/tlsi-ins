@@ -70,32 +70,32 @@ export interface INSiServiceJsonResponse {
     LibelleCR: CRLabels.MULTIPLE_MATCHES,
   },
   INDIVIDU?: {
-    INSACTIF: {
-      IdIndividu: {
-        NumIdentifiant: string;
-        Cle: string;
+    INSACTIF?: {
+      IdIndividu?: {
+        NumIdentifiant?: string;
+        Cle?: string;
       },
-      OID: string;
+      OID?: string;
     },
     INSHISTO?: InsHisto[],
-    TIQ: {
-      NomNaissance: string;
-      ListePrenom: string;
-      Sexe: Gender;
-      DateNaissance: string; // YYYY-MM-DD
-      LieuNaissance: string;
+    TIQ?: {
+      NomNaissance?: string;
+      ListePrenom?: string;
+      Sexe?: Gender;
+      DateNaissance?: string; // YYYY-MM-DD
+      LieuNaissance?: string;
     };
   }
 }
 
 export interface INSiServiceFormattedResponse {
-  birthName: string;
-  firstName: string;
-  allFirstNames: string;
-  gender: Gender;
+  birthName?: string;
+  firstName?: string;
+  allFirstNames?: string;
+  gender?: Gender;
   // Date of birth of the subject as YYYY-MM-DD (ex: 1997-02-26)
-  dateOfBirth: string;
-  placeOfBirthCode: string;
-  socialSecurityNumber: string;
-  oid: string;
+  dateOfBirth?: string;
+  placeOfBirthCode?: string;
+  registrationNumber?: string;
+  oid?: string;
 }

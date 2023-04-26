@@ -84,7 +84,7 @@ const getTchitchiCatarinaFormattedResponse = () => ({
     gender: insi_person_class_1.Gender.Female,
     dateOfBirth: '1936-06-21',
     placeOfBirthCode: '63220',
-    socialSecurityNumber: '236066322083656',
+    registrationNumber: '236066322083656',
     oid: '1.2.250.1.213.1.4.8',
 });
 exports.getTchitchiCatarinaFormattedResponse = getTchitchiCatarinaFormattedResponse;

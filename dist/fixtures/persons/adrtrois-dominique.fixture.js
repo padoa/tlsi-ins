@@ -74,7 +74,7 @@ const getAdrtroisDominiqueFormattedResponse = () => ({
     gender: insi_person_class_1.Gender.Female,
     dateOfBirth: '1997-02-26',
     placeOfBirthCode: '2A020',
-    socialSecurityNumber: '297022A02077878',
+    registrationNumber: '297022A02077878',
     oid: '1.2.250.1.213.1.4.8',
 });
 exports.getAdrtroisDominiqueFormattedResponse = getAdrtroisDominiqueFormattedResponse;

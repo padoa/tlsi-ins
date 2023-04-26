@@ -147,7 +147,7 @@ const getPierreAlainFormattedResponse = () => ({
     gender: insi_person_class_1.Gender.Male,
     dateOfBirth: '2009-07-14',
     placeOfBirthCode: '63220',
-    socialSecurityNumber: '109076322083489',
+    registrationNumber: '109076322083489',
     oid: '1.2.250.1.213.1.4.8',
 });
 exports.getPierreAlainFormattedResponse = getPierreAlainFormattedResponse;

@@ -1,4 +1,11 @@
-import { INSiServiceFormattedResponse, INSiServiceJsonResponse, INSiServiceError } from '../models/insi-fetch-ins.models';
+import {
+  CRCodes,
+  INSiServiceError,
+  INSiServiceFetchInsRequest,
+  INSiServiceFormattedResponse,
+  INSiServiceJsonResponse,
+  INSiServiceRequestStatus,
+} from '../models/insi-fetch-ins.models';
 import _ from 'lodash';
 
 export class InsiHelper {
@@ -6,16 +13,18 @@ export class InsiHelper {
     if (!result.INDIVIDU) {
       return null;
     }
-    const { NumIdentifiant, Cle } = result.INDIVIDU.INSACTIF.IdIndividu;
+    const ListePrenom = result.INDIVIDU?.TIQ?.ListePrenom;
+    const NumIdentifiant = result.INDIVIDU?.INSACTIF?.IdIndividu?.NumIdentifiant;
+    const Cle = result.INDIVIDU?.INSACTIF?.IdIndividu?.Cle;
     return {
-      birthName: result.INDIVIDU.TIQ.NomNaissance,
-      firstName: result.INDIVIDU.TIQ.ListePrenom.split(' ')?.[0],
-      allFirstNames: result.INDIVIDU.TIQ.ListePrenom,
-      gender: result.INDIVIDU.TIQ.Sexe,
-      dateOfBirth: result.INDIVIDU.TIQ.DateNaissance,
-      placeOfBirthCode: result.INDIVIDU.TIQ.LieuNaissance,
-      socialSecurityNumber: `${NumIdentifiant}${Cle}`,
-      oid: result.INDIVIDU.INSACTIF.OID,
+      birthName: result.INDIVIDU?.TIQ?.NomNaissance,
+      firstName: ListePrenom ? ListePrenom.split(' ')?.[0] : undefined,
+      allFirstNames: result.INDIVIDU?.TIQ?.ListePrenom,
+      gender: result.INDIVIDU?.TIQ?.Sexe,
+      dateOfBirth: result.INDIVIDU?.TIQ?.DateNaissance,
+      placeOfBirthCode: result.INDIVIDU?.TIQ?.LieuNaissance,
+      registrationNumber: NumIdentifiant && Cle ? `${NumIdentifiant}${Cle}` : undefined,
+      oid: result.INDIVIDU?.INSACTIF?.OID,
     }
   }
 
@@ -37,5 +46,12 @@ export class InsiHelper {
     } catch {
       return null;
     }
+  }
+
+  public static checkIfRequestIsValid(request: INSiServiceFetchInsRequest): boolean {
+    const requestIsSuccessful = request.status === INSiServiceRequestStatus.SUCCESS;
+    const requestReturnData = request.response.json?.CR.CodeCR === CRCodes.OK;
+    const requestDataIsComplete = _.compact(_.values(request.response.formatted)).length === 8;
+    return requestIsSuccessful && requestReturnData && requestDataIsComplete;
   }
 }
