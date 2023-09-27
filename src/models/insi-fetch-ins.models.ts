@@ -47,6 +47,20 @@ export enum CRLabels {
   MULTIPLE_MATCHES = 'Plusieurs identites trouvees',
 }
 
+export enum INSITestingUser {
+	ADRUN = "ADRUN ZOE",
+	CORSE = "CORSE Anthony",
+	DAEION = "D'AEION Coeur",
+	DARTAGNANDELHERAULT = "D'ARTAGNAN DE L'HERAULT Pierre-alain",
+	DEVINCI = "DE VINCI Ruth",
+	ECETINSI = "ECETINSI Pierre-alain",
+	HERMAN = "HERMAN Gatien",
+	HOUILLES = "HOUILLES Pierre",
+	NESSIMICHELANGELO = "NESSI Michelangelo",
+	NESSIRUTH = "NESSI Ruth",
+	TCHITCHI = "TCHITCHI Ola",
+}
+
 interface InsHisto {
   DateDeb?: string,
   DateFin?: string,
@@ -81,6 +95,7 @@ export interface INSiServiceJsonResponse {
     TIQ?: {
       NomNaissance?: string;
       ListePrenom?: string;
+      Prenom?: string;
       Sexe?: Gender;
       DateNaissance?: string; // YYYY-MM-DD
       LieuNaissance?: string;

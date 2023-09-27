@@ -23,6 +23,7 @@ export interface IGetCNDAXmlRequestParams {
   idam: string,
   version: string,
   name: string,
+  date?: string,
   birthName: string,
   firstName: string,
   gender: Gender,
@@ -30,20 +31,20 @@ export interface IGetCNDAXmlRequestParams {
   assertionPs?: string,
 }
 
-export const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName, gender, dateOfBirth, assertionPs }: IGetCNDAXmlRequestParams): string => {
+export const getCNDAValidationXmlRequest = ({ idam, version, name, birthName, firstName, gender, dateOfBirth, assertionPs, date = defaultDate }: IGetCNDAXmlRequestParams): string => {
   return [
     '<?xml version="1.0" encoding="utf-8"?>',
     '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
     '<soap:Header>',
     '<ctxbam:ContexteBAM Version="01_02">',
     `<ctxbam:Id>${defaultUuid}</ctxbam:Id>`,
-    `<ctxbam:Temps>${new Date(defaultDate).toISOString()}</ctxbam:Temps>`,
+    `<ctxbam:Temps>${new Date(date).toISOString()}</ctxbam:Temps>`,
     '<ctxbam:Emetteur>medecin@yopmail.com</ctxbam:Emetteur>',
     '<ctxbam:COUVERTURE>',
     '</ctxbam:COUVERTURE>',
     '</ctxbam:ContexteBAM> <ctxlps:ContexteLPS Nature="CTXLPS" Version="01_00">',
     `<ctxlps:Id>${defaultUuid}</ctxlps:Id>`,
-    `<ctxlps:Temps>${new Date(defaultDate).toISOString()}</ctxlps:Temps>`,
+    `<ctxlps:Temps>${new Date(date).toISOString()}</ctxlps:Temps>`,
     '<ctxlps:Emetteur>medecin@yopmail.com</ctxlps:Emetteur>',
     '<ctxlps:LPS>',
     `<ctxlps:IDAM R="4">${idam}</ctxlps:IDAM>`,
