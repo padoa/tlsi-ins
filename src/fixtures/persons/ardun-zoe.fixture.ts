@@ -10,12 +10,12 @@ import {
 import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../../models/env';
 
 const getAdrunZoeXmlRequest = (
-  { idam, version, name, assertionPs, date }: { idam: string, version: string, name: string, assertionPs?: string, date?: string }
+  { idam, version, name, assertionPs, requestDate }: { idam: string, version: string, name: string, assertionPs?: string, requestDate?: string }
 ): string => getCNDAValidationXmlRequest({
   idam,
   version,
   name,
-  date,
+  requestDate,
   birthName: 'ADRUN',
   firstName: 'ZOE',
   gender: Gender.Female,
@@ -104,7 +104,7 @@ export const getAdrunMockedResponse = (): any => {
           idam: IDAM,
           version: SOFTWARE_VERSION,
           name: SOFTWARE_NAME,
-          date: new Date().toISOString(),
+          requestDate: new Date().toISOString(),
         })
       },
       response: getAdrunZoeResponse()

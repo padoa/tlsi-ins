@@ -12,19 +12,14 @@ import {
   CRCodes,
   INSiServiceRequestStatus,
   INSiServiceFetchInsResult,
-  INSITestingUser,
 } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
+import { getPersonVirtualMode } from './fixtures/virtual-mode/virtual-mode.helper';
+import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import _ from 'lodash';
-import { getAdrunMockedResponse } from './fixtures/persons/ardun-zoe.fixture';
-import { getCorseMockedResponse } from './fixtures/persons/corse-anthony.fixture';
-import { getCoeurMockedResponse } from './fixtures/persons/aeion-coeur.fixture';
-import { getHeraultMockedResponse } from './fixtures/persons/herault-pierre-alain.fixture';
-import { getDeVinciRuthMockedResponse } from './fixtures/persons/de-vinci-ruth.fixture';
-import { getEcetinsiMockedResponse } from './fixtures/persons/ecetinsi-pierre-alain.fixture';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -91,9 +86,10 @@ export class INSiClient {
    * Fetches INS information of a person
    * @param  {INSiPerson} person the person who's information are about to be fetched
    * @param  {string} requestId of the current request to Ins
+   * @param  {boolean} virtualModeEnabled a boolean that enabled or not the virtual mode
    * @returns Promise<INSiServiceFetchInsResult>
    */
-  public async fetchIns(person: INSiPerson, { requestId = uuidv4() } = {}, virtualModeEnabled: boolean = false): Promise<INSiServiceFetchInsResult> {
+  public async fetchIns(person: INSiPerson, { requestId = uuidv4(), virtualModeEnabled = false } = {}): Promise<INSiServiceFetchInsResult> {
     if (!this._soapClient && !virtualModeEnabled) {
       throw new Error('fetchIns ERROR: you must init client security first');
     }
@@ -107,7 +103,7 @@ export class INSiClient {
 
   private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string, virtualModeEnabled: boolean): Promise<INSiServiceFetchInsRequest[]> {
     if (virtualModeEnabled) {
-      return this._getPersonIdentity(person);
+      return this._getPersonIdentity(person, requestId);
     }
     const fetchRequests: INSiServiceFetchInsRequest[] = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
@@ -134,45 +130,8 @@ export class INSiClient {
     return fetchRequests;
   }
 
-  private _getPersonIdentity(person: INSiPerson): Promise<INSiServiceFetchInsRequest[]> {
-    let fetchRequests: INSiServiceFetchInsRequest[] = [];
-    switch (person.getPerson().birthName.toLowerCase()+' '+person.getPerson().firstName.toLowerCase()) {
-      case INSITestingUser.ADRUN.toLowerCase():
-        fetchRequests = getAdrunMockedResponse();
-        break;
-      case INSITestingUser.CORSE.toLowerCase():
-        fetchRequests = getCorseMockedResponse();
-        break;
-      case INSITestingUser.DAEION.toLowerCase():
-        fetchRequests = getCoeurMockedResponse();
-        break;
-      case INSITestingUser.DARTAGNANDELHERAULT.toLowerCase():
-        fetchRequests = getHeraultMockedResponse();
-        break;
-      case INSITestingUser.DEVINCI.toLowerCase():
-        fetchRequests = getDeVinciRuthMockedResponse();
-        break;
-      case INSITestingUser.ECETINSI.toLowerCase():
-        fetchRequests = getEcetinsiMockedResponse();
-        break;
-      case INSITestingUser.HERMAN.toLowerCase():
-        //fetchRequests = ();
-        break;
-      case INSITestingUser.HOUILLES.toLowerCase():
-        //fetchRequests = ();
-        break;
-      case INSITestingUser.NESSIMICHELANGELO.toLowerCase():
-        //fetchRequests = ();
-        break;
-      case INSITestingUser.NESSIRUTH.toLowerCase():
-        //fetchRequests = ();
-        break;
-      case INSITestingUser.TCHITCHI.toLowerCase():
-        //fetchRequests = ();
-        break;
-      default:
-        break;
-    }
+  private _getPersonIdentity(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
+    const fetchRequests = getPersonVirtualMode(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME });
     return new Promise( function ( resolve ) {
         return resolve(fetchRequests);
     });

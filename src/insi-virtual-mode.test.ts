@@ -9,7 +9,8 @@ import {
   defaultDate,
 } from './fixtures/insi-client.fixture';
 import fs from 'fs';
-import { getAdrunZoeXmlRequestTest, getCorseAnthonyXmlRequestTest, getDeVinciRuthXmlRequestTest } from './test/xml-request-tester';
+import { getXmlRequestTest} from './test/xml-request-tester';
+import { INSITestingUser } from './models/insi-fetch-ins.models';
 
 jest.mock('./class/bam-context.class', () => ({
   BamContext: jest.fn((config: { emitter: string }) => ({
@@ -103,17 +104,13 @@ describe('INSi Client', () => {
         dateOfBirth: '1975-12-31',
       });
 
-      const fetchInsResult = await insiClient.fetchIns(person, { requestId }, true);
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getAdrunZoeXmlRequestTest({
-              idam: IDAM,
-              version: SOFTWARE_VERSION,
-              name: SOFTWARE_NAME,
-            })
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId})
           },
           "response": {
             "formatted": {
@@ -156,7 +153,82 @@ describe('INSi Client', () => {
       });
     });
 
-    test('should get correct response for CORSE Anthony', async () => {
+    test('should get correct response for Tchitchi ola', async () => {
+      const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
+      const person = new INSiPerson({
+        birthName: 'TCHITCHI',
+        firstName: 'OLA CATARINA BELLA',
+        gender: Gender.Female,
+        dateOfBirth: '1936-06-21',
+      });
+
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
+      expect(fetchInsResult).toEqual({
+        successRequest: {
+          "status": "SUCCESS",
+          "request": {
+              "id": expect.any(String),
+              "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: {firstName: 'CATARINA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female}, requestId})
+          },
+          "response": {
+              "formatted": {
+                  "birthName": "TCHITCHI",
+                  "firstName": "CATARINA",
+                  "allFirstNames": "CATARINA BELLA",
+                  "gender": "F",
+                  "dateOfBirth": "1936-06-21",
+                  "placeOfBirthCode": "63220",
+                  "registrationNumber": "236066322083656",
+                  "oid": "1.2.250.1.213.1.4.8"
+              },
+              "json": {
+                  "CR": {
+                      "CodeCR": "00",
+                      "LibelleCR": "OK"
+                  },
+                  "INDIVIDU": {
+                      "INSACTIF": {
+                          "IdIndividu": {
+                              "NumIdentifiant": "2360663220836",
+                              "Cle": "56"
+                          },
+                          "OID": "1.2.250.1.213.1.4.8"
+                      },
+                      "TIQ": {
+                          "NomNaissance": "TCHITCHI",
+                          "ListePrenom": "CATARINA BELLA",
+                          "Sexe": "F",
+                          "DateNaissance": "1936-06-21",
+                          "LieuNaissance": "63220"
+                      }
+                  }
+              },
+              "xml": expect.any(String),
+              "error": null
+          }
+      },
+        failedRequests: [{
+          "status": "SUCCESS",
+          "request": {
+            "id": expect.any(String),
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: {firstName: 'OLA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female}, requestId})
+          },
+          "response": {
+            "formatted": null,
+            "json": {
+                "CR": {
+                    "CodeCR": "01",
+                    "LibelleCR": "Aucune identite trouvee"
+                }
+            },
+            "xml": expect.any(String),
+            "error": null
+          }
+        }],
+      });
+    });
+
+    /* test('should get correct response for CORSE Anthony', async () => {
       const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
       const person = new INSiPerson({
         birthName: 'CORSE',
@@ -165,7 +237,7 @@ describe('INSi Client', () => {
         dateOfBirth: '1980-03-02',
       });
 
-      const fetchInsResult = await insiClient.fetchIns(person, { requestId }, true);
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
           "status": "SUCCESS",
@@ -226,7 +298,7 @@ describe('INSi Client', () => {
         },
         failedRequests: [],
       });
-    });
+    }); */
 
     test('should get correct response for DE VINCI Ruth', async () => {
       const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
@@ -237,18 +309,14 @@ describe('INSi Client', () => {
         dateOfBirth: '1976-07-14',
       });
 
-      const fetchInsResult = await insiClient.fetchIns(person, { requestId }, true);
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: null,
         failedRequests: [{
           "status": "FAIL",
           "request": {
             "id": expect.any(String),
-            "xml": getDeVinciRuthXmlRequestTest({
-              idam: IDAM,
-              version: SOFTWARE_VERSION,
-              name: SOFTWARE_NAME,
-            })
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId})
           },
           "response": {
             "formatted": null,

@@ -3,7 +3,7 @@
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "3.0.0",
+  "version": "2.1.0",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "tsc --build --clean",

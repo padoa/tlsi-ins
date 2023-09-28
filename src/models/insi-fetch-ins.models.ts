@@ -48,17 +48,17 @@ export enum CRLabels {
 }
 
 export enum INSITestingUser {
-	ADRUN = "ADRUN ZOE",
-	CORSE = "CORSE Anthony",
-	DAEION = "D'AEION Coeur",
-	DARTAGNANDELHERAULT = "D'ARTAGNAN DE L'HERAULT Pierre-alain",
-	DEVINCI = "DE VINCI Ruth",
-	ECETINSI = "ECETINSI Pierre-alain",
-	HERMAN = "HERMAN Gatien",
-	HOUILLES = "HOUILLES Pierre",
-	NESSIMICHELANGELO = "NESSI Michelangelo",
-	NESSIRUTH = "NESSI Ruth",
-	TCHITCHI = "TCHITCHI Ola",
+	ADRUN = 'adrun zoe',
+	CORSE = 'corse anthony',
+	DAEION = "d'aeion coeur",
+	DARTAGNANDELHERAULT = "d'artagnan de l'herault pierre-alain",
+	DEVINCI = 'de vinci ruth',
+	ECETINSI = 'ecetinsi pierre-alain',
+	HERMAN = 'herman gatien',
+	HOUILLES = 'houilles pierre',
+	NESSIMICHELANGELO = 'nessi michelangelo',
+	NESSIRUTH = 'nessi ruth',
+	TCHITCHI = 'tchitchi ola catarina bella',
 }
 
 interface InsHisto {

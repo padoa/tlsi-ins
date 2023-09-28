@@ -9,14 +9,13 @@ const getDeVinciRuthXmlRequest = (
   idam,
   version,
   name,
-  date,
+  requestDate: date,
   birthName: 'DE VINCI',
   firstName: 'RUTH',
   gender: Gender.Female,
   dateOfBirth: '1976-07-14',
   assertionPs,
 });
-
 
 export const getDeVinciRuthMockedResponse = (): any => {
   return [
@@ -41,7 +40,7 @@ export const getDeVinciRuthMockedResponse = (): any => {
             "desirCode": "insi_102",
             "error": "L'appel au service de recherche avec les traits d'identité renvoie une erreur technique."
         }
-    }
+      }
     }
   ];
 };
