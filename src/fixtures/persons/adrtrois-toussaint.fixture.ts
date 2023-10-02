@@ -91,16 +91,3 @@ export const getAdrtroisToussaintResponse = (): INSiServiceResponse => ({
   xml: getAdrtroisToussaintXmlResponse(),
   error: null,
 });
-
-export const getAdrtroisMockedResponse = (): any => {
-  return [
-    {
-      status: 'SUCCESS',
-      request: {
-        id: "",
-        xml: ""
-      },
-      response: getAdrtroisToussaintResponse()
-    }
-  ];
-};
