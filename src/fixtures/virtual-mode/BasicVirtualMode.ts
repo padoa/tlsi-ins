@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { INSiPersonArgs } from "../../class/insi-person.class";
-import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequest } from "../../models/insi-fetch-ins.models";
+import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequest, INSiServiceRequestEnv } from "../../models/insi-fetch-ins.models";
 import { getCNDAValidationXmlRequest } from "../insi-client.fixture";
 
 export default class BasicVirtualMode {
@@ -81,11 +81,11 @@ export default class BasicVirtualMode {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\r\n  <S:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\">\r\n    <RESULTAT xmlns:ns3=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns2=\"http://www.cnamts.fr/INSiRecSans\" xmlns=\"http://www.cnamts.fr/INSiResultat\">\r\n      <CR>\r\n        <CodeCR>01</CodeCR>\r\n        <LibelleCR>Aucune identite trouvee</LibelleCR>\r\n      </CR>\r\n </RESULTAT>\r\n  </S:Body>\r\n</soap:Envelope>";
     };
     
-    getBuiltResponse({ idam, version, name, requestId, requestDate }: any): INSiServiceFetchInsRequest[] {
+    getBuiltResponse({ idam, version, name, requestId, requestDate }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
         return this.fetchRequestFlow.map((response: INSiMockedResponse): INSiServiceFetchInsRequest => {
             const getRequest: INSiServiceRequest = {
-                id: requestId,
-                xml: this.getXmlRequest(this.personDetails as INSiPersonArgs, response.firstnameRequest, requestDate, requestId, { idam, version, name })
+                id: requestId as string,
+                xml: this.getXmlRequest(this.personDetails as INSiPersonArgs, response.firstnameRequest, requestDate as string, requestId as string, { idam, version, name })
             };
             if (response.status === INSiServiceRequestStatus.FAIL) {
                 return {
