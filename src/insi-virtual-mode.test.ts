@@ -8,7 +8,7 @@ import {
   defaultUuid,
   defaultDate,
 } from './fixtures/insi-client.fixture';
-import { getXmlRequestTest} from './test/xml-request-tester';
+import { getNoIdentityXmlResponseTest, getXmlRequestTest} from './test/xml-request-tester';
 
 const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lps = new LPS({
@@ -130,7 +130,7 @@ describe('INSi Client', () => {
               "INDIVIDU": {
                 "INSACTIF": {
                   "IdIndividu": {
-                    "NumIdentifiant": "275126322074974",
+                    "NumIdentifiant": "2751263220749",
                     "Cle": "74"
                   },
                   "OID": "1.2.250.1.213.1.4.8"
@@ -202,7 +202,7 @@ describe('INSi Client', () => {
                       }
                   }
               },
-              "xml": expect.any(String),
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><RESULTAT xmlns=\"http://www.cnamts.fr/INSiResultat\" xmlns:ns0=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns1=\"http://www.cnamts.fr/INSiRecSans\"><CR><CodeCR>00</CodeCR><LibelleCR>OK</LibelleCR></CR><INDIVIDU><INSACTIF><IdIndividu><NumIdentifiant>2360663220836</NumIdentifiant><Cle>56</Cle></IdIndividu><OID>1.2.250.1.213.1.4.8</OID></INSACTIF><TIQ><NomNaissance>TCHITCHI</NomNaissance><ListePrenom>CATARINA BELLA</ListePrenom><Sexe>F</Sexe><DateNaissance>1936-06-21</DateNaissance><LieuNaissance>63220</LieuNaissance></TIQ></INDIVIDU></RESULTAT></env:Body></soap:Envelope>",
               "error": null
           }
       },
@@ -220,7 +220,7 @@ describe('INSi Client', () => {
                     "LibelleCR": "Aucune identite trouvee"
                 }
             },
-            "xml": expect.any(String),
+            "xml": getNoIdentityXmlResponseTest(),
             "error": null
           }
         }],
@@ -284,7 +284,6 @@ describe('INSi Client', () => {
                 ],
                 "TIQ": {
                   "NomNaissance": "CORSE",
-                  "Prenom": "ANTHONY",
                   "ListePrenom": "ANTHONY",
                   "Sexe": "M",
                   "DateNaissance": "1980-03-02",
@@ -299,40 +298,7 @@ describe('INSi Client', () => {
         failedRequests: [],
       });
     });
-
-    test('should get correct response for DE VINCI Ruth', async () => {
-      const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
-      const person = new INSiPerson({
-        birthName: 'DE VINCI',
-        firstName: 'RUTH',
-        gender: Gender.Female,
-        dateOfBirth: '1976-07-14',
-      });
-
-      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
-      expect(fetchInsResult).toEqual({
-        successRequest: null,
-        failedRequests: [{
-          "status": "FAIL",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId})
-          },
-          "response": {
-            "formatted": null,
-            "json": null,
-            "xml": expect.any(String),
-            "error": {
-              siramCode: "siram_40",
-              text: "Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.",
-              desirCode: "insi_102",
-              error: "L'appel au service de recherche avec les traits d'identité renvoie une erreur technique."
-            }
-          }
-        }],
-      });
-    });
-
+ 
     test('should get correct response for Houilles Pierre', async () => {
       const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
       const person = new INSiPerson({
@@ -415,7 +381,7 @@ describe('INSi Client', () => {
           }
         }],
       });
-    });
+    }); 
 
   });
 });

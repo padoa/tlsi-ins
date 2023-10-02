@@ -35,4 +35,19 @@ export const getXmlRequestTest = ({ idam, version, name, person, requestId }: {i
       '</soap:Envelope>',
     ].join('');
   };
-  
+
+export const getNoIdentityXmlResponseTest = (): string => {
+    return [
+        '<?xml version="1.0" encoding="UTF-8"?>\n',
+        '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+        '<S:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\">',
+        '<RESULTAT xmlns:ns3=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns2=\"http://www.cnamts.fr/INSiRecSans\" xmlns=\"http://www.cnamts.fr/INSiResultat\">',
+        '<CR>',
+        `<CodeCR>01</CodeCR>`,
+        `<LibelleCR>Aucune identite trouvee</LibelleCR>`,
+        '</CR>',
+        '</RESULTAT>',
+        '</S:Body>',
+        '</soap:Envelope>',
+    ].join('');
+  };

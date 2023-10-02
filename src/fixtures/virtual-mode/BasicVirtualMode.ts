@@ -1,17 +1,12 @@
 import _ from "lodash";
-import { INSiPersonArgs } from "../../class/insi-person.class";
-import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequest, INSiServiceRequestEnv } from "../../models/insi-fetch-ins.models";
-import { getCNDAValidationXmlRequest } from "../insi-client.fixture";
+import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequestEnv, INSiServiceJsonResponse, INSiServiceResponse } from "../../models/insi-fetch-ins.models";
 
 export default class BasicVirtualMode {
-    fetchRequestFlow: INSiMockedResponse[];
-    personDetails: INSiServiceFormattedResponse;
-    constructor(fetchRequestFlow: INSiMockedResponse[], personDetails: INSiServiceFormattedResponse) {
-        this.fetchRequestFlow = fetchRequestFlow;
-        this.personDetails = personDetails;
-    }
+    static insHisto: InsHisto[] = [];
+    static personDetails: INSiServiceFormattedResponse;;
+    static fetchRequestFlow: INSiMockedResponse[];
 
-    getXmlRequest(person: INSiPersonArgs, firstNameResquest: string, { idam, version, name, requestDate, requestId, emitter }: INSiServiceRequestEnv): string {
+    private static getXmlRequest(firstNameResquest: string, { idam, version, name, requestDate, requestId, emitter }: INSiServiceRequestEnv): string {
         return [
             '<?xml version="1.0" encoding="utf-8"?>',
             '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
@@ -36,21 +31,21 @@ export default class BasicVirtualMode {
             '</soap:Header>',
             '<soap:Body>',
             '<insi_recsans_ins:RECSANSVITALE xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans">',
-            `<insi_recsans_ins:NomNaissance>${person.birthName}</insi_recsans_ins:NomNaissance>`,
+            `<insi_recsans_ins:NomNaissance>${this.personDetails.birthName}</insi_recsans_ins:NomNaissance>`,
             `<insi_recsans_ins:Prenom>${firstNameResquest}</insi_recsans_ins:Prenom>`,
-            `<insi_recsans_ins:Sexe>${person.gender}</insi_recsans_ins:Sexe>`,
-            `<insi_recsans_ins:DateNaissance>${person.dateOfBirth}</insi_recsans_ins:DateNaissance>`,
+            `<insi_recsans_ins:Sexe>${this.personDetails.gender}</insi_recsans_ins:Sexe>`,
+            `<insi_recsans_ins:DateNaissance>${this.personDetails.dateOfBirth}</insi_recsans_ins:DateNaissance>`,
             '</insi_recsans_ins:RECSANSVITALE>',
             '</soap:Body>',
             '</soap:Envelope>',
-          ].join('');
+        ].join('');
     }
 
-    getInsHisto = (insHisto: InsHisto[] | undefined): string => {
-        if (_.isNil(insHisto) || insHisto.length === 0) {
+    private static getXmlInsHisto = (): string => {
+        if (_.isNil(this.insHisto) || this.insHisto.length === 0) {
             return "";
         }
-        return insHisto.map((insHisto: InsHisto) => {
+        return this.insHisto.map((insHisto: InsHisto) => {
             return [
                 '<INSHISTO>',
                 '<IdIndividu>',
@@ -60,12 +55,13 @@ export default class BasicVirtualMode {
                 '</IdIndividu>',
                 `<OID>${insHisto.OID}</OID>`,
                 '</INSACTIF>',
-            ]; 
+            ];
         }).join('');
     }
 
-    getValidXmlResponse(response: INSiMockedResponse): string {
-        const insHisto = this.getInsHisto(response.json?.INDIVIDU?.INSHISTO);
+    private static getValidXmlResponse(response: INSiMockedResponse): string {
+        const numIdentifiant = this.personDetails.registrationNumber?.slice(0, -2);
+        const cle = this.personDetails.registrationNumber?.slice(-2);
         return [
             '<?xml version="1.0" encoding="UTF-8"?>\n',
             '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
@@ -78,18 +74,18 @@ export default class BasicVirtualMode {
             '<INDIVIDU>',
             '<INSACTIF>',
             '<IdIndividu>',
-            `<NumIdentifiant>${response.json?.INDIVIDU?.INSACTIF?.IdIndividu?.NumIdentifiant}</NumIdentifiant>`,
-            `<Cle>${response.json?.INDIVIDU?.INSACTIF?.IdIndividu?.Cle}</Cle>`,
+            `<NumIdentifiant>${numIdentifiant}</NumIdentifiant>`,
+            `<Cle>${cle}</Cle>`,
             '</IdIndividu>',
-            `<OID>${response.json?.INDIVIDU?.INSACTIF?.OID}</OID>`,
+            `<OID>${this.personDetails.oid}</OID>`,
             '</INSACTIF>',
-            insHisto,
+            this.getXmlInsHisto(),
             '<TIQ>',
-            `<NomNaissance>${response.formatted?.birthName}</NomNaissance>`,
-            `<ListePrenom>${response.formatted?.allFirstNames}</ListePrenom>`,
-            `<Sexe>M</Sexe>`,
-            `<DateNaissance>${response.formatted?.dateOfBirth}</DateNaissance>`,
-            `<LieuNaissance>${response.formatted?.placeOfBirthCode}</LieuNaissance>`,
+            `<NomNaissance>${this.personDetails?.birthName}</NomNaissance>`,
+            `<ListePrenom>${this.personDetails?.allFirstNames}</ListePrenom>`,
+            `<Sexe>${this.personDetails?.gender}</Sexe>`,
+            `<DateNaissance>${this.personDetails?.dateOfBirth}</DateNaissance>`,
+            `<LieuNaissance>${this.personDetails?.placeOfBirthCode}</LieuNaissance>`,
             '</TIQ>',
             '</INDIVIDU>',
             '</RESULTAT>',
@@ -97,59 +93,87 @@ export default class BasicVirtualMode {
             '</soap:Envelope>',
         ].join('');
     };
-    getFailedXmlResponse(): string {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\r\n  <S:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\">\r\n    <RESULTAT xmlns:ns3=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns2=\"http://www.cnamts.fr/INSiRecSans\" xmlns=\"http://www.cnamts.fr/INSiResultat\">\r\n      <CR>\r\n        <CodeCR>01</CodeCR>\r\n        <LibelleCR>Aucune identite trouvee</LibelleCR>\r\n      </CR>\r\n </RESULTAT>\r\n  </S:Body>\r\n</soap:Envelope>";
-    };
     
-    getBuiltResponse({ idam, version, name, requestId, requestDate, emitter }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
-        return this.fetchRequestFlow.map((response: INSiMockedResponse): INSiServiceFetchInsRequest => {
-            const getRequest: INSiServiceRequest = {
-                id: requestId as string,
-                xml: this.getXmlRequest(this.personDetails as INSiPersonArgs, response.firstnameRequest, { idam, version, name, requestId, requestDate, emitter })
-            };
-            if (response.status === INSiServiceRequestStatus.FAIL) {
+    private static getNoIdentityXmlResponse(): string {
+        return [
+            '<?xml version="1.0" encoding="UTF-8"?>\n',
+            '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+            '<S:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\">',
+            '<RESULTAT xmlns:ns3=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns2=\"http://www.cnamts.fr/INSiRecSans\" xmlns=\"http://www.cnamts.fr/INSiResultat\">',
+            '<CR>',
+            `<CodeCR>01</CodeCR>`,
+            `<LibelleCR>Aucune identite trouvee</LibelleCR>`,
+            '</CR>',
+            '</RESULTAT>',
+            '</S:Body>',
+            '</soap:Envelope>',
+        ].join('');
+    };
+
+    private static buildJsonResponse(response: INSiMockedResponse): INSiServiceResponse {
+        const numIdentifiant = this.personDetails.registrationNumber?.slice(0, -2);
+        const cle = this.personDetails.registrationNumber?.slice(-2);
+        switch (response.codeCR) {
+            case CRCodes.NO_RESULT:
                 return {
-                    status: response.status,
-                    request: getRequest,
-                    response: {
-                        formatted: null,
-                        json: null,
-                        xml: this.getFailedXmlResponse(),
-                        error: {
-                            siramCode: "siram_40",
-                            text: "Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.",
-                            desirCode: "insi_102",
-                            error: "L'appel au service de recherche avec les traits d'identité renvoie une erreur technique."
-                        }
-                    }
-                }
-            }
-            return response.codeCR === CRCodes.NO_RESULT ?
-                {
-                    status: response.status,
-                    request: getRequest,
-                    response: {
-                        formatted: null,
-                        json: {
-                            CR: {
-                                CodeCR: CRCodes.NO_RESULT,
-                                LibelleCR: CRLabels.NO_RESULT
-                            },
+                    formatted: null,
+                    json: {
+                        CR: {
+                            CodeCR: CRCodes.NO_RESULT,
+                            LibelleCR: CRLabels.NO_RESULT
                         },
-                        xml: this.getFailedXmlResponse(),
-                        error: null
-                    }
-                } :
-                {
-                    status: response.status,
-                    request: getRequest,
-                    response: {
-                        formatted: response.formatted,
-                        json: response.json,
-                        xml: this.getValidXmlResponse(response),
-                        error: null
-                    }
-                } as INSiServiceFetchInsRequest;
+                    },
+                    xml: this.getNoIdentityXmlResponse(),
+                    error: null
+                }
+                break;
+            case CRCodes.OK:
+                return {
+                    formatted: this.personDetails as INSiServiceFormattedResponse,
+                    json: {
+                        CR: {
+                            CodeCR: CRCodes.OK,
+                            LibelleCR: CRLabels.OK,
+                        },
+                        INDIVIDU: {
+                            INSACTIF: {
+                                IdIndividu: {
+                                    NumIdentifiant: numIdentifiant,
+                                    Cle: cle
+                                },
+                                OID: this.personDetails.oid
+                            },
+                            ...this.insHisto.length > 0 ? {INSHISTO: this.insHisto} : {},
+                            TIQ: {
+                                NomNaissance: this.personDetails.birthName,
+                                ListePrenom: this.personDetails.allFirstNames,
+                                Sexe: this.personDetails.gender,
+                                DateNaissance: this.personDetails.dateOfBirth,
+                                LieuNaissance: this.personDetails.placeOfBirthCode
+                            }
+                        }
+                    },
+                    xml: this.getValidXmlResponse(response),
+                    error: null
+                }
+                break;
+        
+            default:
+                throw new Error("CR code unvalid !");
+                break;
+        }
+    }
+
+    static getBuiltResponse(clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+        return this.fetchRequestFlow.map((response: INSiMockedResponse): INSiServiceFetchInsRequest => {
+            return {
+                status: INSiServiceRequestStatus.SUCCESS,
+                request: {
+                    id: clientConfig.requestId as string,
+                    xml: this.getXmlRequest(response.firstnameRequest, clientConfig)
+                },
+                response: this.buildJsonResponse(response),
+            }
         })
     }
 }

@@ -103,7 +103,6 @@ export interface INSiServiceJsonResponse {
   }
 }
 export interface INSiMockedResponse {
-  status: INSiServiceRequestStatus,
   codeCR: CRCodes,
   LibelleCR: CRLabels,
   firstnameRequest: string,
