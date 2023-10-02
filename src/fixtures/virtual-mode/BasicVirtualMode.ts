@@ -59,7 +59,7 @@ export default class BasicVirtualMode {
         }).join('');
     }
 
-    private static getValidXmlResponse(response: INSiMockedResponse): string {
+    private static getValidXmlResponse(): string {
         const numIdentifiant = this.personDetails.registrationNumber?.slice(0, -2);
         const cle = this.personDetails.registrationNumber?.slice(-2);
         return [
@@ -68,8 +68,8 @@ export default class BasicVirtualMode {
             '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
             '<RESULTAT xmlns="http://www.cnamts.fr/INSiResultat" xmlns:ns0="http://www.cnamts.fr/INSiRecVit" xmlns:ns1="http://www.cnamts.fr/INSiRecSans">',
             '<CR>',
-            `<CodeCR>${response.codeCR}</CodeCR>`,
-            `<LibelleCR>${response.LibelleCR}</LibelleCR>`,
+            `<CodeCR>00</CodeCR>`,
+            `<LibelleCR>OK</LibelleCR>`,
             '</CR>',
             '<INDIVIDU>',
             '<INSACTIF>',
@@ -153,7 +153,7 @@ export default class BasicVirtualMode {
                             }
                         }
                     },
-                    xml: this.getValidXmlResponse(response),
+                    xml: this.getValidXmlResponse(),
                     error: null
                 }
                 break;
