@@ -147,9 +147,7 @@ export class INSiClient {
     const requestDate = new Date().toISOString();
     const emitter = this.getLpsContextEmitter();
     const fetchRequests = getPersonMockedRequest(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, requestDate, emitter: emitter });
-    return new Promise( function ( resolve ) {
-        return resolve(fetchRequests);
-    });
+    return Promise.resolve(fetchRequests);
   }
 
   private _callFetchFromIdentityTraits(requestId: string, soapBody: INSiPersonSoapBody): Promise<INSiServiceFetchInsRequest> {
