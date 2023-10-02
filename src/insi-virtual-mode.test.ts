@@ -228,7 +228,7 @@ describe('INSi Client', () => {
       });
     });
 
-    /* test('should get correct response for CORSE Anthony', async () => {
+    test('should get correct response for CORSE Anthony', async () => {
       const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
       const person = new INSiPerson({
         birthName: 'CORSE',
@@ -243,10 +243,11 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getCorseAnthonyXmlRequestTest({
+            "xml": getXmlRequestTest({
               idam: IDAM,
               version: SOFTWARE_VERSION,
               name: SOFTWARE_NAME,
+              person: {firstName: 'ANTHONY', birthName: 'CORSE', dateOfBirth: '1980-03-02', gender: Gender.Male}, requestId
             })
           },
           "response": {
@@ -298,7 +299,7 @@ describe('INSi Client', () => {
         },
         failedRequests: [],
       });
-    }); */
+    });
 
     test('should get correct response for DE VINCI Ruth', async () => {
       const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';

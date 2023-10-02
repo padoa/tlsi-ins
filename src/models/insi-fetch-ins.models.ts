@@ -61,7 +61,7 @@ export enum INSITestingUser {
 	TCHITCHI = 'tchitchi ola catarina bella',
 }
 
-interface InsHisto {
+export interface InsHisto {
   DateDeb?: string,
   DateFin?: string,
   IdIndividu: {
@@ -102,6 +102,14 @@ export interface INSiServiceJsonResponse {
     };
   }
 }
+export interface INSiMockedResponse {
+  status: INSiServiceRequestStatus,
+  codeCR: CRCodes,
+  LibelleCR: CRLabels,
+  firstnameRequest: string,
+  json?: INSiServiceJsonResponse,
+  formatted?: INSiServiceFormattedResponse
+}
 
 export interface INSiServiceFormattedResponse {
   birthName?: string;
@@ -113,4 +121,11 @@ export interface INSiServiceFormattedResponse {
   placeOfBirthCode?: string;
   registrationNumber?: string;
   oid?: string;
+}
+
+export interface INSiServiceRequestEnv {
+  idam : string,
+  version: string,
+  name: string,
+  requestDate?: string
 }

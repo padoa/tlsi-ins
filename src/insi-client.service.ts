@@ -17,7 +17,7 @@ import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
-import { getPersonVirtualMode } from './fixtures/virtual-mode/virtual-mode.helper';
+import { getPersonMockedRequest } from './fixtures/virtual-mode/virtual-mode.helper';
 import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import _ from 'lodash';
 
@@ -103,7 +103,7 @@ export class INSiClient {
 
   private async _launchSoapRequestForPerson(person: INSiPerson, requestId: string, virtualModeEnabled: boolean): Promise<INSiServiceFetchInsRequest[]> {
     if (virtualModeEnabled) {
-      return this._getPersonIdentity(person, requestId);
+      return this._getMockedPersonRequest(person, requestId);
     }
     const fetchRequests: INSiServiceFetchInsRequest[] = [];
     const namesToSendRequestFor = person.getSoapBodyAsJson();
@@ -130,8 +130,8 @@ export class INSiClient {
     return fetchRequests;
   }
 
-  private _getPersonIdentity(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
-    const fetchRequests = getPersonVirtualMode(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME });
+  private _getMockedPersonRequest(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
+    const fetchRequests = getPersonMockedRequest(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME });
     return new Promise( function ( resolve ) {
         return resolve(fetchRequests);
     });
