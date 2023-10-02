@@ -1,29 +1,12 @@
 import {
   CRCodes,
   CRLabels,
-  INSiServiceFetchInsRequest,
   INSiServiceFormattedResponse,
   INSiServiceJsonResponse,
-  INSiServiceRequestStatus,
   INSiServiceResponse,
 } from '../../models/insi-fetch-ins.models';
 import { Gender } from '../../class/insi-person.class';
 import { getCNDAValidationXmlRequest } from '../insi-client.fixture';
-import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../../models/env';
-
-export const getTchitchiCatarinaXmlRequest = (
-  { idam, version, name, assertionPs, requestDate, firstName = 'OLA CATARINA BELLA' }: { idam: string, version: string, name: string, assertionPs?: string, requestDate?: string, firstName?: string }
-): string => getCNDAValidationXmlRequest({
-  idam,
-  version,
-  name,
-  requestDate: requestDate,
-  birthName: 'TCHITCHI',
-  firstName: firstName,
-  gender: Gender.Female,
-  dateOfBirth: '1976-07-14',
-  assertionPs,
-});
 
 export const getTchitchiOlaXmlRequest = ({ idam, version, name }: { idam: string, version: string, name: string }): string => getCNDAValidationXmlRequest({
   idam,
@@ -35,7 +18,17 @@ export const getTchitchiOlaXmlRequest = ({ idam, version, name }: { idam: string
   dateOfBirth: '1936-06-21',
 });
 
-const getTchitchiCatarinaXmlResponse = (): string => [
+export const getTchitchiCatarinaXmlRequest = ({ idam, version, name }: { idam: string, version: string, name: string }): string => getCNDAValidationXmlRequest({
+  idam,
+  version,
+  name,
+  birthName: 'TCHITCHI',
+  firstName: 'CATARINA',
+  gender: Gender.Female,
+  dateOfBirth: '1936-06-21',
+});
+
+export const getTchitchiCatarinaXmlResponse = ():string => [
   '<?xml version="1.0" encoding="UTF-8"?>\n',
   '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
   '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
@@ -65,7 +58,7 @@ const getTchitchiCatarinaXmlResponse = (): string => [
   '</soap:Envelope>',
 ].join('');
 
-const getTchitchiCatarinaJsonResponse = (): INSiServiceJsonResponse => ({
+export const getTchitchiCatarinaJsonResponse = (): INSiServiceJsonResponse => ({
   CR: {
     CodeCR: CRCodes.OK,
     LibelleCR: CRLabels.OK,
@@ -88,7 +81,7 @@ const getTchitchiCatarinaJsonResponse = (): INSiServiceJsonResponse => ({
   }
 });
 
-const getTchitchiCatarinaFormattedResponse = (): INSiServiceFormattedResponse => ({
+export const getTchitchiCatarinaFormattedResponse = (): INSiServiceFormattedResponse => ({
   birthName: 'TCHITCHI',
   firstName: 'CATARINA',
   allFirstNames: 'CATARINA BELLA',
@@ -105,47 +98,3 @@ export const getTchitchiCatarinaResponse = (): INSiServiceResponse => ({
   xml: getTchitchiCatarinaXmlResponse(),
   error: null,
 });
-
-
-export const getTchitchiCatarinaMockedResponse = (): INSiServiceFetchInsRequest[] => {
-  return [
-    {
-      status: INSiServiceRequestStatus.SUCCESS,
-      request: {
-        id: "b3d188ab-8bc5-4e75-b217-a0ecf58a6953",
-        xml: getTchitchiCatarinaXmlRequest({
-          idam: IDAM,
-          version: SOFTWARE_VERSION,
-          name: SOFTWARE_NAME,
-          requestDate: new Date().toISOString(),
-          firstName: "OLA"
-        })
-      },
-      response: {
-        formatted: null,
-        json: {
-          CR: {
-            CodeCR: CRCodes.NO_RESULT,
-            LibelleCR: CRLabels.NO_RESULT
-          },
-        },
-        xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><S:Fault xmlns:ns4=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang=\"en\">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite=\"fatal\" code=\"insi_102\" xmlns:siram=\"urn:siram\">L'appel au service de recherche avec les traits d'identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>",
-        error: null
-      }
-    },
-    {
-      status: INSiServiceRequestStatus.SUCCESS,
-      request: {
-        id: "b3d188ab-8bc5-4e75-b217-a0ecf58a6953",
-        xml: getTchitchiCatarinaXmlRequest({
-          idam: IDAM,
-          version: SOFTWARE_VERSION,
-          name: SOFTWARE_NAME,
-          requestDate: new Date().toISOString(),
-          firstName: "CATARINA"
-        })
-      },
-      response: getTchitchiCatarinaResponse()
-    }
-  ];
-};
