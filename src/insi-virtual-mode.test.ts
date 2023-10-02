@@ -328,7 +328,91 @@ describe('INSi Client', () => {
               text: "Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.",
               desirCode: "insi_102",
               error: "L'appel au service de recherche avec les traits d'identité renvoie une erreur technique."
+            }
           }
+        }],
+      });
+    });
+
+    test('should get correct response for Houilles Pierre', async () => {
+      const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
+      const person = new INSiPerson({
+        birthName: 'HOUILLES',
+        firstName: 'PIERRE',
+        gender: Gender.Male,
+        dateOfBirth: '1993-01-27',
+      });
+
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
+      expect(fetchInsResult).toEqual({
+        successRequest: null,
+        failedRequests: [{
+          "status": "SUCCESS",
+          "request": {
+            "id": expect.any(String),
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: {firstName: 'PIERRE', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male}, requestId})
+          },
+          "response": {
+            formatted: null,
+            json: {
+              CR: {
+                    CodeCR: "01",
+                    LibelleCR: "Aucune identite trouvee"
+                }
+            },
+            "xml": expect.any(String),
+            "error": null
+          }
+        }, {
+          "status": "SUCCESS",
+          "request": {
+            "id": expect.any(String),
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: {firstName: 'PAUL', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male}, requestId})
+          },
+          "response": {
+            formatted: null,
+            json: {
+              CR: {
+                    CodeCR: "01",
+                    LibelleCR: "Aucune identite trouvee"
+                }
+            },
+            "xml": expect.any(String),
+            "error": null
+          }
+        }, {
+          "status": "SUCCESS",
+          "request": {
+            "id": expect.any(String),
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: {firstName: 'JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male}, requestId})
+          },
+          "response": {
+            formatted: null,
+            json: {
+              CR: {
+                    CodeCR: "01",
+                    LibelleCR: "Aucune identite trouvee"
+                }
+            },
+            "xml": expect.any(String),
+            "error": null
+          }
+        }, {
+          "status": "SUCCESS",
+          "request": {
+            "id": expect.any(String),
+            "xml": getXmlRequestTest({idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: {firstName: 'PIERRE PAUL JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male}, requestId})
+          },
+          "response": {
+            formatted: null,
+            json: {
+              CR: {
+                    CodeCR: "01",
+                    LibelleCR: "Aucune identite trouvee"
+                }
+            },
+            "xml": expect.any(String),
+            "error": null
           }
         }],
       });

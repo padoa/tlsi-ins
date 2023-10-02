@@ -7,7 +7,7 @@ export class HouillesPierreVirtualMode extends BasicVirtualMode {
         const personDetails = {
             birthName: 'HOUILLES',
             gender: Gender.Male,
-            dateOfBirth: '1936-06-21',
+            dateOfBirth: '1993-01-27',
         }
         const fetchRequestFlow: INSiMockedResponse[] = [{
             status: INSiServiceRequestStatus.SUCCESS,
@@ -16,18 +16,18 @@ export class HouillesPierreVirtualMode extends BasicVirtualMode {
             LibelleCR: CRLabels.NO_RESULT,
         }, {
             status: INSiServiceRequestStatus.SUCCESS,
-            codeCR: CRCodes.OK,
-            LibelleCR: CRLabels.OK,
+            codeCR: CRCodes.NO_RESULT,
+            LibelleCR: CRLabels.NO_RESULT,
             firstnameRequest: 'PAUL',
         }, {
             status: INSiServiceRequestStatus.SUCCESS,
-            codeCR: CRCodes.OK,
-            LibelleCR: CRLabels.OK,
+            codeCR: CRCodes.NO_RESULT,
+            LibelleCR: CRLabels.NO_RESULT,
             firstnameRequest: 'JACQUES',
         }, {
             status: INSiServiceRequestStatus.SUCCESS,
-            codeCR: CRCodes.OK,
-            LibelleCR: CRLabels.OK,
+            codeCR: CRCodes.NO_RESULT,
+            LibelleCR: CRLabels.NO_RESULT,
             firstnameRequest: 'PIERRE PAUL JACQUES',
         },
     ]
