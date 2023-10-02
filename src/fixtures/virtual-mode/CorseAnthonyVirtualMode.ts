@@ -1,10 +1,9 @@
-import { Gender, INSiPersonArgs } from "../../class/insi-person.class";
-import { getCNDAValidationXmlRequest } from "../insi-client.fixture";
+import { Gender } from "../../class/insi-person.class";
 import BasicVirtualMode from "./BasicVirtualMode";
 import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceRequestEnv, INSiServiceRequestStatus } from "../../models/insi-fetch-ins.models";
 
 export class CorseAnthonyVirtualMode extends BasicVirtualMode {
-    static getMockedResponse(requestId: string, { idam, version, name, requestDate }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+    static getMockedResponse(requestId: string, { idam, version, name, requestDate, emitter }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
         const personDetails = {
             gender: Gender.Male,
             birthName: 'CORSE',
@@ -57,6 +56,6 @@ export class CorseAnthonyVirtualMode extends BasicVirtualMode {
             },
         }];
         const corseAnthonyVirtualMode = new CorseAnthonyVirtualMode(fetchRequestFlow, personDetails);
-        return corseAnthonyVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate });
+        return corseAnthonyVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate, emitter });
     }
 }

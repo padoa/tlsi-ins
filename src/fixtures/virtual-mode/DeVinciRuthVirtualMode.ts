@@ -1,11 +1,9 @@
-import { Gender, INSiPersonArgs } from "../../class/insi-person.class";
-import { getCNDAValidationXmlRequest } from "../insi-client.fixture";
+import { Gender } from "../../class/insi-person.class";
 import BasicVirtualMode from "./BasicVirtualMode";
-import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, INSiServiceJsonResponse, INSiServiceRequestEnv, INSiServiceRequestStatus } from "../../models/insi-fetch-ins.models";
-import { v4 as uuidv4 } from 'uuid';
+import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceRequestEnv, INSiServiceRequestStatus } from "../../models/insi-fetch-ins.models";
 
 export class DeVinciRuthVirtualMode extends BasicVirtualMode {
-    static getMockedResponse(requestId: string, { idam, version, name, requestDate }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+    static getMockedResponse(requestId: string, { idam, version, name, requestDate, emitter }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
         const personDetails = {
             gender: Gender.Female,
             birthName: 'DE VINCI',
@@ -20,6 +18,6 @@ export class DeVinciRuthVirtualMode extends BasicVirtualMode {
             firstnameRequest: 'RUTH',
         }];
         const deVinciRuthVirtualMode = new DeVinciRuthVirtualMode(fetchRequestFlow, personDetails);
-        return deVinciRuthVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate });
+        return deVinciRuthVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate, emitter });
     }
 }

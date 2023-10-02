@@ -6,24 +6,25 @@ import { DeVinciRuthVirtualMode } from "./DeVinciRuthVirtualMode";
 import { HouillesPierreVirtualMode } from "./HouillesPierreVirtualMode";
 import { CorseAnthonyVirtualMode } from "./CorseAnthonyVirtualMode";
 
-export const getPersonMockedRequest = (person: INSiPersonArgs, requestId: string, {idam, version, name, requestDate}: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
+export const getPersonMockedRequest = (person: INSiPersonArgs, requestId: string, {idam, version, name, requestDate, emitter}: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
     const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();
+    const requestEnv =  {idam, version, name, requestDate, emitter};
     let fetchRequests: INSiServiceFetchInsRequest[] = [];
     switch (formattedName) {
         case INSITestingUser.TCHITCHI:
-            fetchRequests = TchitchiOlaVirtualMode.getMockedResponse(requestId, {idam, version, name, requestDate});
+            fetchRequests = TchitchiOlaVirtualMode.getMockedResponse(requestId, requestEnv);
             break;
         case INSITestingUser.ADRUN:
-            fetchRequests = AdrunZoeVirtualMode.getMockedResponse(requestId, {idam, version, name, requestDate});
+            fetchRequests = AdrunZoeVirtualMode.getMockedResponse(requestId, requestEnv);
             break;
         case INSITestingUser.CORSE:
-            fetchRequests = CorseAnthonyVirtualMode.getMockedResponse(requestId, {idam, version, name, requestDate});
+            fetchRequests = CorseAnthonyVirtualMode.getMockedResponse(requestId, requestEnv);
             break;
         case INSITestingUser.DEVINCI:
-            fetchRequests = DeVinciRuthVirtualMode.getMockedResponse(requestId, {idam, version, name, requestDate});
+            fetchRequests = DeVinciRuthVirtualMode.getMockedResponse(requestId, requestEnv);
             break;
         case INSITestingUser.HOUILLES:
-            fetchRequests = HouillesPierreVirtualMode.getMockedResponse(requestId, {idam, version, name, requestDate});
+            fetchRequests = HouillesPierreVirtualMode.getMockedResponse(requestId, requestEnv);
             break;
         default:
             fetchRequests = [];

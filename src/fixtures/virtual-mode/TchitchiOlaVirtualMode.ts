@@ -3,7 +3,7 @@ import BasicVirtualMode from "./BasicVirtualMode";
 import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceRequestEnv, INSiServiceRequestStatus } from '../../models/insi-fetch-ins.models';
 
 export class TchitchiOlaVirtualMode extends BasicVirtualMode {
-    static getMockedResponse(requestId: string, { idam, version, name, requestDate }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+    static getMockedResponse(requestId: string, { idam, version, name, requestDate, emitter }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
         const personDetails = {
             birthName: 'TCHITCHI',
             gender: Gender.Female,
@@ -52,6 +52,6 @@ export class TchitchiOlaVirtualMode extends BasicVirtualMode {
         },
     ]
     const tchitchiOlaVirtualMode = new TchitchiOlaVirtualMode(fetchRequestFlow, personDetails);
-    return tchitchiOlaVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate });
+    return tchitchiOlaVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate, emitter });
 }
 }

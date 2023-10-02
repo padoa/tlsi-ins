@@ -3,7 +3,7 @@ import BasicVirtualMode from "./BasicVirtualMode";
 import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceRequestEnv, INSiServiceRequestStatus } from '../../models/insi-fetch-ins.models';
 
 export class HouillesPierreVirtualMode extends BasicVirtualMode {
-    static getMockedResponse(requestId: string, { idam, version, name, requestDate }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+    static getMockedResponse(requestId: string, { idam, version, name, requestDate, emitter }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
         const personDetails = {
             birthName: 'HOUILLES',
             gender: Gender.Male,
@@ -32,6 +32,6 @@ export class HouillesPierreVirtualMode extends BasicVirtualMode {
         },
     ]
     const houillesPierreVirtualMode = new HouillesPierreVirtualMode(fetchRequestFlow, personDetails);
-    return houillesPierreVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate });
+    return houillesPierreVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate, emitter });
 }
 }

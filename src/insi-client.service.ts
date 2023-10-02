@@ -129,9 +129,24 @@ export class INSiClient {
     }
     return fetchRequests;
   }
+  /**
+   * This method is public as it needs to be mocked
+   * @returns The emitter of the request
+   */
+  public getLpsContextEmitter(): string {
+    return this._lpsContext.emitter;
+  }
 
+  /**
+   * Fetches INS information of a person
+   * @param  {INSiPerson} person the person who's information are about to be fetched
+   * @param  {string} requestId of the current request to Ins
+   * @returns Promise<INSiServiceFetchInsResult>
+   */
   private _getMockedPersonRequest(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
-    const fetchRequests = getPersonMockedRequest(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME });
+    const requestDate = new Date().toISOString();
+    const emitter = this.getLpsContextEmitter();
+    const fetchRequests = getPersonMockedRequest(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, requestDate, emitter: emitter });
     return new Promise( function ( resolve ) {
         return resolve(fetchRequests);
     });

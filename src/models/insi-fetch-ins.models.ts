@@ -128,5 +128,6 @@ export interface INSiServiceRequestEnv {
   version: string,
   name: string,
   requestDate?: string
-  requestId?: string
+  requestId?: string,
+  emitter?: string,
 }

@@ -1,11 +1,9 @@
-import { Gender, INSiPersonArgs } from "../../class/insi-person.class";
-import { getCNDAValidationXmlRequest } from "../insi-client.fixture";
+import { Gender } from "../../class/insi-person.class";
 import BasicVirtualMode from "./BasicVirtualMode";
-import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, INSiServiceJsonResponse, INSiServiceRequestEnv, INSiServiceRequestStatus } from "../../models/insi-fetch-ins.models";
-import { v4 as uuidv4 } from 'uuid';
+import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceRequestEnv, INSiServiceRequestStatus } from "../../models/insi-fetch-ins.models";
 
 export class AdrunZoeVirtualMode extends BasicVirtualMode {
-    static getMockedResponse(requestId: string, { idam, version, name, requestDate }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+    static getMockedResponse(requestId: string, { idam, version, name, requestDate, emitter }: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
         const personDetails = {
             gender: Gender.Female,
             birthName: 'ADRUN',
@@ -48,6 +46,6 @@ export class AdrunZoeVirtualMode extends BasicVirtualMode {
             },
         }];
         const adrunZoeVirtualMode = new AdrunZoeVirtualMode(fetchRequestFlow, personDetails);
-        return adrunZoeVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate });
+        return adrunZoeVirtualMode.getBuiltResponse({ idam, version, name, requestId, requestDate, emitter });
     }
 }

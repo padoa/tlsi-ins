@@ -8,52 +8,7 @@ import {
   defaultUuid,
   defaultDate,
 } from './fixtures/insi-client.fixture';
-import fs from 'fs';
 import { getXmlRequestTest} from './test/xml-request-tester';
-import { INSITestingUser } from './models/insi-fetch-ins.models';
-
-jest.mock('./class/bam-context.class', () => ({
-  BamContext: jest.fn((config: { emitter: string }) => ({
-    getSoapHeaderAsJson: (): BamContextSoapHeader => {
-      const soapHeader = {
-        ContexteBAM: {
-          attributes: {
-            Version: '01_02',
-          },
-          Id: defaultUuid,
-          Temps: new Date(defaultDate).toISOString(),
-          Emetteur: config.emitter,
-          COUVERTURE: {},
-        },
-      };
-      const name = 'ContexteBAM';
-      const namespace = 'ctxbam';
-      return { soapHeader, name, namespace };
-    },
-  })),
-}));
-
-jest.mock('./class/lps-context.class', () => ({
-  LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
-    getSoapHeaderAsJson: (): LpsContextSoapHeader => {
-      const soapHeader = {
-        ContexteLPS: {
-          attributes: {
-            Nature: 'CTXLPS',
-            Version: '01_00',
-          },
-          Id: defaultUuid,
-          Temps: new Date(defaultDate).toISOString(),
-          Emetteur: config.emitter,
-          LPS: config.lps.getSoapHeaderAsJson(),
-        },
-      };
-      const name = 'ContexteLPS';
-      const namespace = 'ctxlps';
-      return { soapHeader, name, namespace };
-    },
-  })),
-}));
 
 const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lps = new LPS({
@@ -81,6 +36,50 @@ const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
 
 beforeEach(() => {
   jest.spyOn(Date.prototype, 'toISOString').mockReturnValue('2023-01-01T00:00:00.000Z');
+  jest.spyOn(INSiClient.prototype, 'getLpsContextEmitter').mockReturnValue('medecin@yopmail.com');
+ 
+  jest.mock('./class/bam-context.class', () => ({
+    BamContext: jest.fn((config: { emitter: string }) => ({
+      getSoapHeaderAsJson: (): BamContextSoapHeader => {
+        const soapHeader = {
+          ContexteBAM: {
+            attributes: {
+              Version: '01_02',
+            },
+            Id: defaultUuid,
+            Temps: new Date(defaultDate).toISOString(),
+            Emetteur: config.emitter,
+            COUVERTURE: {},
+          },
+        };
+        const name = 'ContexteBAM';
+        const namespace = 'ctxbam';
+        return { soapHeader, name, namespace };
+      },
+    })),
+  }));
+
+  jest.mock('./class/lps-context.class', () => ({
+    LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
+      getSoapHeaderAsJson: (): LpsContextSoapHeader => {
+        const soapHeader = {
+          ContexteLPS: {
+            attributes: {
+              Nature: 'CTXLPS',
+              Version: '01_00',
+            },
+            Id: defaultUuid,
+            Temps: new Date(defaultDate).toISOString(),
+            Emetteur: config.emitter,
+            LPS: config.lps.getSoapHeaderAsJson(),
+          },
+        };
+        const name = 'ContexteLPS';
+        const namespace = 'ctxlps';
+        return { soapHeader, name, namespace };
+      },
+    })),
+  }));
 });
 
 afterEach(() => {
