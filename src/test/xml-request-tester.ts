@@ -1,4 +1,5 @@
 import { INSiPersonArgs } from "src/class/insi-person.class";
+import { INSiServiceFormattedResponse, InsHisto } from "src/models/insi-fetch-ins.models";
 
 export const getXmlRequestTest = ({ idam, version, name, person, requestId }: {idam: string, version:string, name:string, person: INSiPersonArgs, requestId: string}): string => {
     return [
@@ -50,4 +51,55 @@ export const getNoIdentityXmlResponseTest = (): string => {
         '</S:Body>',
         '</soap:Envelope>',
     ].join('');
+  };
+
+  const getXmlInsHisto = (insHisto: InsHisto[]): string => {
+    return insHisto.map((insHisto: InsHisto) => {
+        return [
+            '<INSHISTO>',
+            '<IdIndividu>',
+            `<NumIdentifiant>${insHisto.IdIndividu.NumIdentifiant}</NumIdentifiant>`,
+            `<Cle>${insHisto.IdIndividu.Cle}</Cle>`,
+            `<TypeMatricule>${insHisto.IdIndividu.TypeMatricule}</TypeMatricule>`,
+            '</IdIndividu>',
+            `<OID>${insHisto.OID}</OID>`,
+            '</INSHISTO>',
+        ];
+    }).join('');
+  }
+
+export const getValidXmlResponseTest = (personDetails: INSiServiceFormattedResponse, insHisto: InsHisto[] = []): string => {
+  const numIdentifiant = personDetails.registrationNumber?.slice(0, -2);
+  const cle = personDetails.registrationNumber?.slice(-2);
+  const xmlInsHisto = getXmlInsHisto(insHisto);
+    return [
+      '<?xml version="1.0" encoding="UTF-8"?>\n',
+      '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+      '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+      '<RESULTAT xmlns="http://www.cnamts.fr/INSiResultat" xmlns:ns0="http://www.cnamts.fr/INSiRecVit" xmlns:ns1="http://www.cnamts.fr/INSiRecSans">',
+      '<CR>',
+      `<CodeCR>00</CodeCR>`,
+      `<LibelleCR>OK</LibelleCR>`,
+      '</CR>',
+      '<INDIVIDU>',
+      '<INSACTIF>',
+      '<IdIndividu>',
+      `<NumIdentifiant>${numIdentifiant}</NumIdentifiant>`,
+      `<Cle>${cle}</Cle>`,
+      '</IdIndividu>',
+      `<OID>${personDetails.oid}</OID>`,
+      '</INSACTIF>',
+      xmlInsHisto,
+      '<TIQ>',
+      `<NomNaissance>${personDetails.birthName}</NomNaissance>`,
+      `<ListePrenom>${personDetails.allFirstNames}</ListePrenom>`,
+      `<Sexe>${personDetails.gender}</Sexe>`,
+      `<DateNaissance>${personDetails.dateOfBirth}</DateNaissance>`,
+      `<LieuNaissance>${personDetails.placeOfBirthCode}</LieuNaissance>`,
+      '</TIQ>',
+      '</INDIVIDU>',
+      '</RESULTAT>',
+      '</env:Body>',
+      '</soap:Envelope>',
+  ].join('');
   };

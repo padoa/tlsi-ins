@@ -3,7 +3,7 @@ import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSi
 
 export default class BasicVirtualMode {
     static insHisto: InsHisto[] = [];
-    static personDetails: INSiServiceFormattedResponse;;
+    static personDetails: INSiServiceFormattedResponse;
     static fetchRequestFlow: INSiMockedResponse[];
 
     private static getXmlRequest(firstNameResquest: string, { idam, version, name, requestDate, requestId, emitter }: INSiServiceRequestEnv): string {
@@ -41,7 +41,7 @@ export default class BasicVirtualMode {
         ].join('');
     }
 
-    private static getXmlInsHisto = (): string => {
+    private static getXmlInsHisto(): string {
         if (_.isNil(this.insHisto) || this.insHisto.length === 0) {
             return "";
         }
@@ -54,7 +54,7 @@ export default class BasicVirtualMode {
                 `<TypeMatricule>${insHisto.IdIndividu.TypeMatricule}</TypeMatricule>`,
                 '</IdIndividu>',
                 `<OID>${insHisto.OID}</OID>`,
-                '</INSACTIF>',
+                '</INSHISTO>',
             ];
         }).join('');
     }

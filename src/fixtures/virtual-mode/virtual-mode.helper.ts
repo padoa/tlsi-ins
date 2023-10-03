@@ -4,6 +4,9 @@ import { TchitchiOlaVirtualMode } from "./TchitchiOlaVirtualMode";
 import { INSITestingUser, INSiServiceFetchInsRequest, INSiServiceRequestEnv } from "../../models/insi-fetch-ins.models";
 import { HouillesPierreVirtualMode } from "./HouillesPierreVirtualMode";
 import { CorseAnthonyVirtualMode } from "./CorseAnthonyVirtualMode";
+import { EcetinsiPierreAlainVirtualMode } from "./EcetinsiPierreAlainVirtualMode";
+import { HermanGatienVirtualMode } from "./HermanGatienVirtualMode";
+import { NessiMichelangeloVirtualMode } from "./NessiMichelangeloVirtualMode";
 
 export const getPersonMockedRequest = (person: INSiPersonArgs, requestId: string, {idam, version, name, requestDate, emitter}: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
     const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();
@@ -21,6 +24,15 @@ export const getPersonMockedRequest = (person: INSiPersonArgs, requestId: string
             break;
         case INSITestingUser.HOUILLES:
             fetchRequests = HouillesPierreVirtualMode.getBuiltResponse(clientConfig);
+            break;
+        case INSITestingUser.ECETINSI:
+            fetchRequests = EcetinsiPierreAlainVirtualMode.getBuiltResponse(clientConfig);
+            break;
+        case INSITestingUser.HERMAN:
+            fetchRequests = HermanGatienVirtualMode.getBuiltResponse(clientConfig);
+            break;
+        case INSITestingUser.NESSIMICHELANGELO:
+            fetchRequests = NessiMichelangeloVirtualMode.getBuiltResponse(clientConfig);
             break;
         default:
             fetchRequests = [];

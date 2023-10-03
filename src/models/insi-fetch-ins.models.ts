@@ -50,14 +50,10 @@ export enum CRLabels {
 export enum INSITestingUser {
 	ADRUN = 'adrun zoe',
 	CORSE = 'corse anthony',
-	DAEION = "d'aeion coeur",
-	DARTAGNANDELHERAULT = "d'artagnan de l'herault pierre-alain",
-	DEVINCI = 'de vinci ruth',
 	ECETINSI = 'ecetinsi pierre-alain',
-	HERMAN = 'herman gatien',
+	HERMAN = 'hermann gatien',
 	HOUILLES = 'houilles pierre',
 	NESSIMICHELANGELO = 'nessi michelangelo',
-	NESSIRUTH = 'nessi ruth',
 	TCHITCHI = 'tchitchi ola catarina bella',
 }
 
