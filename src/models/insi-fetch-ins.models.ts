@@ -48,13 +48,13 @@ export enum CRLabels {
 }
 
 export enum INSITestingUser {
-	ADRUN = 'adrun zoe',
-	CORSE = 'corse anthony',
-	ECETINSI = 'ecetinsi pierre-alain',
-	HERMAN = 'hermann gatien',
-	HOUILLES = 'houilles pierre',
-	NESSIMICHELANGELO = 'nessi michelangelo',
-	TCHITCHI = 'tchitchi ola catarina bella',
+  ADRUN = 'adrun zoe',
+  CORSE = 'corse anthony',
+  ECETINSI = 'ecetinsi pierre-alain',
+  HERMAN = 'hermann gatien',
+  HOUILLES = 'houilles pierre',
+  NESSIMICHELANGELO = 'nessi michelangelo',
+  TCHITCHI = 'tchitchi ola catarina bella',
 }
 
 export interface InsHisto {
@@ -118,7 +118,7 @@ export interface INSiServiceFormattedResponse {
 }
 
 export interface INSiServiceRequestEnv {
-  idam : string,
+  idam: string,
   version: string,
   name: string,
   requestDate?: string
