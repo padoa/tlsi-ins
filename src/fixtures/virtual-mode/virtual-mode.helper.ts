@@ -9,7 +9,7 @@ import { HermanGatienVirtualMode } from "./HermanGatienVirtualMode";
 import { NessiMichelangeloVirtualMode } from "./NessiMichelangeloVirtualMode";
 
 export const getPersonMockedRequest = (person: INSiPersonArgs, clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
-    const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();
+  const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();
     let fetchRequests: INSiServiceFetchInsRequest[] = [];
     switch (formattedName) {
         case INSITestingUser.TCHITCHI:
@@ -36,6 +36,6 @@ export const getPersonMockedRequest = (person: INSiPersonArgs, clientConfig: INS
         default:
             fetchRequests = [];
             break;
-    }
+  }
     return fetchRequests;
 }

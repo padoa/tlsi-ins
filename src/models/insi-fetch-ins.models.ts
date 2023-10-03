@@ -91,7 +91,6 @@ export interface INSiServiceJsonResponse {
     TIQ?: {
       NomNaissance?: string;
       ListePrenom?: string;
-      Prenom?: string;
       Sexe?: Gender;
       DateNaissance?: string; // YYYY-MM-DD
       LieuNaissance?: string;
