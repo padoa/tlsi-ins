@@ -8,9 +8,8 @@ import { EcetinsiPierreAlainVirtualMode } from "./EcetinsiPierreAlainVirtualMode
 import { HermanGatienVirtualMode } from "./HermanGatienVirtualMode";
 import { NessiMichelangeloVirtualMode } from "./NessiMichelangeloVirtualMode";
 
-export const getPersonMockedRequest = (person: INSiPersonArgs, requestId: string, {idam, version, name, requestDate, emitter}: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
+export const getPersonMockedRequest = (person: INSiPersonArgs, clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
     const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();
-    const clientConfig =  {idam, version, name, requestId, requestDate, emitter};
     let fetchRequests: INSiServiceFetchInsRequest[] = [];
     switch (formattedName) {
         case INSITestingUser.TCHITCHI:

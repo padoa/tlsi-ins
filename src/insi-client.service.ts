@@ -146,7 +146,8 @@ export class INSiClient {
   private _getMockedPersonRequest(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
     const requestDate = new Date().toISOString();
     const emitter = this.getLpsContextEmitter();
-    const fetchRequests = getPersonMockedRequest(person.getPerson(), requestId, { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, requestDate, emitter: emitter });
+    const clientConfig = { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, requestId, requestDate, emitter: emitter }
+    const fetchRequests = getPersonMockedRequest(person.getPerson(), clientConfig);
     return Promise.resolve(fetchRequests);
   }
 
