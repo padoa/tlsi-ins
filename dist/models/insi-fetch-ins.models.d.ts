@@ -38,7 +38,16 @@ export declare enum CRLabels {
     NO_RESULT = "Aucune identite trouvee",
     MULTIPLE_MATCHES = "Plusieurs identites trouvees"
 }
-interface InsHisto {
+export declare enum INSITestingUser {
+    ADRUN = "adrun zoe",
+    CORSE = "corse anthony",
+    ECETINSI = "ecetinsi pierre-alain",
+    HERMAN = "hermann gatien",
+    HOUILLES = "houilles pierre",
+    NESSIMICHELANGELO = "nessi michelangelo",
+    TCHITCHI = "tchitchi ola catarina bella"
+}
+export interface InsHisto {
     DateDeb?: string;
     DateFin?: string;
     IdIndividu: {
@@ -77,6 +86,13 @@ export interface INSiServiceJsonResponse {
         };
     };
 }
+export interface INSiMockedResponse {
+    codeCR: CRCodes;
+    LibelleCR: CRLabels;
+    firstnameRequest: string;
+    json?: INSiServiceJsonResponse;
+    formatted?: INSiServiceFormattedResponse;
+}
 export interface INSiServiceFormattedResponse {
     birthName?: string;
     firstName?: string;
@@ -87,4 +103,11 @@ export interface INSiServiceFormattedResponse {
     registrationNumber?: string;
     oid?: string;
 }
-export {};
+export interface INSiServiceRequestEnv {
+    idam: string;
+    version: string;
+    name: string;
+    requestDate?: string;
+    requestId?: string;
+    emitter?: string;
+}

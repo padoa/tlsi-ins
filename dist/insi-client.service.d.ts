@@ -41,12 +41,26 @@ export declare class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
+     * @param  {boolean} virtualModeEnabled a boolean that enabled or not the virtual mode
      * @returns Promise<INSiServiceFetchInsResult>
      */
-    fetchIns(person: INSiPerson, { requestId }?: {
+    fetchIns(person: INSiPerson, { requestId, virtualModeEnabled }?: {
         requestId?: string | undefined;
+        virtualModeEnabled?: boolean | undefined;
     }): Promise<INSiServiceFetchInsResult>;
     private _launchSoapRequestForPerson;
+    /**
+     * This method is public as it needs to be mocked
+     * @returns The emitter of the request
+     */
+    getLpsContextEmitter(): string;
+    /**
+     * Fetches INS information of a person
+     * @param  {INSiPerson} person the person who's information are about to be fetched
+     * @param  {string} requestId of the current request to Ins
+     * @returns Promise<INSiServiceFetchInsResult>
+     */
+    private _getMockedPersonRequest;
     private _callFetchFromIdentityTraits;
     private _setSoapHeaders;
     private _setClientSSLSecurityPFX;

@@ -24,6 +24,8 @@ const insi_error_1 = require("./utils/insi-error");
 const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
 const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
+const virtual_mode_helper_1 = require("./fixtures/virtual-mode/virtual-mode.helper");
+const env_1 = require("./models/env");
 const lodash_1 = __importDefault(require("lodash"));
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
@@ -77,14 +79,15 @@ class INSiClient {
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched
      * @param  {string} requestId of the current request to Ins
+     * @param  {boolean} virtualModeEnabled a boolean that enabled or not the virtual mode
      * @returns Promise<INSiServiceFetchInsResult>
      */
-    fetchIns(person, { requestId = (0, uuid_1.v4)() } = {}) {
+    fetchIns(person, { requestId = (0, uuid_1.v4)(), virtualModeEnabled = false } = {}) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this._soapClient) {
+            if (!this._soapClient && !virtualModeEnabled) {
                 throw new Error('fetchIns ERROR: you must init client security first');
             }
-            const fetchInsRequests = yield this._launchSoapRequestForPerson(person, requestId);
+            const fetchInsRequests = yield this._launchSoapRequestForPerson(person, requestId, virtualModeEnabled);
             const [[successFetchRequest], failedFetchRequests] = lodash_1.default.partition(fetchInsRequests, (req) => insi_helper_1.InsiHelper.checkIfRequestIsValid(req));
             return {
                 successRequest: successFetchRequest || null,
@@ -92,9 +95,12 @@ class INSiClient {
             };
         });
     }
-    _launchSoapRequestForPerson(person, requestId) {
+    _launchSoapRequestForPerson(person, requestId, virtualModeEnabled) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            if (virtualModeEnabled) {
+                return this._getMockedPersonRequest(person, requestId);
+            }
             const fetchRequests = [];
             const namesToSendRequestFor = person.getSoapBodyAsJson();
             const savedOverriddenHttpClientResponseHandler = this._httpClient.handleResponse;
@@ -122,6 +128,26 @@ class INSiClient {
             }
             return fetchRequests;
         });
+    }
+    /**
+     * This method is public as it needs to be mocked
+     * @returns The emitter of the request
+     */
+    getLpsContextEmitter() {
+        return this._lpsContext.emitter;
+    }
+    /**
+     * Fetches INS information of a person
+     * @param  {INSiPerson} person the person who's information are about to be fetched
+     * @param  {string} requestId of the current request to Ins
+     * @returns Promise<INSiServiceFetchInsResult>
+     */
+    _getMockedPersonRequest(person, requestId) {
+        const requestDate = new Date().toISOString();
+        const emitter = this.getLpsContextEmitter();
+        const clientConfig = { idam: env_1.IDAM, version: env_1.SOFTWARE_VERSION, name: env_1.SOFTWARE_NAME, requestId, requestDate, emitter: emitter };
+        const fetchRequests = (0, virtual_mode_helper_1.getPersonMockedRequest)(person.getPerson(), clientConfig);
+        return Promise.resolve(fetchRequests);
     }
     _callFetchFromIdentityTraits(requestId, soapBody) {
         const { method } = insi_soap_action_models_1.INSiSoapActions[insi_soap_action_models_1.INSiSoapActionsName.FETCH_FROM_IDENTITY_TRAITS];

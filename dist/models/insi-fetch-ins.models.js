@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CRLabels = exports.CRCodes = exports.INSiServiceRequestStatus = void 0;
+exports.INSITestingUser = exports.CRLabels = exports.CRCodes = exports.INSiServiceRequestStatus = void 0;
 var INSiServiceRequestStatus;
 (function (INSiServiceRequestStatus) {
     INSiServiceRequestStatus["SUCCESS"] = "SUCCESS";
@@ -18,4 +18,14 @@ var CRLabels;
     CRLabels["NO_RESULT"] = "Aucune identite trouvee";
     CRLabels["MULTIPLE_MATCHES"] = "Plusieurs identites trouvees";
 })(CRLabels = exports.CRLabels || (exports.CRLabels = {}));
+var INSITestingUser;
+(function (INSITestingUser) {
+    INSITestingUser["ADRUN"] = "adrun zoe";
+    INSITestingUser["CORSE"] = "corse anthony";
+    INSITestingUser["ECETINSI"] = "ecetinsi pierre-alain";
+    INSITestingUser["HERMAN"] = "hermann gatien";
+    INSITestingUser["HOUILLES"] = "houilles pierre";
+    INSITestingUser["NESSIMICHELANGELO"] = "nessi michelangelo";
+    INSITestingUser["TCHITCHI"] = "tchitchi ola catarina bella";
+})(INSITestingUser = exports.INSITestingUser || (exports.INSITestingUser = {}));
 //# sourceMappingURL=insi-fetch-ins.models.js.map
