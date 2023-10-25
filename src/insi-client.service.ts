@@ -12,13 +12,13 @@ import {
   CRCodes,
   INSiServiceRequestStatus,
   INSiServiceFetchInsResult,
+  INSiServiceRequestEnv,
 } from './models/insi-fetch-ins.models';
 import { InsiError } from './utils/insi-error';
 import { InsiHelper } from './utils/insi-helper';
 import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
 import { getPersonMockedRequest } from './fixtures/virtual-mode/virtual-mode.helper';
-import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
 import _ from 'lodash';
 
 interface INSiClientArgs {
@@ -133,8 +133,13 @@ export class INSiClient {
    * This method is public as it needs to be mocked
    * @returns The emitter of the request
    */
-  public getLpsContextEmitter(): string {
-    return this._lpsContext.emitter;
+  public getINSiServiceRequestEnvConfig(): INSiServiceRequestEnv {
+    return {
+      emitter: this._lpsContext.emitter,
+      idam: this._lpsContext.lps.idam,
+      version: this._lpsContext.lps.softwareVersion,
+      softwareName: this._lpsContext.lps.softwareName,
+    };
   }
 
   /**
@@ -145,8 +150,7 @@ export class INSiClient {
    */
   private _getMockedPersonRequest(person: INSiPerson, requestId: string): Promise<INSiServiceFetchInsRequest[]> {
     const requestDate = new Date().toISOString();
-    const emitter = this.getLpsContextEmitter();
-    const clientConfig = { idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, requestId, requestDate, emitter: emitter }
+    const clientConfig = { ...this.getINSiServiceRequestEnvConfig(), requestId, requestDate };
     const fetchRequests = getPersonMockedRequest(person.getPerson(), clientConfig);
     return Promise.resolve(fetchRequests);
   }

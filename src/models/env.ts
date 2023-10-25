@@ -1,6 +1,10 @@
 import { config } from 'dotenv';
 
 // Loads variables from the .env file
+
+// WARNING
+// THIS FILE MUST NOT BE IMPORTED OUTSIDE TEST ENVIRONMENT
+
 config()
 
 export const { TLSI_INS_CERTIFICATE_PASSPHRASE } = process.env;

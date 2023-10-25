@@ -120,7 +120,7 @@ export interface INSiServiceFormattedResponse {
 export interface INSiServiceRequestEnv {
   idam: string,
   version: string,
-  name: string,
+  softwareName: string,
   requestDate?: string
   requestId?: string,
   emitter?: string,

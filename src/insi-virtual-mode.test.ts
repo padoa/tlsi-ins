@@ -1,31 +1,35 @@
 import { LPS } from './class/lps.class';
-import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
-import { LpsContext, LpsContextSoapHeader } from './class/lps-context.class';
-import { BamContext, BamContextSoapHeader } from './class/bam-context.class';
+import { LpsContext } from './class/lps-context.class';
+import { BamContext } from './class/bam-context.class';
 import { INSiClient } from './insi-client.service';
 import { Gender, INSiPerson } from './class/insi-person.class';
-import {
-  defaultUuid,
-  defaultDate,
-} from './fixtures/insi-client.fixture';
 import { getNoIdentityXmlResponseTest, getValidXmlResponseTest, getXmlRequestTest } from './test/xml-request-tester';
 import { INSiServiceFormattedResponse } from './models/insi-fetch-ins.models';
 
+const clientConfig = {
+  idam: 'idam',
+  version: 'version',
+  name: 'name',
+  emitter: 'medecin@yopmail.com',
+}
+
+const nowDate = '2023-01-01T00:00:00.000Z';
+
 const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   const lps = new LPS({
-    idam: IDAM,
-    version: SOFTWARE_VERSION,
-    name: SOFTWARE_NAME,
+    idam: clientConfig.idam,
+    version: clientConfig.version,
+    name: clientConfig.name,
     id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
   });
 
   const lpsContext = new LpsContext({
-    emitter: 'medecin@yopmail.com',
+    emitter: clientConfig.emitter,
     lps,
   });
 
   const bamContext = new BamContext({
-    emitter: 'medecin@yopmail.com',
+    emitter: clientConfig.emitter,
   });
 
   return new INSiClient({
@@ -35,60 +39,17 @@ const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
   });
 };
 
-beforeEach(() => {
-  jest.spyOn(Date.prototype, 'toISOString').mockReturnValue('2023-01-01T00:00:00.000Z');
-  jest.spyOn(INSiClient.prototype, 'getLpsContextEmitter').mockReturnValue('medecin@yopmail.com');
-
-  jest.mock('./class/bam-context.class', () => ({
-    BamContext: jest.fn((config: { emitter: string }) => ({
-      getSoapHeaderAsJson: (): BamContextSoapHeader => {
-        const soapHeader = {
-          ContexteBAM: {
-            attributes: {
-              Version: '01_02',
-            },
-            Id: defaultUuid,
-            Temps: new Date(defaultDate).toISOString(),
-            Emetteur: config.emitter,
-            COUVERTURE: {},
-          },
-        };
-        const name = 'ContexteBAM';
-        const namespace = 'ctxbam';
-        return { soapHeader, name, namespace };
-      },
-    })),
-  }));
-
-  jest.mock('./class/lps-context.class', () => ({
-    LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
-      getSoapHeaderAsJson: (): LpsContextSoapHeader => {
-        const soapHeader = {
-          ContexteLPS: {
-            attributes: {
-              Nature: 'CTXLPS',
-              Version: '01_00',
-            },
-            Id: defaultUuid,
-            Temps: new Date(defaultDate).toISOString(),
-            Emetteur: config.emitter,
-            LPS: config.lps.getSoapHeaderAsJson(),
-          },
-        };
-        const name = 'ContexteLPS';
-        const namespace = 'ctxlps';
-        return { soapHeader, name, namespace };
-      },
-    })),
-  }));
-});
-
-afterEach(() => {
-  jest.restoreAllMocks()
-});
 
 describe('INSi Client', () => {
   let insiClient: INSiClient;
+
+  beforeEach(() => {
+    jest.spyOn(Date.prototype, 'toISOString').mockReturnValue(nowDate);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  });
 
   describe('Initialisation', () => {
     test('should be able to create a new INSi client without throwing', () => {
@@ -117,7 +78,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
           "response": {
             "formatted": {
@@ -199,7 +160,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
           "response": {
             "formatted": {
@@ -281,7 +242,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
           "response": {
             "formatted": {
@@ -347,7 +308,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: person.getPerson(), requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
           "response": {
             "formatted": {
@@ -412,7 +373,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: { firstName: 'CATARINA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'CATARINA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId, date: nowDate })
           },
           "response": {
             "formatted": {
@@ -455,7 +416,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: { firstName: 'OLA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'OLA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId, date: nowDate })
           },
           "response": {
             "formatted": null,
@@ -504,10 +465,10 @@ describe('INSi Client', () => {
           "request": {
             "id": expect.any(String),
             "xml": getXmlRequestTest({
-              idam: IDAM,
-              version: SOFTWARE_VERSION,
-              name: SOFTWARE_NAME,
-              person: { firstName: 'ANTHONY', birthName: 'CORSE', dateOfBirth: '1980-03-02', gender: Gender.Male }, requestId
+              ...clientConfig,
+              person: { firstName: 'ANTHONY', birthName: 'CORSE', dateOfBirth: '1980-03-02', gender: Gender.Male },
+              requestId,
+              date: nowDate,
             })
           },
           "response": {
@@ -576,7 +537,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: { firstName: 'PIERRE', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'PIERRE', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
           "response": {
             formatted: null,
@@ -593,7 +554,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: { firstName: 'PAUL', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'PAUL', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
           "response": {
             formatted: null,
@@ -610,7 +571,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: { firstName: 'JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
           "response": {
             formatted: null,
@@ -627,7 +588,7 @@ describe('INSi Client', () => {
           "status": "SUCCESS",
           "request": {
             "id": expect.any(String),
-            "xml": getXmlRequestTest({ idam: IDAM, version: SOFTWARE_VERSION, name: SOFTWARE_NAME, person: { firstName: 'PIERRE PAUL JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId })
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'PIERRE PAUL JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
           "response": {
             formatted: null,
