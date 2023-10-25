@@ -1,21 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getValidXmlResponseTest = exports.getNoIdentityXmlResponseTest = exports.getXmlRequestTest = void 0;
-const getXmlRequestTest = ({ idam, version, name, person, requestId }) => {
+const getXmlRequestTest = ({ idam, version, name, emitter, person, requestId, date }) => {
     return [
         '<?xml version="1.0" encoding="utf-8"?>',
         '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
         '<soap:Header>',
         '<ctxbam:ContexteBAM Version="01_02">',
         `<ctxbam:Id>${requestId}</ctxbam:Id>`,
-        `<ctxbam:Temps>2023-01-01T00:00:00.000Z</ctxbam:Temps>`,
-        '<ctxbam:Emetteur>medecin@yopmail.com</ctxbam:Emetteur>',
+        `<ctxbam:Temps>${date}</ctxbam:Temps>`,
+        `<ctxbam:Emetteur>${emitter}</ctxbam:Emetteur>`,
         '<ctxbam:COUVERTURE>',
         '</ctxbam:COUVERTURE>',
         '</ctxbam:ContexteBAM> <ctxlps:ContexteLPS Nature="CTXLPS" Version="01_00">',
         `<ctxlps:Id>${requestId}</ctxlps:Id>`,
-        `<ctxlps:Temps>2023-01-01T00:00:00.000Z</ctxlps:Temps>`,
-        '<ctxlps:Emetteur>medecin@yopmail.com</ctxlps:Emetteur>',
+        `<ctxlps:Temps>${date}</ctxlps:Temps>`,
+        `<ctxlps:Emetteur>${emitter}</ctxlps:Emetteur>`,
         '<ctxlps:LPS>',
         `<ctxlps:IDAM R="4">${idam}</ctxlps:IDAM>`,
         `<ctxlps:Version>${version}</ctxlps:Version>`,

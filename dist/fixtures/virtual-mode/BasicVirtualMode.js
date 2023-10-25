@@ -18,7 +18,7 @@ class BasicVirtualMode {
             };
         });
     }
-    static _getXmlRequest(firstNameResquest, { idam, version, name, requestDate, requestId, emitter }) {
+    static _getXmlRequest(firstNameResquest, { idam, version, softwareName, requestDate, requestId, emitter }) {
         return [
             '<?xml version="1.0" encoding="utf-8"?>',
             '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
@@ -37,7 +37,7 @@ class BasicVirtualMode {
             `<ctxlps:IDAM R="4">${idam}</ctxlps:IDAM>`,
             `<ctxlps:Version>${version}</ctxlps:Version>`,
             '<ctxlps:Instance>b3549edd-4ae9-472a-b26f-fd2fb4ef397f</ctxlps:Instance>',
-            `<ctxlps:Nom>urn:lps:${name}:${version}</ctxlps:Nom>`,
+            `<ctxlps:Nom>${softwareName}</ctxlps:Nom>`,
             '</ctxlps:LPS>',
             '</ctxlps:ContexteLPS> <wsa:Action xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns="http://www.w3.org/2005/08/addressing">urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecTraitsIdentite</wsa:Action> <wsa:MessageID xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns="http://www.w3.org/2005/08/addressing">uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f</wsa:MessageID>',
             '</soap:Header>',

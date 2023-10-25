@@ -2,7 +2,7 @@
 import { LpsContext } from './class/lps-context.class';
 import { BamContext } from './class/bam-context.class';
 import { INSiPerson } from './class/insi-person.class';
-import { INSiServiceFetchInsResult } from './models/insi-fetch-ins.models';
+import { INSiServiceFetchInsResult, INSiServiceRequestEnv } from './models/insi-fetch-ins.models';
 interface INSiClientArgs {
     lpsContext: LpsContext;
     bamContext: BamContext;
@@ -53,7 +53,7 @@ export declare class INSiClient {
      * This method is public as it needs to be mocked
      * @returns The emitter of the request
      */
-    getLpsContextEmitter(): string;
+    getINSiServiceRequestEnvConfig(): INSiServiceRequestEnv;
     /**
      * Fetches INS information of a person
      * @param  {INSiPerson} person the person who's information are about to be fetched

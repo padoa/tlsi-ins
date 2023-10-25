@@ -25,7 +25,6 @@ const insi_helper_1 = require("./utils/insi-helper");
 const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
 const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
 const virtual_mode_helper_1 = require("./fixtures/virtual-mode/virtual-mode.helper");
-const env_1 = require("./models/env");
 const lodash_1 = __importDefault(require("lodash"));
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
@@ -133,8 +132,13 @@ class INSiClient {
      * This method is public as it needs to be mocked
      * @returns The emitter of the request
      */
-    getLpsContextEmitter() {
-        return this._lpsContext.emitter;
+    getINSiServiceRequestEnvConfig() {
+        return {
+            emitter: this._lpsContext.emitter,
+            idam: this._lpsContext.lps.idam,
+            version: this._lpsContext.lps.softwareVersion,
+            softwareName: this._lpsContext.lps.softwareName,
+        };
     }
     /**
      * Fetches INS information of a person
@@ -144,8 +148,7 @@ class INSiClient {
      */
     _getMockedPersonRequest(person, requestId) {
         const requestDate = new Date().toISOString();
-        const emitter = this.getLpsContextEmitter();
-        const clientConfig = { idam: env_1.IDAM, version: env_1.SOFTWARE_VERSION, name: env_1.SOFTWARE_NAME, requestId, requestDate, emitter: emitter };
+        const clientConfig = Object.assign(Object.assign({}, this.getINSiServiceRequestEnvConfig()), { requestId, requestDate });
         const fetchRequests = (0, virtual_mode_helper_1.getPersonMockedRequest)(person.getPerson(), clientConfig);
         return Promise.resolve(fetchRequests);
     }

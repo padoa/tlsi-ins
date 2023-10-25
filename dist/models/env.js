@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SOFTWARE_VERSION = exports.TLSI_INS_SOFTWARE_VERSION = exports.SOFTWARE_NAME = exports.TLSI_INS_SOFTWARE_NAME = exports.IDAM = exports.TLSI_INS_IDAM = exports.PASSPHRASE = exports.TLSI_INS_CERTIFICATE_PASSPHRASE = void 0;
 const dotenv_1 = require("dotenv");
 // Loads variables from the .env file
+// WARNING
+// THIS FILE MUST NOT BE IMPORTED OUTSIDE TEST ENVIRONMENT
 (0, dotenv_1.config)();
 exports.TLSI_INS_CERTIFICATE_PASSPHRASE = process.env.TLSI_INS_CERTIFICATE_PASSPHRASE;
 if (!exports.TLSI_INS_CERTIFICATE_PASSPHRASE)
