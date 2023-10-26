@@ -13,7 +13,7 @@ export interface INSiServiceRequest {
     xml: string;
 }
 export interface INSiServiceResponse {
-    formatted: INSiServiceFormattedResponse | null;
+    formatted: Partial<INSiServiceFormattedResponse> | null;
     json: INSiServiceJsonResponse | null;
     xml: string;
     error: INSiServiceError | null;
@@ -94,11 +94,11 @@ export interface INSiMockedResponse {
     formatted?: INSiServiceFormattedResponse;
 }
 export interface INSiServiceFormattedResponse {
-    birthName?: string;
-    firstName?: string;
-    allFirstNames?: string;
-    gender?: Gender;
-    dateOfBirth?: string;
+    birthName: string;
+    firstName: string;
+    allFirstNames: string;
+    gender: Gender;
+    dateOfBirth: string;
     placeOfBirthCode?: string;
     registrationNumber?: string;
     oid?: string;

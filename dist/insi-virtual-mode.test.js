@@ -42,7 +42,7 @@ const getClientWithDefinedId = (overrideSpecialCases = true) => {
         overrideSpecialCases,
     });
 };
-describe('INSi Client', () => {
+describe('INSi Client - virtualMode', () => {
     let insiClient;
     beforeEach(() => {
         jest.spyOn(Date.prototype, 'toISOString').mockReturnValue(nowDate);
@@ -50,10 +50,43 @@ describe('INSi Client', () => {
     afterEach(() => {
         jest.restoreAllMocks();
     });
-    describe('Initialisation', () => {
-        test('should be able to create a new INSi client without throwing', () => {
-            insiClient = getClientWithDefinedId();
-        });
+    test('should be able to create a new INSi client without throwing', () => {
+        insiClient = getClientWithDefinedId();
+    });
+    describe('unknown person', () => {
+        test('should get a not implemented error', () => __awaiter(void 0, void 0, void 0, function* () {
+            const requestId = '7871dedb-2add-47db-8b76-117f8144a840';
+            const person = new insi_person_class_1.INSiPerson({
+                birthName: 'INCONNU',
+                firstName: 'SOLDAT',
+                gender: insi_person_class_1.Gender.Male,
+                dateOfBirth: '1920-11-11',
+            });
+            const fetchInsResult = yield insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
+            expect(fetchInsResult).toEqual({
+                successRequest: null,
+                failedRequests: [{
+                        "status": "SUCCESS",
+                        "request": {
+                            "id": expect.any(String),
+                            "xml": (0, xml_request_tester_1.getXmlRequestTest)(Object.assign(Object.assign({}, clientConfig), { person: { firstName: 'SOLDAT', birthName: 'INCONNU', dateOfBirth: '1920-11-11', gender: insi_person_class_1.Gender.Male }, requestId, date: nowDate }))
+                        },
+                        "response": {
+                            formatted: null,
+                            json: {
+                                CR: {
+                                    CodeCR: "01",
+                                    LibelleCR: "Aucune identite trouvee"
+                                }
+                            },
+                            "xml": (0, xml_request_tester_1.getNoIdentityXmlResponseTest)(),
+                            "error": null
+                        }
+                    }],
+            });
+        }));
+    });
+    describe('known persons', () => {
         test('should get correct response for ADRUN ZOE', () => __awaiter(void 0, void 0, void 0, function* () {
             const requestId = '7871dedb-2add-47db-8b76-117f8144a840';
             const person = new insi_person_class_1.INSiPerson({

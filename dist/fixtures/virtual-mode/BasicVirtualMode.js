@@ -12,13 +12,31 @@ class BasicVirtualMode {
                 status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
                 request: {
                     id: clientConfig.requestId,
-                    xml: this._getXmlRequest(response.firstnameRequest, clientConfig)
+                    xml: this._getXmlRequest({
+                        birthName: this.personDetails.birthName,
+                        firstName: response.firstnameRequest,
+                        gender: this.personDetails.gender,
+                        dateOfBirth: this.personDetails.dateOfBirth,
+                    }, clientConfig)
                 },
                 response: this._buildJsonResponse(response),
             };
         });
     }
-    static _getXmlRequest(firstNameResquest, { idam, version, softwareName, requestDate, requestId, emitter }) {
+    static getBuiltNotImplementedResponse(clientConfig, person) {
+        return [{
+                status: insi_fetch_ins_models_1.INSiServiceRequestStatus.SUCCESS,
+                request: {
+                    id: clientConfig.requestId,
+                    xml: this._getXmlRequest(person, clientConfig)
+                },
+                response: this._buildJsonResponse({
+                    codeCR: insi_fetch_ins_models_1.CRCodes.NO_RESULT,
+                    LibelleCR: insi_fetch_ins_models_1.CRLabels.NO_RESULT
+                }),
+            }];
+    }
+    static _getXmlRequest({ birthName, firstName, gender, dateOfBirth }, { idam, version, softwareName, requestDate, requestId, emitter }) {
         return [
             '<?xml version="1.0" encoding="utf-8"?>',
             '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
@@ -43,10 +61,10 @@ class BasicVirtualMode {
             '</soap:Header>',
             '<soap:Body>',
             '<insi_recsans_ins:RECSANSVITALE xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans">',
-            `<insi_recsans_ins:NomNaissance>${this.personDetails.birthName}</insi_recsans_ins:NomNaissance>`,
-            `<insi_recsans_ins:Prenom>${firstNameResquest}</insi_recsans_ins:Prenom>`,
-            `<insi_recsans_ins:Sexe>${this.personDetails.gender}</insi_recsans_ins:Sexe>`,
-            `<insi_recsans_ins:DateNaissance>${this.personDetails.dateOfBirth}</insi_recsans_ins:DateNaissance>`,
+            `<insi_recsans_ins:NomNaissance>${birthName}</insi_recsans_ins:NomNaissance>`,
+            `<insi_recsans_ins:Prenom>${firstName}</insi_recsans_ins:Prenom>`,
+            `<insi_recsans_ins:Sexe>${gender}</insi_recsans_ins:Sexe>`,
+            `<insi_recsans_ins:DateNaissance>${dateOfBirth}</insi_recsans_ins:DateNaissance>`,
             '</insi_recsans_ins:RECSANSVITALE>',
             '</soap:Body>',
             '</soap:Envelope>',
@@ -122,9 +140,9 @@ class BasicVirtualMode {
     }
     ;
     static _buildJsonResponse(response) {
-        var _a, _b;
-        const numIdentifiant = (_a = this.personDetails.registrationNumber) === null || _a === void 0 ? void 0 : _a.slice(0, -2);
-        const cle = (_b = this.personDetails.registrationNumber) === null || _b === void 0 ? void 0 : _b.slice(-2);
+        var _a, _b, _c, _d;
+        const numIdentifiant = (_b = (_a = this.personDetails) === null || _a === void 0 ? void 0 : _a.registrationNumber) === null || _b === void 0 ? void 0 : _b.slice(0, -2);
+        const cle = (_d = (_c = this.personDetails) === null || _c === void 0 ? void 0 : _c.registrationNumber) === null || _d === void 0 ? void 0 : _d.slice(-2);
         switch (response.codeCR) {
             case insi_fetch_ins_models_1.CRCodes.NO_RESULT:
                 return {

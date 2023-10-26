@@ -11,6 +11,7 @@ class HouillesPierreVirtualMode extends BasicVirtualMode_1.default {
 }
 HouillesPierreVirtualMode.insHisto = [];
 HouillesPierreVirtualMode.personDetails = {
+    firstName: '',
     birthName: 'HOUILLES',
     allFirstNames: 'PIERRE PAUL JACQUES',
     gender: insi_person_class_1.Gender.Male,

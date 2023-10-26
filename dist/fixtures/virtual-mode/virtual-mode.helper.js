@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPersonMockedRequest = void 0;
 const AdrunZoeVirtualMode_1 = require("./AdrunZoeVirtualMode");
@@ -9,6 +12,7 @@ const CorseAnthonyVirtualMode_1 = require("./CorseAnthonyVirtualMode");
 const EcetinsiPierreAlainVirtualMode_1 = require("./EcetinsiPierreAlainVirtualMode");
 const HermanGatienVirtualMode_1 = require("./HermanGatienVirtualMode");
 const NessiMichelangeloVirtualMode_1 = require("./NessiMichelangeloVirtualMode");
+const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const getPersonMockedRequest = (person, clientConfig) => {
     const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();
     let fetchRequests = [];
@@ -35,7 +39,7 @@ const getPersonMockedRequest = (person, clientConfig) => {
             fetchRequests = NessiMichelangeloVirtualMode_1.NessiMichelangeloVirtualMode.getBuiltResponse(clientConfig);
             break;
         default:
-            fetchRequests = [];
+            fetchRequests = BasicVirtualMode_1.default.getBuiltNotImplementedResponse(clientConfig, person);
             break;
     }
     return fetchRequests;
