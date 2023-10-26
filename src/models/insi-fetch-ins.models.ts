@@ -17,7 +17,7 @@ export interface INSiServiceRequest {
 }
 
 export interface INSiServiceResponse {
-  formatted: INSiServiceFormattedResponse | null;
+  formatted: Partial<INSiServiceFormattedResponse> | null;
   json: INSiServiceJsonResponse | null;
   xml: string;
   error: INSiServiceError | null,
@@ -106,12 +106,12 @@ export interface INSiMockedResponse {
 }
 
 export interface INSiServiceFormattedResponse {
-  birthName?: string;
-  firstName?: string;
-  allFirstNames?: string;
-  gender?: Gender;
+  birthName: string;
+  firstName: string;
+  allFirstNames: string;
+  gender: Gender;
   // Date of birth of the subject as YYYY-MM-DD (ex: 1997-02-26)
-  dateOfBirth?: string;
+  dateOfBirth: string;
   placeOfBirthCode?: string;
   registrationNumber?: string;
   oid?: string;

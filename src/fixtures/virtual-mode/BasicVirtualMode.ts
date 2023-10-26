@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequestEnv, INSiServiceJsonResponse, INSiServiceResponse } from "../../models/insi-fetch-ins.models";
+import { Gender, INSiPersonArgs } from '../../class/insi-person.class';
 
 export default class BasicVirtualMode {
   static insHisto: InsHisto[] = [];
@@ -12,14 +13,36 @@ export default class BasicVirtualMode {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: clientConfig.requestId as string,
-          xml: this._getXmlRequest(response.firstnameRequest, clientConfig)
+          xml: this._getXmlRequest({
+            birthName: this.personDetails.birthName,
+            firstName: response.firstnameRequest,
+            gender: this.personDetails.gender,
+            dateOfBirth: this.personDetails.dateOfBirth,
+          }, clientConfig)
         },
         response: this._buildJsonResponse(response),
       }
-    })
+    });
   }
 
-  private static _getXmlRequest(firstNameResquest: string, { idam, version, softwareName, requestDate, requestId, emitter }: INSiServiceRequestEnv): string {
+  public static getBuiltNotImplementedResponse(clientConfig: INSiServiceRequestEnv, person: INSiPersonArgs): INSiServiceFetchInsRequest[] {
+    return [{
+      status: INSiServiceRequestStatus.SUCCESS,
+      request: {
+        id: clientConfig.requestId as string,
+        xml: this._getXmlRequest(person, clientConfig)
+      },
+      response: this._buildJsonResponse({
+        codeCR: CRCodes.NO_RESULT,
+        LibelleCR: CRLabels.NO_RESULT
+      } as INSiMockedResponse),
+    }];
+  }
+
+  private static _getXmlRequest(
+      {birthName, firstName, gender, dateOfBirth }: {birthName: string; firstName: string; gender: Gender; dateOfBirth: string },
+      { idam, version, softwareName, requestDate, requestId, emitter }: INSiServiceRequestEnv
+  ): string {
     return [
       '<?xml version="1.0" encoding="utf-8"?>',
       '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://www.cnamts.fr/webservice" xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1" xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit" xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ctxbam="urn:siram:bam:ctxbam" xmlns:ctxlps="urn:siram:lps:ctxlps" xmlns:siram="urn:siram" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">',
@@ -44,10 +67,10 @@ export default class BasicVirtualMode {
       '</soap:Header>',
       '<soap:Body>',
       '<insi_recsans_ins:RECSANSVITALE xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans">',
-      `<insi_recsans_ins:NomNaissance>${this.personDetails.birthName}</insi_recsans_ins:NomNaissance>`,
-      `<insi_recsans_ins:Prenom>${firstNameResquest}</insi_recsans_ins:Prenom>`,
-      `<insi_recsans_ins:Sexe>${this.personDetails.gender}</insi_recsans_ins:Sexe>`,
-      `<insi_recsans_ins:DateNaissance>${this.personDetails.dateOfBirth}</insi_recsans_ins:DateNaissance>`,
+      `<insi_recsans_ins:NomNaissance>${birthName}</insi_recsans_ins:NomNaissance>`,
+      `<insi_recsans_ins:Prenom>${firstName}</insi_recsans_ins:Prenom>`,
+      `<insi_recsans_ins:Sexe>${gender}</insi_recsans_ins:Sexe>`,
+      `<insi_recsans_ins:DateNaissance>${dateOfBirth}</insi_recsans_ins:DateNaissance>`,
       '</insi_recsans_ins:RECSANSVITALE>',
       '</soap:Body>',
       '</soap:Envelope>',
@@ -124,8 +147,8 @@ export default class BasicVirtualMode {
   };
 
   private static _buildJsonResponse(response: INSiMockedResponse): INSiServiceResponse {
-    const numIdentifiant = this.personDetails.registrationNumber?.slice(0, -2);
-    const cle = this.personDetails.registrationNumber?.slice(-2);
+    const numIdentifiant = this.personDetails?.registrationNumber?.slice(0, -2);
+    const cle = this.personDetails?.registrationNumber?.slice(-2);
     switch (response.codeCR) {
       case CRCodes.NO_RESULT:
         return {

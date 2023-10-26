@@ -9,7 +9,7 @@ import {
 import _ from 'lodash';
 
 export class InsiHelper {
-  public static formatFetchINSResult(result: INSiServiceJsonResponse): INSiServiceFormattedResponse | null {
+  public static formatFetchINSResult(result: INSiServiceJsonResponse): Partial<INSiServiceFormattedResponse> | null {
     if (!result.INDIVIDU) {
       return null;
     }

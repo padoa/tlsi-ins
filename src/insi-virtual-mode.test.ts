@@ -40,7 +40,7 @@ const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
 };
 
 
-describe('INSi Client', () => {
+describe('INSi Client - virtualMode', () => {
   let insiClient: INSiClient;
 
   beforeEach(() => {
@@ -51,11 +51,47 @@ describe('INSi Client', () => {
     jest.restoreAllMocks()
   });
 
-  describe('Initialisation', () => {
-    test('should be able to create a new INSi client without throwing', () => {
-      insiClient = getClientWithDefinedId();
+  test('should be able to create a new INSi client without throwing', () => {
+    insiClient = getClientWithDefinedId();
+  });
+
+  describe('unknown person', () => {
+    test('should get a not implemented error', async () => {
+      const requestId = '7871dedb-2add-47db-8b76-117f8144a840';
+      const person = new INSiPerson({
+        birthName: 'INCONNU',
+        firstName: 'SOLDAT',
+        gender: Gender.Male,
+        dateOfBirth: '1920-11-11',
+      });
+
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
+      expect(fetchInsResult).toEqual({
+        successRequest: null,
+        failedRequests: [{
+          "status": "SUCCESS",
+          "request": {
+            "id": expect.any(String),
+            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'SOLDAT', birthName: 'INCONNU', dateOfBirth: '1920-11-11', gender: Gender.Male }, requestId, date: nowDate })
+          },
+          "response": {
+            formatted: null,
+            json: {
+              CR: {
+                CodeCR: "01",
+                LibelleCR: "Aucune identite trouvee"
+              }
+            },
+            "xml": getNoIdentityXmlResponseTest(),
+            "error": null
+          }
+        }],
+      });
     });
 
+  });
+
+  describe('known persons', () => {
     test('should get correct response for ADRUN ZOE', async () => {
       const requestId = '7871dedb-2add-47db-8b76-117f8144a840';
       const person = new INSiPerson({
