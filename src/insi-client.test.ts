@@ -472,14 +472,14 @@ describe('INSi Client', () => {
           },
           response: {
             error: {
-              desirCode: 'insi_102',
-              error: 'L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.',
-              siramCode: 'siram_40',
-              text: 'Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.',
+              desirCode: 'desir_1020',
+              error: 'Le service appelé est temporairement indisponible',
+              siramCode: undefined,
+              text: undefined,
             },
             formatted: null,
             json: null,
-            xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope"><S:Fault xmlns:ns4="http://schemas.xmlsoap.org/soap/envelope/"><S:Code><S:Value>S:Receiver</S:Value><S:Subcode><S:Value>S:siram_40</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang="en">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur severite="fatal" code="insi_102" xmlns:siram="urn:siram">L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>',
+            xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:env="http://www.w3.org/2003/05/soap-envelope"><soap:Fault><soap:Code><soap:Value>soap:Sender</soap:Value><soap:Subcode><soap:Value>soap:siram_40</soap:Value></soap:Subcode></soap:Code><soap:Reason><soap:Text xml:lang="fr">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</soap:Text></soap:Reason><soap:Detail><siram:Erreur code="desir_1020" severite="fatale" messageID="uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f" xmlns:siram="urn:siram">Le service appelé est temporairement indisponible</siram:Erreur></soap:Detail></soap:Fault></env:Body></soap:Envelope>',
           },
         }],
       });

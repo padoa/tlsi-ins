@@ -5,6 +5,7 @@ import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSi
 export class HouillesPierreVirtualMode extends BasicVirtualMode {
   static insHisto: InsHisto[] = [];
   static personDetails: INSiServiceFormattedResponse = {
+    firstName: '',
     birthName: 'HOUILLES',
     allFirstNames: 'PIERRE PAUL JACQUES',
     gender: Gender.Male,
