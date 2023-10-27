@@ -1,5 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fakeIdamXmlResponse = void 0;
-exports.fakeIdamXmlResponse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><env:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\"><S:Fault xmlns:ns4=\"http://schemas.xmlsoap.org/soap/envelope/\"><S:Code><S:Value>S:Sender</S:Value><S:Subcode><S:Value>S:siram_100</S:Value></S:Subcode></S:Code><S:Reason><S:Text xml:lang=\"en\">L'accès par ce progiciel au service n'est pas autorisé. Contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text></S:Reason><S:Detail><siram:Erreur code=\"desir_550\" messageID=\"uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f\" severite=\"erreur\" xmlns:siram=\"urn:siram\">Numéro d'autorisation du logiciel inconnu.</siram:Erreur></S:Detail></S:Fault></env:Body></soap:Envelope>";
-//# sourceMappingURL=siram_100-desir_500-fake-idam.fixtures.js.map
