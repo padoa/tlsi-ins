@@ -1,10 +1,10 @@
-import { LPS } from './class/lps.class';
-import { LpsContext } from './class/lps-context.class';
-import { BamContext } from './class/bam-context.class';
-import { INSiClient } from './insi-client.service';
-import { Gender, INSiPerson } from './class/insi-person.class';
-import { getNoIdentityXmlResponseTest, getValidXmlResponseTest, getXmlRequestTest } from './test/xml-request-tester';
-import { INSiServiceFormattedResponse } from './models/insi-fetch-ins.models';
+import { LPS } from '../class/lps.class';
+import { LpsContext } from '../class/lps-context.class';
+import { BamContext } from '../class/bam-context.class';
+import { INSiClient } from '../insi-client.service';
+import { Gender, INSiPerson } from '../class/insi-person.class';
+import { getNoIdentityXmlResponseTest, getValidXmlResponseTest, getXmlRequestTest } from './tester/xml-request-tester';
+import { INSiServiceFormattedResponse } from '../models/insi-fetch-ins.models';
 
 const clientConfig = {
   idam: 'idam',

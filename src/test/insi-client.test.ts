@@ -1,36 +1,36 @@
-import { LPS } from './class/lps.class';
-import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from './models/env';
-import { LpsContext, LpsContextSoapHeader } from './class/lps-context.class';
-import { BamContext, BamContextSoapHeader } from './class/bam-context.class';
-import { INSiClient } from './insi-client.service';
-import { Gender, INSiPerson } from './class/insi-person.class';
+import { LPS } from '../class/lps.class';
+import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from '../models/env';
+import { LpsContext, LpsContextSoapHeader } from '../class/lps-context.class';
+import { BamContext, BamContextSoapHeader } from '../class/bam-context.class';
+import { INSiClient } from '../insi-client.service';
+import { Gender, INSiPerson } from '../class/insi-person.class';
 import {
   getCR02XmlResponse,
   getCNDAValidationXmlRequest,
   defaultUuid,
   defaultDate,
-} from './fixtures/insi-client.fixture';
+} from '../fixtures/insi-client.fixture';
 import fs from 'fs';
-import { CRCodes, CRLabels, INSiServiceRequestStatus } from './models/insi-fetch-ins.models';
-import { getAdrtroisDominiqueXmlRequest } from './fixtures/persons/adrtrois-dominique.fixture';
+import { CRCodes, CRLabels, INSiServiceRequestStatus } from '../models/insi-fetch-ins.models';
+import { getAdrtroisDominiqueXmlRequest } from '../fixtures/persons/adrtrois-dominique.fixture';
 import {
   getTchitchiCatarinaResponse,
   getTchitchiCatarinaXmlRequest,
   getTchitchiOlaXmlRequest,
-} from './fixtures/persons/tchitchi-ola-catarina.fixture';
-import { getDeVinciLeonardoXmlRequest } from './fixtures/persons/de-vinci-leonardo.fixture';
+} from '../fixtures/persons/tchitchi-ola-catarina.fixture';
+import { getDeVinciLeonardoXmlRequest } from '../fixtures/persons/de-vinci-leonardo.fixture';
 import {
   getPierreAlainFormattedResponse,
   getPierreAlainLiveXmlResponse,
   getPierreAlainRawResponse,
   getPierreAlainXmlRequest,
   getPierreAlainXmlResponse,
-} from './fixtures/persons/pierre-alain.fixture';
-import { fakeIdamXmlResponse } from './fixtures/service-errors/siram_100-desir_500-fake-idam.fixtures';
+} from '../fixtures/persons/pierre-alain.fixture';
+import { fakeIdamXmlResponse } from '../fixtures/service-errors/siram_100-desir_500-fake-idam.fixtures';
 import {
   getAdrtroisToussaintResponse,
   getAdrtroisToussaintXmlRequest,
-} from './fixtures/persons/adrtrois-toussaint.fixture';
+} from '../fixtures/persons/adrtrois-toussaint.fixture';
 
 jest.mock('./class/bam-context.class', () => ({
   BamContext: jest.fn((config: { emitter: string }) => ({
