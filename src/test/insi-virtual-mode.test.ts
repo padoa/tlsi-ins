@@ -1,6 +1,3 @@
-import { LPS } from '../class/lps.class';
-import { LpsContext } from '../class/lps-context.class';
-import { BamContext } from '../class/bam-context.class';
 import { INSiClient } from '../insi-client.service';
 import { Gender, INSiPerson } from '../class/insi-person.class';
 import { getNoIdentityXmlResponseTest, getValidXmlResponseTest, getXmlRequestTest } from './tester/xml-request-tester';
@@ -15,31 +12,6 @@ const clientConfig = {
 
 const nowDate = '2023-01-01T00:00:00.000Z';
 
-const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
-  const lps = new LPS({
-    idam: clientConfig.idam,
-    version: clientConfig.version,
-    name: clientConfig.name,
-    id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-  });
-
-  const lpsContext = new LpsContext({
-    emitter: clientConfig.emitter,
-    lps,
-  });
-
-  const bamContext = new BamContext({
-    emitter: clientConfig.emitter,
-  });
-
-  return new INSiClient({
-    lpsContext,
-    bamContext,
-    overrideSpecialCases,
-  });
-};
-
-
 describe('INSi Client - virtualMode', () => {
   let insiClient: INSiClient;
 
@@ -52,7 +24,7 @@ describe('INSi Client - virtualMode', () => {
   });
 
   test('should be able to create a new INSi client without throwing', () => {
-    insiClient = getClientWithDefinedId();
+    insiClient = INSiClient.getClientWithDefinedId(clientConfig.idam, false, clientConfig.version, clientConfig.name, clientConfig.emitter);
   });
 
   describe('unknown person', () => {

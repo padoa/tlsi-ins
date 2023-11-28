@@ -32,7 +32,7 @@ import {
   getAdrtroisToussaintXmlRequest,
 } from '../fixtures/persons/adrtrois-toussaint.fixture';
 
-jest.mock('./class/bam-context.class', () => ({
+jest.mock('../class/bam-context.class', () => ({
   BamContext: jest.fn((config: { emitter: string }) => ({
     getSoapHeaderAsJson: (): BamContextSoapHeader => {
       const soapHeader = {
@@ -53,7 +53,7 @@ jest.mock('./class/bam-context.class', () => ({
   })),
 }));
 
-jest.mock('./class/lps-context.class', () => ({
+jest.mock('../class/lps-context.class', () => ({
   LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
     getSoapHeaderAsJson: (): LpsContextSoapHeader => {
       const soapHeader = {
@@ -81,37 +81,13 @@ const padoaConf = {
   name: SOFTWARE_NAME,
 };
 
-const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
-  const lps = new LPS({
-    idam: IDAM,
-    version: SOFTWARE_VERSION,
-    name: SOFTWARE_NAME,
-    id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-  });
-
-  const lpsContext = new LpsContext({
-    emitter: 'medecin@yopmail.com',
-    lps,
-  });
-
-  const bamContext = new BamContext({
-    emitter: 'medecin@yopmail.com',
-  });
-
-  return new INSiClient({
-    lpsContext,
-    bamContext,
-    overrideSpecialCases,
-  });
-};
-
 describe('INSi Client', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
   let insiClient: INSiClient;
 
   describe('Initialisation', () => {
     test('should be able to create a new INSi client without throwing', () => {
-      insiClient = getClientWithDefinedId();
+      insiClient = INSiClient.getClientWithDefinedId(IDAM);
     });
 
     test('should throw an error if calling fetchInsi without initClient first', async () => {
@@ -155,7 +131,7 @@ describe('INSi Client', () => {
     });
 
     test('should throw an INSi error if the pfx is not a correct pfx file', async () => {
-      const client = getClientWithDefinedId();
+      const client = INSiClient.getClientWithDefinedId(IDAM);
       const fakePfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
       await client.initClientPfx(fakePfx, PASSPHRASE);
       const person = new INSiPerson({
@@ -169,7 +145,7 @@ describe('INSi Client', () => {
     });
 
     test('should throw an INSi error if the Passe phrase is not a correct', async () => {
-      const client = getClientWithDefinedId();
+      const client = INSiClient.getClientWithDefinedId(IDAM);
       await client.initClientPfx(pfx, 'fake-pass-phrase');
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
@@ -396,7 +372,7 @@ describe('INSi Client', () => {
     });
 
     test('should handle single INSHISTO as an array, test_2.04 LIVE', async () => {
-      const client = getClientWithDefinedId(false);
+      const client = INSiClient.getClientWithDefinedId(IDAM, false);
       await client.initClientPfx(pfx, PASSPHRASE);
       const person = new INSiPerson({
         birthName: 'ECETINSI',
@@ -495,7 +471,7 @@ describe('INSi Client', () => {
     const assertionPs = `PUT YOUR ASSERTION PS HERE`;
     let insiCpxClient: INSiClient;
     test('should create an insiClient with an AssertionPsSecurityClass', async () => {
-      insiCpxClient = getClientWithDefinedId();
+      insiCpxClient = INSiClient.getClientWithDefinedId(IDAM);
       await insiCpxClient.initClientCpx(assertionPs);
     });
 
