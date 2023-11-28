@@ -36,7 +36,7 @@ export class VerifyCertificateProcessor {
     .parseAsync();
     const endpoint = isTestCertif ? 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps' : 'https://services-ps-tlsm.ameli.fr/lps';
   
-    const certificate = Certificate.DecryptCertificate(certificatePath, passPhrase);
+    const certificate = Certificate.decryptCertificate(certificatePath, passPhrase);
     console.log('your certificate is:', certificate);
 
     console.log('------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------');

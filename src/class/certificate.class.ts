@@ -14,7 +14,7 @@ interface ICertificate {
 }
 
 export class Certificate {
-  public static DecryptCertificate(certificatePath: string, passPhrase: string): ICertificate {
+  public static decryptCertificate(certificatePath: string, passPhrase: string): ICertificate {
     const pfx = fs.readFileSync(certificatePath)
     const certificate = fs.readFileSync(certificatePath, {encoding: 'base64'});
 
