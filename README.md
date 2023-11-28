@@ -31,6 +31,70 @@ openssl pkcs12 -info -in certificates/INSI-AUTO/AUTO-certificate.p12
 # subject=/C=FR/ST=Rh\xC3\xB4ne (69)/O=CENTRE DE SANTE RPPS15287/OU=10B0152872/CN=Padoa
 ```
 
+## script
+#### test certificate
+To run the script, execute
+
+```sh
+npm run verify-certif -- --cp='certificate path' --pp='certificate passphrase' --test=false --idam='idam'
+Options :
+  -h, --help                   print help                              [boolean]
+      --idam                   Use a different IDAM than the one in the
+                               environment                              [string]
+      --cp, --certificatePath  The path to the p12 certificate file to test
+                                                             [string] [required]
+      --pp, --passPhrase       The passphrase of the certificate to test
+                                                             [string] [required]
+      --test, --isTestCertif   It must be true if it's a test certificate
+                                                                       [boolean]
+```
+
+Exemples of return :
+
+```sh
+your certificate is: {
+  pfx: <Buffer 30 82 1b ec 02 01 03 30 82 1b b2 06 09 2a 86 48 86 f7 0d 01 07 01 a0 82 1b a3 04 82 1b 9f 30 82 1b 9b 30 82 16 52 06 09 2a 86 48 86 f7 0d 01 07 01 a0 ... 7102 more bytes>,
+  subjectCN: 'INSI-MANU',
+  issuerCN: 'AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
+  validity: {
+    notBefore: 2023-11-08T15:39:16.000Z,
+    notAfter: 2026-11-08T15:39:16.000Z
+  }
+}
+------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------
+{ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } }
+
+------------------ALL IS GOOD, YOU CAN USE THE CERTIFICATE------------------
+```
+
+```sh
+your certificate is: {
+  pfx: <Buffer 30 82 1c 6d 02 01 03 30 82 1c 33 06 09 2a 86 48 86 f7 0d 01 07 01 a0 82 1c 24 04 82 1c 20 30 82 1c 1c 30 82 16 d3 06 09 2a 86 48 86 f7 0d 01 07 01 a0 ... 7231 more bytes>,
+  subjectCN: 'INSI-MANU',
+  issuerCN: 'TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
+  validity: {
+    notBefore: 2021-12-01T15:18:56.000Z,
+    notAfter: 2024-12-01T15:18:56.000Z
+  }
+}
+------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------
+{
+  CR: { CodeCR: '00', LibelleCR: 'OK' },
+  INDIVIDU: {
+    INSACTIF: { IdIndividu: [Object], OID: '1.2.250.1.213.1.4.8' },
+    TIQ: {
+      NomNaissance: 'ADRUN',
+      ListePrenom: 'ZOE',
+      Sexe: 'F',
+      DateNaissance: '1975-12-31',
+      LieuNaissance: '63220'
+    }
+  }
+}
+
+------------------ALL IS GOOD, YOU CAN USE THE CERTIFICATE------------------
+```
+
 ## Notes
 
 > Pour l’erreur DESIR_560 - Niveau d'accès insuffisant : Si le CN de votre certificat Client est différent INSI-MANU ou INSI-AUTO, le serveur renvoi une erreur DESIR_560 avec le message « Vous ne disposez pas des droits suffisants pour accéder à ce service ». Le CN doit être égale à INSI-MANU ou INSI-AUTO et tous les caractères doivent être en majuscule et le séparateur entre INIS et AUTO est un signe moins -
