@@ -20,6 +20,8 @@ import { AssertionPsSecurityClass } from './class/assertionPsSecurity.class';
 import { CR01_STAGING_ENV_CASES, TEST_2_04_STAGING_ENV_CASES, TEST_2_05_STAGING_ENV_CASES, TEST_2_08_01_STAGING_ENV_CASES, TEST_2_08_02_STAGING_ENV_CASES } from './models/insi-fetch-ins-special-cases.models';
 import { getPersonMockedRequest } from './fixtures/virtual-mode/virtual-mode.helper';
 import _ from 'lodash';
+import { SOFTWARE_VERSION, SOFTWARE_NAME } from './models/env';
+import { LPS } from './class/lps.class';
 
 interface INSiClientArgs {
   lpsContext: LpsContext,
@@ -271,4 +273,28 @@ export class INSiClient {
       this._overrideHttpClientResponse('./fixtures/TEST_2.08_cas2.xml');
     }
   }
+
+  public static getClientWithDefinedId = (idam: string, overrideSpecialCases = true, softwareVersion?: string, softwareName?:string, emitter?: string): INSiClient => {
+    const lps = new LPS({
+      idam,
+      version: softwareVersion ? softwareVersion : SOFTWARE_VERSION,
+      name: softwareName ? softwareName : SOFTWARE_NAME,
+      id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+    });
+  
+    const lpsContext = new LpsContext({
+      emitter: emitter ? emitter : 'medecin@yopmail.com',
+      lps,
+    });
+  
+    const bamContext = new BamContext({
+      emitter: emitter ? emitter : 'medecin@yopmail.com',
+    });
+  
+    return new INSiClient({
+      lpsContext,
+      bamContext,
+      overrideSpecialCases,
+    });
+  };
 }
