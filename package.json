@@ -8,7 +8,7 @@
     "build": "npm run clean && tsc",
     "clean": "tsc --build --clean",
     "test": "jest",
-    "verify-certif": "npx tsx ./src/certificate-verification/script.ts"
+    "verify-certif": "npx tsx ./script/script.ts"
   },
   "repository": {
     "type": "git",
