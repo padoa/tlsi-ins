@@ -1,5 +1,4 @@
 import { LpsContext } from './lps-context.class';
-import { validate as validateUUID } from 'uuid';
 import { LPS } from './lps.class';
 
 const defaultUuid = '1f7425e2-b913-415c-adaa-785ee1076a70';

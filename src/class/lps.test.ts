@@ -1,5 +1,4 @@
 import { LPS } from './lps.class';
-import { validate as validateUUID } from 'uuid';
 
 describe('LPS class', () => {
   test('should be able to create an LPS and get his header as json', () => {
