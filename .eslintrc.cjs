@@ -3,30 +3,31 @@ module.exports = {
         node: true
     },
     extends: [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended'
     ],
     overrides: [
         {
             env: {
-                "node": true
+                'node': true
             },
             files: [
-                ".eslintrc.{js,cjs}"
+                '.eslintrc.{js,cjs}'
             ],
             parserOptions: {
-                sourceType: "script"
+                sourceType: 'script'
             }
         }
     ],
-    parser: "@typescript-eslint/parser",
+    parser: '@typescript-eslint/parser',
     parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module"
+        ecmaVersion: 'latest',
+        sourceType: 'module'
     },
     plugins: [
-        "@typescript-eslint"
+        '@typescript-eslint'
     ],
     rules: {
+        'quotes': [2, 'single', { 'avoidEscape': true }]
     }
 }

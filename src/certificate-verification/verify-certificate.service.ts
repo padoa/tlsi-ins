@@ -1,8 +1,8 @@
-import { Certificate } from "src/class/certificate.class";
-import { Gender, INSiPerson } from "src/class/insi-person.class";
-import { INSiClient } from "src/insi-client.service";
-import { IDAM } from "src/models/env";
-import yargs from "yargs";
+import { Certificate } from 'src/class/certificate.class';
+import { Gender, INSiPerson } from 'src/class/insi-person.class';
+import { INSiClient } from 'src/insi-client.service';
+import { IDAM } from 'src/models/env';
+import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 export class VerifyCertificateProcessor {
@@ -22,13 +22,13 @@ export class VerifyCertificateProcessor {
     })
     .alias('pp', 'passPhrase')
     .option('isTestCertif', {
-      describe: `It must be true if it's a test certificate`,
+      describe: 'It must be true if it\'s a test certificate',
       type: 'boolean',
       default: false,
     })
     .alias('test', 'isTestCertif')
     .option('idam', {
-      describe: `Use a different IDAM than the one in the environment`,
+      describe: 'Use a different IDAM than the one in the environment',
       type: 'string',
     })
     .demandOption(['certificatePath', 'passPhrase'])

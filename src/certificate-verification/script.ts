@@ -1,3 +1,3 @@
-import { VerifyCertificateProcessor } from "src/certificate-verification/verify-certificate.service";
+import { VerifyCertificateProcessor } from 'src/certificate-verification/verify-certificate.service';
 
 VerifyCertificateProcessor.verifyCertificate();

@@ -26,7 +26,7 @@ export class Certificate {
     })[pki.oids.certBag]?.[0]?.cert;
 
     if (!bag) {
-      throw new Error(`The certificate's bag is undefined !`)
+      throw new Error('The certificate\'s bag is undefined !')
     }
     
     if (bag.subject.getField('CN').value !== 'INSI-AUTO' && bag.subject.getField('CN').value !== 'INSI-MANU') {

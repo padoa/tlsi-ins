@@ -1,4 +1,4 @@
-import { Certificate } from "./certificate.class";
+import { Certificate } from './certificate.class';
 import { PASSPHRASE } from '../models/env';
 
 describe('Certificate', () => {
