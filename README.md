@@ -31,22 +31,23 @@ openssl pkcs12 -info -in certificates/INSI-AUTO/AUTO-certificate.p12
 # subject=/C=FR/ST=Rh\xC3\xB4ne (69)/O=CENTRE DE SANTE RPPS15287/OU=10B0152872/CN=Padoa
 ```
 
-## script
+## Script
 #### test certificate
+The script use environment variable by default (TLSI_INS_SOFTWARE_NAME, TLSI_INS_SOFTWARE_VERSION...) but you can modify some with the script options.
 To run the script, execute
 
 ```sh
-npm run verify-certif -- --cp='certificate path' --pp='certificate passphrase' --test=false --idam='idam'
+npm run verify-certif -- --certificatePath='certificate path' --passPhrase='certificate passphrase' --isTestCertif=false --idam='idam'
 Options :
   -h, --help                   print help                              [boolean]
-      --idam                   Use a different IDAM than the one in the
-                               environment                              [string]
       --certificatePath        The path to the p12 certificate file to test
                                                              [string] [required]
       --passPhrase             The passphrase of the certificate to test
                                                              [string] [required]
       --isTestCertif           It must be true if it's a test certificate
                                                                        [boolean]
+      --idam                   Use a different IDAM than the one in the
+                               environment                              [string]
 ```
 
 Exemples of return :
