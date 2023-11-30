@@ -9,6 +9,7 @@ const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const insi_fetch_ins_models_1 = require("../../models/insi-fetch-ins.models");
 class AdrunZoeVirtualMode extends BasicVirtualMode_1.default {
 }
+exports.AdrunZoeVirtualMode = AdrunZoeVirtualMode;
 AdrunZoeVirtualMode.insHisto = [];
 AdrunZoeVirtualMode.personDetails = {
     firstName: 'ZOE',
@@ -25,5 +26,4 @@ AdrunZoeVirtualMode.fetchRequestFlow = [{
         LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
         firstnameRequest: 'ZOE',
     }];
-exports.AdrunZoeVirtualMode = AdrunZoeVirtualMode;
 //# sourceMappingURL=AdrunZoeVirtualMode.js.map

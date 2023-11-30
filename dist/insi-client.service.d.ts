@@ -69,5 +69,6 @@ export declare class INSiClient {
     private _specificErrorManagement;
     private _overrideHttpClientResponse;
     private _manageCndaValidationSpecialCases;
+    static getClientWithDefinedId: (idam: string, overrideSpecialCases?: boolean, softwareVersion?: string, softwareName?: string, emitter?: string) => INSiClient;
 }
 export {};

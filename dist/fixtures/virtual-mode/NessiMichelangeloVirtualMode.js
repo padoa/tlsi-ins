@@ -9,6 +9,7 @@ const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const insi_fetch_ins_models_1 = require("../../models/insi-fetch-ins.models");
 class NessiMichelangeloVirtualMode extends BasicVirtualMode_1.default {
 }
+exports.NessiMichelangeloVirtualMode = NessiMichelangeloVirtualMode;
 NessiMichelangeloVirtualMode.insHisto = [];
 NessiMichelangeloVirtualMode.personDetails = {
     firstName: 'MICHELANGELO',
@@ -25,5 +26,4 @@ NessiMichelangeloVirtualMode.fetchRequestFlow = [{
         LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
         firstnameRequest: 'MICHELANGELO',
     }];
-exports.NessiMichelangeloVirtualMode = NessiMichelangeloVirtualMode;
 //# sourceMappingURL=NessiMichelangeloVirtualMode.js.map

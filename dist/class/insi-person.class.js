@@ -5,7 +5,7 @@ var Gender;
 (function (Gender) {
     Gender["Male"] = "M";
     Gender["Female"] = "F";
-})(Gender = exports.Gender || (exports.Gender = {}));
+})(Gender || (exports.Gender = Gender = {}));
 class INSiPerson {
     constructor(personArgs) {
         if (!personArgs.birthName) {

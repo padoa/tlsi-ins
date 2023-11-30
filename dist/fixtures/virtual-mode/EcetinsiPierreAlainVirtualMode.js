@@ -9,6 +9,7 @@ const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const insi_fetch_ins_models_1 = require("../../models/insi-fetch-ins.models");
 class EcetinsiPierreAlainVirtualMode extends BasicVirtualMode_1.default {
 }
+exports.EcetinsiPierreAlainVirtualMode = EcetinsiPierreAlainVirtualMode;
 EcetinsiPierreAlainVirtualMode.insHisto = [
     {
         IdIndividu: {
@@ -42,5 +43,4 @@ EcetinsiPierreAlainVirtualMode.fetchRequestFlow = [{
         LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
         firstnameRequest: 'PIERRE-ALAIN',
     }];
-exports.EcetinsiPierreAlainVirtualMode = EcetinsiPierreAlainVirtualMode;
 //# sourceMappingURL=EcetinsiPierreAlainVirtualMode.js.map
