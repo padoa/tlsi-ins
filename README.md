@@ -33,7 +33,7 @@ openssl pkcs12 -info -in certificates/INSI-AUTO/AUTO-certificate.p12
 
 ## Script
 #### test certificate
-The script use environment variable by default (TLSI_INS_SOFTWARE_NAME, TLSI_INS_SOFTWARE_VERSION...) but you can modify some with the script options.
+The script use environment variable by default (TLSI_INS_SOFTWARE_NAME, TLSI_INS_SOFTWARE_VERSION & TLSI_INS_IDAM) but you can use a personalized idam with the parameters of the script.
 To run the script, execute
 
 ```sh
@@ -53,14 +53,25 @@ Options :
 Exemples of return :
 
 ```sh
-your certificate is: {
-  pfx: <Buffer 30 82 1b ec 02 01 03 30 82 1b b2 06 09 2a 86 48 86 f7 0d 01 07 01 a0 82 1b a3 04 82 1b 9f 30 82 1b 9b 30 82 16 52 06 09 2a 86 48 86 f7 0d 01 07 01 a0 ... 7102 more bytes>,
-  subjectCN: 'INSI-MANU',
-  issuerCN: 'AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
-  validity: {
-    notBefore: 2023-11-08T15:39:16.000Z,
-    notAfter: 2026-11-08T15:39:16.000Z
-  }
+{
+  certificateValidity: 'VALID',
+  assertions: [
+    {
+      type: 'SUBJECT CN',
+      status: 'SUCCESS',
+      message: "Subjec's common name = INSI-MANU"
+    },
+    {
+      type: 'ISSUER CN',
+      status: 'SUCCESS',
+      message: "Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS"
+    },
+    {
+      type: 'VALIDITY DATES',
+      status: 'SUCCESS',
+      message: 'validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"}'
+    }
+  ]
 }
 ------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------
 { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } }
@@ -69,14 +80,25 @@ your certificate is: {
 ```
 
 ```sh
-your certificate is: {
-  pfx: <Buffer 30 82 1c 6d 02 01 03 30 82 1c 33 06 09 2a 86 48 86 f7 0d 01 07 01 a0 82 1c 24 04 82 1c 20 30 82 1c 1c 30 82 16 d3 06 09 2a 86 48 86 f7 0d 01 07 01 a0 ... 7231 more bytes>,
-  subjectCN: 'INSI-MANU',
-  issuerCN: 'TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
-  validity: {
-    notBefore: 2021-12-01T15:18:56.000Z,
-    notAfter: 2024-12-01T15:18:56.000Z
-  }
+{
+  certificateValidity: 'VALID',
+  assertions: [
+    {
+      type: 'SUBJECT CN',
+      status: 'SUCCESS',
+      message: "Subjec's common name = INSI-MANU"
+    },
+    {
+      type: 'ISSUER CN',
+      status: 'SUCCESS',
+      message: "Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS"
+    },
+    {
+      type: 'VALIDITY DATES',
+      status: 'SUCCESS',
+      message: 'validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"}'
+    }
+  ]
 }
 ------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------
 {

@@ -5,13 +5,11 @@ import { IDAM } from '../src/models/env';
 
 export class VerifyCertificateProcessor {
   public static async verifyCertificate (certificate: IPKCS12Certificate, passPhrase: string, endpoint: string, customizedIdam?: string): Promise<void> {
-    console.log('your certificate is:', certificate);
-
-    PKCS12Certificate.validateINSCertificate(certificate);
+    console.log(PKCS12Certificate.validateINSCertificate(certificate));
     console.log('------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------');
     const insiClient = INSiClient.getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM, true, undefined, undefined, 'previsit+certificate-testing-script@padoa.fr');
 
-    await insiClient.initClientPfx(certificate.pfx, passPhrase, endpoint);
+    await insiClient.initClientPfx(Buffer.from(certificate.pfx, 'base64'), passPhrase, endpoint);
 
     const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
     const person = new INSiPerson({
