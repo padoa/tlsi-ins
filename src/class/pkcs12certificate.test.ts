@@ -1,14 +1,17 @@
-import { Certificate } from './certificate.class';
+import { PKCS12Certificate } from './pkcs12certificate.class';
 import { PASSPHRASE } from '../models/env';
+import fs from 'fs';
 
 describe('Certificate', () => {
   test('should throw an error if the passphrase is false', () => {
-    expect(() => Certificate.decryptCertificate('certificates/INSI-MANU/MANU-certificate.p12', 'false passphrase'))
+    const pfx = fs.readFileSync('certificates/INSI-MANU/MANU-certificate.p12');
+    expect(() => PKCS12Certificate.decryptCertificate(pfx, 'false passphrase'))
     .toThrow('PKCS#12 MAC could not be verified. Invalid password?');
   });
 
   test('should be able to decrypt a certificate', () => {
-    expect(Certificate.decryptCertificate('certificates/INSI-MANU/MANU-certificate.p12', PASSPHRASE)).toMatchObject(
+    const pfx = fs.readFileSync('certificates/INSI-MANU/MANU-certificate.p12');
+    expect(PKCS12Certificate.decryptCertificate(pfx, PASSPHRASE)).toMatchObject(
       {
         subjectCN: 'INSI-MANU',
         issuerCN: 'TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',

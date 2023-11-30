@@ -41,11 +41,11 @@ Options :
   -h, --help                   print help                              [boolean]
       --idam                   Use a different IDAM than the one in the
                                environment                              [string]
-      --cp, --certificatePath  The path to the p12 certificate file to test
+      --certificatePath        The path to the p12 certificate file to test
                                                              [string] [required]
-      --pp, --passPhrase       The passphrase of the certificate to test
+      --passPhrase             The passphrase of the certificate to test
                                                              [string] [required]
-      --test, --isTestCertif   It must be true if it's a test certificate
+      --isTestCertif           It must be true if it's a test certificate
                                                                        [boolean]
 ```
 
@@ -81,7 +81,7 @@ your certificate is: {
 {
   CR: { CodeCR: '00', LibelleCR: 'OK' },
   INDIVIDU: {
-    INSACTIF: { IdIndividu: [Object], OID: '1.2.250.1.213.1.4.8' },
+    INSACTIF: { IdIndividu: [Object], OID: '0.0.000.0.000.0.0.0' },
     TIQ: {
       NomNaissance: 'ADRUN',
       ListePrenom: 'ZOE',

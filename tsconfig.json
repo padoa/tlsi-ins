@@ -1,5 +1,5 @@
 {
-  "include": ["./src/**/*", "script/script.ts", "script/verify-certificate.service.ts"],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules", "*/**/*.test.ts", "./src/test/**/*" ,"./src/fixtures/**/*"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */

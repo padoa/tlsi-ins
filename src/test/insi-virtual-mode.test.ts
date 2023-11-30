@@ -24,7 +24,7 @@ describe('INSi Client - virtualMode', () => {
   });
 
   test('should be able to create a new INSi client without throwing', () => {
-    insiClient = INSiClient.getClientWithDefinedId(clientConfig.idam, false, clientConfig.version, clientConfig.name, clientConfig.emitter);
+    insiClient = INSiClient.getClientWithDefinedId(clientConfig.idam, true, clientConfig.version, clientConfig.name, clientConfig.emitter);
   });
 
   describe('unknown person', () => {
@@ -41,21 +41,21 @@ describe('INSi Client - virtualMode', () => {
       expect(fetchInsResult).toEqual({
         successRequest: null,
         failedRequests: [{
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'SOLDAT', birthName: 'INCONNU', dateOfBirth: '1920-11-11', gender: Gender.Male }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'SOLDAT', birthName: 'INCONNU', dateOfBirth: '1920-11-11', gender: Gender.Male }, requestId, date: nowDate })
           },
-          "response": {
+          'response': {
             formatted: null,
             json: {
               CR: {
-                CodeCR: "01",
-                LibelleCR: "Aucune identite trouvee"
+                CodeCR: '01',
+                LibelleCR: 'Aucune identite trouvee'
               }
             },
-            "xml": getNoIdentityXmlResponseTest(),
-            "error": null
+            'xml': getNoIdentityXmlResponseTest(),
+            'error': null
           }
         }],
       });
@@ -83,46 +83,46 @@ describe('INSi Client - virtualMode', () => {
       const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
-          "response": {
-            "formatted": {
-              "birthName": "ADRUN",
-              "firstName": "ZOE",
-              "allFirstNames": "ZOE",
-              "gender": "F",
-              "dateOfBirth": "1975-12-31",
-              "placeOfBirthCode": "63220",
-              "registrationNumber": "275126322074974",
-              "oid": "1.2.250.1.213.1.4.8"
+          'response': {
+            'formatted': {
+              'birthName': 'ADRUN',
+              'firstName': 'ZOE',
+              'allFirstNames': 'ZOE',
+              'gender': 'F',
+              'dateOfBirth': '1975-12-31',
+              'placeOfBirthCode': '63220',
+              'registrationNumber': '275126322074974',
+              'oid': '1.2.250.1.213.1.4.8'
             },
-            "json": {
-              "CR": {
-                "CodeCR": "00",
-                "LibelleCR": "OK"
+            'json': {
+              'CR': {
+                'CodeCR': '00',
+                'LibelleCR': 'OK'
               },
-              "INDIVIDU": {
-                "INSACTIF": {
-                  "IdIndividu": {
-                    "NumIdentifiant": "2751263220749",
-                    "Cle": "74"
+              'INDIVIDU': {
+                'INSACTIF': {
+                  'IdIndividu': {
+                    'NumIdentifiant': '2751263220749',
+                    'Cle': '74'
                   },
-                  "OID": "1.2.250.1.213.1.4.8"
+                  'OID': '1.2.250.1.213.1.4.8'
                 },
-                "TIQ": {
-                  "NomNaissance": "ADRUN",
-                  "ListePrenom": "ZOE",
-                  "Sexe": "F",
-                  "DateNaissance": "1975-12-31",
-                  "LieuNaissance": "63220"
+                'TIQ': {
+                  'NomNaissance': 'ADRUN',
+                  'ListePrenom': 'ZOE',
+                  'Sexe': 'F',
+                  'DateNaissance': '1975-12-31',
+                  'LieuNaissance': '63220'
                 }
               }
             },
-            "xml": getValidXmlResponseTest(personDetails),
-            "error": null
+            'xml': getValidXmlResponseTest(personDetails),
+            'error': null
           }
         },
         failedRequests: [],
@@ -146,66 +146,66 @@ describe('INSi Client - virtualMode', () => {
       };
       const insHisto = [
         {
-          "IdIndividu": {
-            "NumIdentifiant": "2090763220834",
-            "Cle": "39",
-            "TypeMatricule": "NIR"
+          'IdIndividu': {
+            'NumIdentifiant': '2090763220834',
+            'Cle': '39',
+            'TypeMatricule': 'NIR'
           },
-          "OID": "1.2.250.1.213.1.4.8"
+          'OID': '1.2.250.1.213.1.4.8'
         },
         {
-          "IdIndividu": {
-            "NumIdentifiant": "2090663220123",
-            "Cle": "55",
-            "TypeMatricule": "NIR"
+          'IdIndividu': {
+            'NumIdentifiant': '2090663220123',
+            'Cle': '55',
+            'TypeMatricule': 'NIR'
           },
-          "OID": "1.2.250.1.213.1.4.8"
+          'OID': '1.2.250.1.213.1.4.8'
         }
       ];
       const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
-          "response": {
-            "formatted": {
-              "birthName": "ECETINSI",
-              "firstName": "PIERRE-ALAIN",
-              "allFirstNames": "PIERRE-ALAIN MURIEL FLORIANT",
-              "gender": "M",
-              "dateOfBirth": "2009-07-14",
-              "placeOfBirthCode": "63220",
-              "registrationNumber": "109076322083489",
-              "oid": "1.2.250.1.213.1.4.8"
+          'response': {
+            'formatted': {
+              'birthName': 'ECETINSI',
+              'firstName': 'PIERRE-ALAIN',
+              'allFirstNames': 'PIERRE-ALAIN MURIEL FLORIANT',
+              'gender': 'M',
+              'dateOfBirth': '2009-07-14',
+              'placeOfBirthCode': '63220',
+              'registrationNumber': '109076322083489',
+              'oid': '1.2.250.1.213.1.4.8'
             },
-            "json": {
-              "CR": {
-                "CodeCR": "00",
-                "LibelleCR": "OK"
+            'json': {
+              'CR': {
+                'CodeCR': '00',
+                'LibelleCR': 'OK'
               },
-              "INDIVIDU": {
-                "INSACTIF": {
-                  "IdIndividu": {
-                    "NumIdentifiant": "1090763220834",
-                    "Cle": "89"
+              'INDIVIDU': {
+                'INSACTIF': {
+                  'IdIndividu': {
+                    'NumIdentifiant': '1090763220834',
+                    'Cle': '89'
                   },
-                  "OID": "1.2.250.1.213.1.4.8"
+                  'OID': '1.2.250.1.213.1.4.8'
                 },
-                "INSHISTO": insHisto,
-                "TIQ": {
-                  "NomNaissance": "ECETINSI",
-                  "ListePrenom": "PIERRE-ALAIN MURIEL FLORIANT",
-                  "Sexe": "M",
-                  "DateNaissance": "2009-07-14",
-                  "LieuNaissance": "63220"
+                'INSHISTO': insHisto,
+                'TIQ': {
+                  'NomNaissance': 'ECETINSI',
+                  'ListePrenom': 'PIERRE-ALAIN MURIEL FLORIANT',
+                  'Sexe': 'M',
+                  'DateNaissance': '2009-07-14',
+                  'LieuNaissance': '63220'
                 }
               }
             },
-            "xml": getValidXmlResponseTest(personDetails, insHisto),
-            "error": null
+            'xml': getValidXmlResponseTest(personDetails, insHisto),
+            'error': null
           },
         },
         failedRequests: [],
@@ -229,65 +229,65 @@ describe('INSi Client - virtualMode', () => {
       };
       const insHisto = [
         {
-          "IdIndividu": {
-            "NumIdentifiant": "1810363220456",
-            "Cle": "60"
+          'IdIndividu': {
+            'NumIdentifiant': '1810363220456',
+            'Cle': '60'
           },
-          "OID": "1.2.250.1.213.1.4.8"
+          'OID': '1.2.250.1.213.1.4.8'
         },
         {
-          "IdIndividu": {
-            "NumIdentifiant": "2810363220456",
-            "Cle": "10"
+          'IdIndividu': {
+            'NumIdentifiant': '2810363220456',
+            'Cle': '10'
           },
-          "OID": "1.2.250.1.213.1.4.8"
+          'OID': '1.2.250.1.213.1.4.8'
         }
       ]
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
-          "response": {
-            "formatted": {
-              "birthName": "HERMANN",
-              "firstName": "GATIEN",
-              "allFirstNames": "GATIEN",
-              "gender": "M",
-              "dateOfBirth": "1981-03-24",
-              "placeOfBirthCode": "63220",
-              "registrationNumber": "181036322045660",
-              "oid": "1.2.250.1.213.1.4.8"
+          'response': {
+            'formatted': {
+              'birthName': 'HERMANN',
+              'firstName': 'GATIEN',
+              'allFirstNames': 'GATIEN',
+              'gender': 'M',
+              'dateOfBirth': '1981-03-24',
+              'placeOfBirthCode': '63220',
+              'registrationNumber': '181036322045660',
+              'oid': '1.2.250.1.213.1.4.8'
             },
-            "json": {
-              "CR": {
-                "CodeCR": "00",
-                "LibelleCR": "OK"
+            'json': {
+              'CR': {
+                'CodeCR': '00',
+                'LibelleCR': 'OK'
               },
-              "INDIVIDU": {
-                "INSACTIF": {
-                  "IdIndividu": {
-                    "NumIdentifiant": "1810363220456",
-                    "Cle": "60"
+              'INDIVIDU': {
+                'INSACTIF': {
+                  'IdIndividu': {
+                    'NumIdentifiant': '1810363220456',
+                    'Cle': '60'
                   },
-                  "OID": "1.2.250.1.213.1.4.8"
+                  'OID': '1.2.250.1.213.1.4.8'
                 },
-                "INSHISTO": insHisto,
-                "TIQ": {
-                  "NomNaissance": "HERMANN",
-                  "ListePrenom": "GATIEN",
-                  "Sexe": "M",
-                  "DateNaissance": "1981-03-24",
-                  "LieuNaissance": "63220"
+                'INSHISTO': insHisto,
+                'TIQ': {
+                  'NomNaissance': 'HERMANN',
+                  'ListePrenom': 'GATIEN',
+                  'Sexe': 'M',
+                  'DateNaissance': '1981-03-24',
+                  'LieuNaissance': '63220'
                 }
               }
             },
-            "xml": getValidXmlResponseTest(personDetails, insHisto),
-            "error": null
+            'xml': getValidXmlResponseTest(personDetails, insHisto),
+            'error': null
           },
         },
         failedRequests: [],
@@ -313,46 +313,46 @@ describe('INSi Client - virtualMode', () => {
       const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: person.getPerson(), requestId, date: nowDate })
           },
-          "response": {
-            "formatted": {
-              "birthName": "NESSI",
-              "firstName": "MICHELANGELO",
-              "allFirstNames": "MICHELANGELO ANTHONY",
-              "gender": "M",
-              "dateOfBirth": "2010-08-07",
-              "placeOfBirthCode": "63220",
-              "registrationNumber": "110086322083060",
-              "oid": "1.2.250.1.213.1.4.8"
+          'response': {
+            'formatted': {
+              'birthName': 'NESSI',
+              'firstName': 'MICHELANGELO',
+              'allFirstNames': 'MICHELANGELO ANTHONY',
+              'gender': 'M',
+              'dateOfBirth': '2010-08-07',
+              'placeOfBirthCode': '63220',
+              'registrationNumber': '110086322083060',
+              'oid': '1.2.250.1.213.1.4.8'
             },
-            "json": {
-              "CR": {
-                  "CodeCR": "00",
-                  "LibelleCR": "OK"
+            'json': {
+              'CR': {
+                  'CodeCR': '00',
+                  'LibelleCR': 'OK'
               },
-              "INDIVIDU": {
-                  "INSACTIF": {
-                      "IdIndividu": {
-                          "NumIdentifiant": "1100863220830",
-                          "Cle": "60"
+              'INDIVIDU': {
+                  'INSACTIF': {
+                      'IdIndividu': {
+                          'NumIdentifiant': '1100863220830',
+                          'Cle': '60'
                       },
-                      "OID": "1.2.250.1.213.1.4.8"
+                      'OID': '1.2.250.1.213.1.4.8'
                   },
-                  "TIQ": {
-                      "NomNaissance": "NESSI",
-                      "ListePrenom": "MICHELANGELO ANTHONY",
-                      "Sexe": "M",
-                      "DateNaissance": "2010-08-07",
-                      "LieuNaissance": "63220"
+                  'TIQ': {
+                      'NomNaissance': 'NESSI',
+                      'ListePrenom': 'MICHELANGELO ANTHONY',
+                      'Sexe': 'M',
+                      'DateNaissance': '2010-08-07',
+                      'LieuNaissance': '63220'
                   }
               }
           },
-            "xml": getValidXmlResponseTest(personDetails),
-            "error": null
+            'xml': getValidXmlResponseTest(personDetails),
+            'error': null
           },
         },
         failedRequests: [],
@@ -378,64 +378,64 @@ describe('INSi Client - virtualMode', () => {
       const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'CATARINA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'CATARINA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId, date: nowDate })
           },
-          "response": {
-            "formatted": {
-              "birthName": "TCHITCHI",
-              "firstName": "CATARINA",
-              "allFirstNames": "CATARINA BELLA",
-              "gender": "F",
-              "dateOfBirth": "1936-06-21",
-              "placeOfBirthCode": "63220",
-              "registrationNumber": "236066322083656",
-              "oid": "1.2.250.1.213.1.4.8"
+          'response': {
+            'formatted': {
+              'birthName': 'TCHITCHI',
+              'firstName': 'CATARINA',
+              'allFirstNames': 'CATARINA BELLA',
+              'gender': 'F',
+              'dateOfBirth': '1936-06-21',
+              'placeOfBirthCode': '63220',
+              'registrationNumber': '236066322083656',
+              'oid': '1.2.250.1.213.1.4.8'
             },
-            "json": {
-              "CR": {
-                "CodeCR": "00",
-                "LibelleCR": "OK"
+            'json': {
+              'CR': {
+                'CodeCR': '00',
+                'LibelleCR': 'OK'
               },
-              "INDIVIDU": {
-                "INSACTIF": {
-                  "IdIndividu": {
-                    "NumIdentifiant": "2360663220836",
-                    "Cle": "56"
+              'INDIVIDU': {
+                'INSACTIF': {
+                  'IdIndividu': {
+                    'NumIdentifiant': '2360663220836',
+                    'Cle': '56'
                   },
-                  "OID": "1.2.250.1.213.1.4.8"
+                  'OID': '1.2.250.1.213.1.4.8'
                 },
-                "TIQ": {
-                  "NomNaissance": "TCHITCHI",
-                  "ListePrenom": "CATARINA BELLA",
-                  "Sexe": "F",
-                  "DateNaissance": "1936-06-21",
-                  "LieuNaissance": "63220"
+                'TIQ': {
+                  'NomNaissance': 'TCHITCHI',
+                  'ListePrenom': 'CATARINA BELLA',
+                  'Sexe': 'F',
+                  'DateNaissance': '1936-06-21',
+                  'LieuNaissance': '63220'
                 }
               }
             },
-            "xml": getValidXmlResponseTest(personDetails),
-            "error": null
+            'xml': getValidXmlResponseTest(personDetails),
+            'error': null
           }
         },
         failedRequests: [{
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'OLA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'OLA', birthName: 'TCHITCHI', dateOfBirth: '1936-06-21', gender: Gender.Female }, requestId, date: nowDate })
           },
-          "response": {
-            "formatted": null,
-            "json": {
-              "CR": {
-                "CodeCR": "01",
-                "LibelleCR": "Aucune identite trouvee"
+          'response': {
+            'formatted': null,
+            'json': {
+              'CR': {
+                'CodeCR': '01',
+                'LibelleCR': 'Aucune identite trouvee'
               }
             },
-            "xml": getNoIdentityXmlResponseTest(),
-            "error": null
+            'xml': getNoIdentityXmlResponseTest(),
+            'error': null
           }
         }],
       });
@@ -458,71 +458,71 @@ describe('INSi Client - virtualMode', () => {
       };
       const insHisto = [
         {
-          "IdIndividu": {
-            "NumIdentifiant": "180032B020401",
-            "Cle": "23"
+          'IdIndividu': {
+            'NumIdentifiant': '180032B020401',
+            'Cle': '23'
           },
-          "OID": "1.2.250.1.213.1.4.8"
+          'OID': '1.2.250.1.213.1.4.8'
         }
       ]
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
       expect(fetchInsResult).toEqual({
         successRequest: {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({
               ...clientConfig,
               person: { firstName: 'ANTHONY', birthName: 'CORSE', dateOfBirth: '1980-03-02', gender: Gender.Male },
               requestId,
               date: nowDate,
             })
           },
-          "response": {
-            "formatted": {
-              "birthName": "CORSE",
-              "firstName": "ANTHONY",
-              "allFirstNames": "ANTHONY",
-              "gender": "M",
-              "dateOfBirth": "1980-03-02",
-              "placeOfBirthCode": "2B020",
-              "registrationNumber": "180032B02040123",
-              "oid": "1.2.250.1.213.1.4.8"
+          'response': {
+            'formatted': {
+              'birthName': 'CORSE',
+              'firstName': 'ANTHONY',
+              'allFirstNames': 'ANTHONY',
+              'gender': 'M',
+              'dateOfBirth': '1980-03-02',
+              'placeOfBirthCode': '2B020',
+              'registrationNumber': '180032B02040123',
+              'oid': '1.2.250.1.213.1.4.8'
             },
-            "json": {
-              "CR": {
-                "CodeCR": "00",
-                "LibelleCR": "OK"
+            'json': {
+              'CR': {
+                'CodeCR': '00',
+                'LibelleCR': 'OK'
               },
-              "INDIVIDU": {
-                "INSACTIF": {
-                  "IdIndividu": {
-                    "NumIdentifiant": "180032B020401",
-                    "Cle": "23"
+              'INDIVIDU': {
+                'INSACTIF': {
+                  'IdIndividu': {
+                    'NumIdentifiant': '180032B020401',
+                    'Cle': '23'
                   },
-                  "OID": "1.2.250.1.213.1.4.8"
+                  'OID': '1.2.250.1.213.1.4.8'
                 },
-                "INSHISTO": [
+                'INSHISTO': [
                   {
-                    "IdIndividu": {
-                      "NumIdentifiant": "180032B020401",
-                      "Cle": "23"
+                    'IdIndividu': {
+                      'NumIdentifiant': '180032B020401',
+                      'Cle': '23'
                     },
-                    "OID": "1.2.250.1.213.1.4.8"
+                    'OID': '1.2.250.1.213.1.4.8'
                   }
                 ],
-                "TIQ": {
-                  "NomNaissance": "CORSE",
-                  "ListePrenom": "ANTHONY",
-                  "Sexe": "M",
-                  "DateNaissance": "1980-03-02",
-                  "LieuNaissance": "2B020"
+                'TIQ': {
+                  'NomNaissance': 'CORSE',
+                  'ListePrenom': 'ANTHONY',
+                  'Sexe': 'M',
+                  'DateNaissance': '1980-03-02',
+                  'LieuNaissance': '2B020'
                 }
               }
             },
-            "xml": getValidXmlResponseTest(personDetails, insHisto),
-            "error": null
+            'xml': getValidXmlResponseTest(personDetails, insHisto),
+            'error': null
           }
         },
         failedRequests: [],
@@ -542,72 +542,72 @@ describe('INSi Client - virtualMode', () => {
       expect(fetchInsResult).toEqual({
         successRequest: null,
         failedRequests: [{
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'PIERRE', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'PIERRE', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
-          "response": {
+          'response': {
             formatted: null,
             json: {
               CR: {
-                CodeCR: "01",
-                LibelleCR: "Aucune identite trouvee"
+                CodeCR: '01',
+                LibelleCR: 'Aucune identite trouvee'
               }
             },
-            "xml": getNoIdentityXmlResponseTest(),
-            "error": null
+            'xml': getNoIdentityXmlResponseTest(),
+            'error': null
           }
         }, {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'PAUL', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'PAUL', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
-          "response": {
+          'response': {
             formatted: null,
             json: {
               CR: {
-                CodeCR: "01",
-                LibelleCR: "Aucune identite trouvee"
+                CodeCR: '01',
+                LibelleCR: 'Aucune identite trouvee'
               }
             },
-            "xml": getNoIdentityXmlResponseTest(),
-            "error": null
+            'xml': getNoIdentityXmlResponseTest(),
+            'error': null
           }
         }, {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
-          "response": {
+          'response': {
             formatted: null,
             json: {
               CR: {
-                CodeCR: "01",
-                LibelleCR: "Aucune identite trouvee"
+                CodeCR: '01',
+                LibelleCR: 'Aucune identite trouvee'
               }
             },
-            "xml": getNoIdentityXmlResponseTest(),
-            "error": null
+            'xml': getNoIdentityXmlResponseTest(),
+            'error': null
           }
         }, {
-          "status": "SUCCESS",
-          "request": {
-            "id": expect.any(String),
-            "xml": getXmlRequestTest({ ...clientConfig, person: { firstName: 'PIERRE PAUL JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
+          'status': 'SUCCESS',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'PIERRE PAUL JACQUES', birthName: 'HOUILLES', dateOfBirth: '1993-01-27', gender: Gender.Male }, requestId, date: nowDate })
           },
-          "response": {
+          'response': {
             formatted: null,
             json: {
               CR: {
-                CodeCR: "01",
-                LibelleCR: "Aucune identite trouvee"
+                CodeCR: '01',
+                LibelleCR: 'Aucune identite trouvee'
               }
             },
-            "xml": getNoIdentityXmlResponseTest(),
-            "error": null
+            'xml': getNoIdentityXmlResponseTest(),
+            'error': null
           }
         }],
       });
