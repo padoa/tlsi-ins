@@ -26,7 +26,7 @@ export class InsCertificateValidator {
     return PKCS12Certificate;
   }
 
-  public static validateINSCertificate(pfx: Buffer, passPhrase: string): IINSValidationResponse {
+  public static validatePKCS12(pfx: Buffer, passPhrase: string): IINSValidationResponse {
     const certificate = this._decryptCertificate(pfx, passPhrase);
     let certificateValidity = INSCertificateValidity.VALID;
     const assertions: INSValidityAssertion[] = [];

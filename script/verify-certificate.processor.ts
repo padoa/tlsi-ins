@@ -7,7 +7,7 @@ import { AssertionStatus, INSCertificateValidity } from '../src/class/InsCertifi
 import { INSiClient } from '../src/insi-client.service';
 import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../src/models/env';
 
-const getClientWithDefinedId = (idam: string, overrideSpecialCases = true, emitter?: string): INSiClient => {
+const getClientWithDefinedId = (idam: string): INSiClient => {
   const lps = new LPS({
     idam,
     version: SOFTWARE_VERSION,
@@ -16,31 +16,31 @@ const getClientWithDefinedId = (idam: string, overrideSpecialCases = true, emitt
   });
 
   const lpsContext = new LpsContext({
-    emitter: emitter ? emitter : 'medecin@yopmail.com',
+    emitter: 'previsit+certificate-testing-script@padoa.fr',
     lps,
   });
 
   const bamContext = new BamContext({
-    emitter: emitter ? emitter : 'medecin@yopmail.com',
+    emitter: 'previsit+certificate-testing-script@padoa.fr',
   });
 
   return new INSiClient({
     lpsContext,
     bamContext,
-    overrideSpecialCases,
+    overrideSpecialCases: true,
   });
 };
 
 export class VerifyCertificateProcessor {
   public static async verifyCertificate (pfx: Buffer, passPhrase: string, endpoint: string, customizedIdam?: string): Promise<void> {
-    const INSvalidity = InsCertificateValidator.validateINSCertificate(pfx, passPhrase);
+    const INSvalidity = InsCertificateValidator.validatePKCS12(pfx, passPhrase);
     console.log(`Certificate validity : ${INSvalidity.certificateValidity == INSCertificateValidity.VALID ? '✅' : '❌'}`);
     console.log('---');
     INSvalidity.assertions.forEach((assertion) => {
       console.log(`${assertion.message} ${assertion.status == AssertionStatus.SUCCESS ? '✅' : '❌'}`);
     })
     console.log('\nTEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER');
-    const insiClient = getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM, true, 'previsit+certificate-testing-script@padoa.fr');
+    const insiClient = getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM);
 
     await insiClient.initClientPfx(pfx, passPhrase, endpoint);
 

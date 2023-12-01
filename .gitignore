@@ -7,6 +7,7 @@
 !certificates/INSI-AUTO/AUTO-certificate.p12
 !certificates/INSI-AUTO/AUTO-certificate-fake.p12
 !certificates/INSI-MANU/MANU-certificate.p12
+!certificates/bad-ssl/badssl.com-client.p12
 
 # Taken from https://github.com/microsoft/TypeScript-Node-Starter/blob/master/.gitignore
 lib-cov
