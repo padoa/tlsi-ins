@@ -53,54 +53,26 @@ Options :
 Exemples of return :
 
 ```sh
-{
-  certificateValidity: 'VALID',
-  assertions: [
-    {
-      type: 'SUBJECT CN',
-      status: 'SUCCESS',
-      message: "Subjec's common name = INSI-MANU"
-    },
-    {
-      type: 'ISSUER CN',
-      status: 'SUCCESS',
-      message: "Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS"
-    },
-    {
-      type: 'VALIDITY DATES',
-      status: 'SUCCESS',
-      message: 'validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"}'
-    }
-  ]
-}
-------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------
+Certificate validity : ✅
+---
+Subjec's common name = INSI-MANU ✅
+Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS ✅
+validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"} ✅
+
+TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
 { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } }
 
-------------------ALL IS GOOD, YOU CAN USE THE CERTIFICATE------------------
+ALL IS GOOD, YOU CAN USE THE CERTIFICATE
 ```
 
 ```sh
-{
-  certificateValidity: 'VALID',
-  assertions: [
-    {
-      type: 'SUBJECT CN',
-      status: 'SUCCESS',
-      message: "Subjec's common name = INSI-MANU"
-    },
-    {
-      type: 'ISSUER CN',
-      status: 'SUCCESS',
-      message: "Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS"
-    },
-    {
-      type: 'VALIDITY DATES',
-      status: 'SUCCESS',
-      message: 'validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"}'
-    }
-  ]
-}
-------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------
+Certificate validity : ✅
+---
+Subjec's common name = INSI-MANU ✅
+Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS ✅
+validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"} ✅
+
+TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
 {
   CR: { CodeCR: '00', LibelleCR: 'OK' },
   INDIVIDU: {
@@ -115,7 +87,7 @@ Exemples of return :
   }
 }
 
-------------------ALL IS GOOD, YOU CAN USE THE CERTIFICATE------------------
+ALL IS GOOD, YOU CAN USE THE CERTIFICATE
 ```
 
 ## Notes

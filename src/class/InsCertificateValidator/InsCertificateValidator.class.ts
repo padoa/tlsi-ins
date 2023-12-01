@@ -1,46 +1,8 @@
 import { util, asn1, pkcs12, pki } from 'node-forge';
+import { IPKCS12Certificate, IINSValidationResponse, INSCertificateValidity, INSValidityAssertion, AssertionType, AssertionStatus } from './InsCertificateValidator.model';
 
-enum INSCertificateValidity {
-  VALID = 'VALID',
-  INVALID = 'INVALID',
-}
-
-enum AssertionType {
-  SUBJECT_CN = 'SUBJECT CN',
-  ISSUER_CN = 'ISSUER CN',
-  VAILIDITY_DATES = 'VALIDITY DATES',
-}
-
-enum AssertionStatus {
-  SUCCESS = 'SUCCESS',
-  FAIL = 'FAIL',
-}
-
-interface INSValidityAssertion {
-  type: AssertionType,
-  status: AssertionStatus,
-  message: string,
-}
-
-interface IINSValidationResponse {
-  certificateValidity: INSCertificateValidity,
-  assertions: INSValidityAssertion[],
-}
-
-interface IValidityDates {
-  notBefore: Date;
-  notAfter: Date;
-}
-
-export interface IPKCS12Certificate {
-  pfx: string; //base 64
-  subjectCN: string;
-  issuerCN: string;
-  validity: IValidityDates;
-}
-
-export class PKCS12Certificate {
-  public static decryptCertificate(pfx: Buffer, passPhrase: string): IPKCS12Certificate {
+export class InsCertificateValidator {
+  private static _decryptCertificate(pfx: Buffer, passPhrase: string): IPKCS12Certificate {
     const pfxB64 = pfx.toString('base64');
 
     const p12Der = util.decode64(pfxB64);
@@ -64,7 +26,8 @@ export class PKCS12Certificate {
     return PKCS12Certificate;
   }
 
-  public static validateINSCertificate(certificate: IPKCS12Certificate ): IINSValidationResponse {
+  public static validateINSCertificate(pfx: Buffer, passPhrase: string): IINSValidationResponse {
+    const certificate = this._decryptCertificate(pfx, passPhrase);
     let certificateValidity = INSCertificateValidity.VALID;
     const assertions: INSValidityAssertion[] = [];
 

@@ -1,24 +1,56 @@
+import { BamContext } from '../src/class/bam-context.class';
 import { Gender, INSiPerson } from '../src/class/insi-person.class';
-import { IPKCS12Certificate, PKCS12Certificate } from '../src/class/pkcs12certificate.class';
+import { LpsContext } from '../src/class/lps-context.class';
+import { LPS } from '../src/class/lps.class';
+import { InsCertificateValidator } from '../src/class/InsCertificateValidator/InsCertificateValidator.class';
+import { AssertionStatus, INSCertificateValidity } from '../src/class/InsCertificateValidator/InsCertificateValidator.model';
 import { INSiClient } from '../src/insi-client.service';
-import { IDAM } from '../src/models/env';
+import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../src/models/env';
+
+const getClientWithDefinedId = (idam: string, overrideSpecialCases = true, emitter?: string): INSiClient => {
+  const lps = new LPS({
+    idam,
+    version: SOFTWARE_VERSION,
+    name: SOFTWARE_NAME,
+    id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+  });
+
+  const lpsContext = new LpsContext({
+    emitter: emitter ? emitter : 'medecin@yopmail.com',
+    lps,
+  });
+
+  const bamContext = new BamContext({
+    emitter: emitter ? emitter : 'medecin@yopmail.com',
+  });
+
+  return new INSiClient({
+    lpsContext,
+    bamContext,
+    overrideSpecialCases,
+  });
+};
 
 export class VerifyCertificateProcessor {
-  public static async verifyCertificate (certificate: IPKCS12Certificate, passPhrase: string, endpoint: string, customizedIdam?: string): Promise<void> {
-    console.log(PKCS12Certificate.validateINSCertificate(certificate));
-    console.log('------------------TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER------------------');
-    const insiClient = INSiClient.getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM, true, undefined, undefined, 'previsit+certificate-testing-script@padoa.fr');
+  public static async verifyCertificate (pfx: Buffer, passPhrase: string, endpoint: string, customizedIdam?: string): Promise<void> {
+    const INSvalidity = InsCertificateValidator.validateINSCertificate(pfx, passPhrase);
+    console.log(`Certificate validity : ${INSvalidity.certificateValidity == INSCertificateValidity.VALID ? '✅' : '❌'}`);
+    console.log('---');
+    INSvalidity.assertions.forEach((assertion) => {
+      console.log(`${assertion.message} ${assertion.status == AssertionStatus.SUCCESS ? '✅' : '❌'}`);
+    })
+    console.log('\nTEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER');
+    const insiClient = getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM, true, 'previsit+certificate-testing-script@padoa.fr');
 
-    await insiClient.initClientPfx(Buffer.from(certificate.pfx, 'base64'), passPhrase, endpoint);
+    await insiClient.initClientPfx(pfx, passPhrase, endpoint);
 
-    const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
     const person = new INSiPerson({
       birthName: 'ADRUN',
       firstName: 'ZOE',
       gender: Gender.Female,
       dateOfBirth: '1975-12-31',
     });
-    const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: false });
+    const fetchInsResult = await insiClient.fetchIns(person, { virtualModeEnabled: false });
 
     if (fetchInsResult.successRequest?.status!=='SUCCESS' && fetchInsResult.failedRequests[0]?.status!=='SUCCESS') {
       const errorMessage = fetchInsResult.successRequest ? fetchInsResult.successRequest : fetchInsResult.failedRequests[0];
@@ -27,6 +59,6 @@ export class VerifyCertificateProcessor {
     const responseMessage = fetchInsResult.successRequest ? fetchInsResult.successRequest : fetchInsResult.failedRequests[0];
     console.log(responseMessage.response.json);
     
-    console.log('\n------------------ALL IS GOOD, YOU CAN USE THE CERTIFICATE------------------\n');
+    console.log('\nALL IS GOOD, YOU CAN USE THE CERTIFICATE\n');
   }
 }

@@ -1,4 +1,4 @@
-import {validate as validateUUID } from 'uuid';
+import { validate as validateUUID } from 'uuid';
 
 export interface LpsArgs {
   idam: string;

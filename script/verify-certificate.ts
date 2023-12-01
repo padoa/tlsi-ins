@@ -1,5 +1,4 @@
 import { VerifyCertificateProcessor } from './verify-certificate.processor';
-import { PKCS12Certificate } from '../src/class/pkcs12certificate.class';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import fs from 'fs';
@@ -32,8 +31,7 @@ const run = async (): Promise<void> => {
 
   const endpoint = isTestCertif ? 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps' : 'https://services-ps-tlsm.ameli.fr/lps';
   const pfx = fs.readFileSync(certificatePath)
-  const certificate = PKCS12Certificate.decryptCertificate(pfx, passPhrase);
-  VerifyCertificateProcessor.verifyCertificate(certificate, passPhrase, endpoint, customizedIdam);
+  VerifyCertificateProcessor.verifyCertificate(pfx, passPhrase, endpoint, customizedIdam);
 }
 
 run().catch((e) => {

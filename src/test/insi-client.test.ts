@@ -81,13 +81,37 @@ const padoaConf = {
   name: SOFTWARE_NAME,
 };
 
+const getClientWithDefinedId = (overrideSpecialCases = true): INSiClient => {
+  const lps = new LPS({
+    idam: IDAM,
+    version: SOFTWARE_VERSION,
+    name: SOFTWARE_NAME,
+    id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+  });
+
+  const lpsContext = new LpsContext({
+    emitter: 'medecin@yopmail.com',
+    lps,
+  });
+
+  const bamContext = new BamContext({
+    emitter: 'medecin@yopmail.com',
+  });
+
+  return new INSiClient({
+    lpsContext,
+    bamContext,
+    overrideSpecialCases,
+  });
+};
+
 describe('INSi Client', () => {
   const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
   let insiClient: INSiClient;
 
   describe('Initialisation', () => {
     test('should be able to create a new INSi client without throwing', () => {
-      insiClient = INSiClient.getClientWithDefinedId(IDAM);
+      insiClient = getClientWithDefinedId();
     });
 
     test('should throw an error if calling fetchInsi without initClient first', async () => {
@@ -131,7 +155,7 @@ describe('INSi Client', () => {
     });
 
     test('should throw an INSi error if the pfx is not a correct pfx file', async () => {
-      const client = INSiClient.getClientWithDefinedId(IDAM);
+      const client = getClientWithDefinedId();
       const fakePfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
       await client.initClientPfx(fakePfx, PASSPHRASE);
       const person = new INSiPerson({
@@ -145,7 +169,7 @@ describe('INSi Client', () => {
     });
 
     test('should throw an INSi error if the Passe phrase is not a correct', async () => {
-      const client = INSiClient.getClientWithDefinedId(IDAM);
+      const client = getClientWithDefinedId();
       await client.initClientPfx(pfx, 'fake-pass-phrase');
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
@@ -372,7 +396,7 @@ describe('INSi Client', () => {
     });
 
     test('should handle single INSHISTO as an array, test_2.04 LIVE', async () => {
-      const client = INSiClient.getClientWithDefinedId(IDAM, false);
+      const client = getClientWithDefinedId(false);
       await client.initClientPfx(pfx, PASSPHRASE);
       const person = new INSiPerson({
         birthName: 'ECETINSI',
@@ -468,10 +492,10 @@ describe('INSi Client', () => {
    * You can test it locally by putting a valid assertion
    * */
   describe.skip('Security: Cpx', () => {
-    const assertionPs = `PUT YOUR ASSERTION PS HERE`;
+    const assertionPs = 'PUT YOUR ASSERTION PS HERE';
     let insiCpxClient: INSiClient;
     test('should create an insiClient with an AssertionPsSecurityClass', async () => {
-      insiCpxClient = INSiClient.getClientWithDefinedId(IDAM);
+      insiCpxClient = getClientWithDefinedId();
       await insiCpxClient.initClientCpx(assertionPs);
     });
 
