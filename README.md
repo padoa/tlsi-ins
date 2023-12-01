@@ -55,9 +55,9 @@ Exemples of return :
 ```sh
 Certificate validity : ✅
 ---
-Subjec's common name = INSI-MANU ✅
-Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS ✅
-validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"} ✅
+✅ Subject's common name = INSI-MANU
+✅ Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"}
 
 TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
 { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } }
@@ -68,9 +68,9 @@ ALL IS GOOD, YOU CAN USE THE CERTIFICATE
 ```sh
 Certificate validity : ✅
 ---
-Subjec's common name = INSI-MANU ✅
-Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS ✅
-validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"} ✅
+✅ Subject's common name = INSI-MANU
+✅ Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"}
 
 TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
 {
@@ -88,6 +88,14 @@ TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
 }
 
 ALL IS GOOD, YOU CAN USE THE CERTIFICATE
+```
+
+```sh
+Certificate validity : ❌
+---
+❌ Subject's common name = BadSSL Client Certificate, it should be INSI-AUTO or INSI-MANU
+❌ Issuer's common name = BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ validity = {"notBefore":"2023-11-29T22:34:03.000Z","notAfter":"2025-11-28T22:34:03.000Z"}
 ```
 
 ## Notes
