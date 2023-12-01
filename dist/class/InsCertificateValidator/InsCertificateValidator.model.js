@@ -11,6 +11,7 @@ var AssertionType;
     AssertionType["SUBJECT_CN"] = "SUBJECT CN";
     AssertionType["ISSUER_CN"] = "ISSUER CN";
     AssertionType["VAILIDITY_DATES"] = "VALIDITY DATES";
+    AssertionType["PKCS12_CERTIFICATE"] = "PKCS12 CERTIFICATE";
 })(AssertionType || (exports.AssertionType = AssertionType = {}));
 var AssertionStatus;
 (function (AssertionStatus) {

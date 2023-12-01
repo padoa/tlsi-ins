@@ -5,7 +5,8 @@ export declare enum INSCertificateValidity {
 export declare enum AssertionType {
     SUBJECT_CN = "SUBJECT CN",
     ISSUER_CN = "ISSUER CN",
-    VAILIDITY_DATES = "VALIDITY DATES"
+    VAILIDITY_DATES = "VALIDITY DATES",
+    PKCS12_CERTIFICATE = "PKCS12 CERTIFICATE"
 }
 export declare enum AssertionStatus {
     SUCCESS = "SUCCESS",
@@ -19,6 +20,9 @@ export interface INSValidityAssertion {
 export interface IINSValidationResponse {
     certificateValidity: INSCertificateValidity;
     assertions: INSValidityAssertion[];
+    error?: {
+        message: string;
+    };
 }
 export interface IValidityDates {
     notBefore: Date;
