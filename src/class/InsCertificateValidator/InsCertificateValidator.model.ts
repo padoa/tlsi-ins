@@ -7,6 +7,7 @@ export enum AssertionType {
   SUBJECT_CN = 'SUBJECT CN',
   ISSUER_CN = 'ISSUER CN',
   VAILIDITY_DATES = 'VALIDITY DATES',
+  PKCS12_CERTIFICATE = 'PKCS12 CERTIFICATE'
 }
 
 export enum AssertionStatus {
@@ -23,6 +24,7 @@ export interface INSValidityAssertion {
 export interface IINSValidationResponse {
   certificateValidity: INSCertificateValidity,
   assertions: INSValidityAssertion[],
+  error?: { message: string },
 }
 
 export interface IValidityDates {

@@ -4,10 +4,11 @@ import fs from 'fs';
 import { AssertionStatus, AssertionType, INSCertificateValidity } from './InsCertificateValidator.model';
 
 describe('Certificate', () => {
-  test('should throw an error if the passphrase is false', () => {
+  test('should find an error if the passphrase is false', () => {
     const pfx = fs.readFileSync('certificates/INSI-MANU/MANU-certificate.p12');
-    expect(() => InsCertificateValidator.validatePKCS12(pfx, 'false passphrase'))
-    .toThrow('PKCS#12 MAC could not be verified. Invalid password?');
+    const response = InsCertificateValidator.validatePKCS12(pfx, 'false passphrase');
+    expect(response).toMatchObject({certificateValidity: INSCertificateValidity.INVALID});
+    expect(response.error).toEqual({message: 'PKCS#12 MAC could not be verified. Invalid password?'});
   });
 
   test('should find errors in the certificate', () => {
@@ -23,12 +24,12 @@ describe('Certificate', () => {
         expect.objectContaining({
           type: AssertionType.SUBJECT_CN,
           status: AssertionStatus.FAIL,
-          message: 'The common name of the subject is not valid for INS, it should be INSI-AUTO or INSI-MANU',
+          message: 'Subject\'s common name = BadSSL Client Certificate, it should be INSI-AUTO or INSI-MANU',
         }),
         expect.objectContaining({
           type: AssertionType.ISSUER_CN,
           status: AssertionStatus.FAIL,
-          message: 'The common name of the issuer is not valid for INS, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
+          message: 'Issuer\'s common name = BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
         }),
         expect.objectContaining({
           type: AssertionType.VAILIDITY_DATES,

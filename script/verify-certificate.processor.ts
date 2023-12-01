@@ -37,8 +37,9 @@ export class VerifyCertificateProcessor {
     console.log(`Certificate validity : ${INSvalidity.certificateValidity == INSCertificateValidity.VALID ? '✅' : '❌'}`);
     console.log('---');
     INSvalidity.assertions.forEach((assertion) => {
-      console.log(`${assertion.message} ${assertion.status == AssertionStatus.SUCCESS ? '✅' : '❌'}`);
+      console.log(`${assertion.status == AssertionStatus.SUCCESS ? '✅' : '❌'} ${assertion.message}`);
     })
+    if (INSvalidity.certificateValidity == INSCertificateValidity.INVALID) { return; }
     console.log('\nTEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER');
     const insiClient = getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM);
 
