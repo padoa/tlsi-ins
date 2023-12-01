@@ -17,8 +17,6 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const soap_1 = require("soap");
 const uuid_1 = require("uuid");
-const lps_context_class_1 = require("./class/lps-context.class");
-const bam_context_class_1 = require("./class/bam-context.class");
 const certificates_1 = require("./utils/certificates");
 const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
 const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
@@ -28,8 +26,6 @@ const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class")
 const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
 const virtual_mode_helper_1 = require("./fixtures/virtual-mode/virtual-mode.helper");
 const lodash_1 = __importDefault(require("lodash"));
-const env_1 = require("./models/env");
-const lps_class_1 = require("./class/lps.class");
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 /**
@@ -272,24 +268,4 @@ class INSiClient {
     }
 }
 exports.INSiClient = INSiClient;
-INSiClient.getClientWithDefinedId = (idam, overrideSpecialCases = true, softwareVersion, softwareName, emitter) => {
-    const lps = new lps_class_1.LPS({
-        idam,
-        version: softwareVersion ? softwareVersion : env_1.SOFTWARE_VERSION,
-        name: softwareName ? softwareName : env_1.SOFTWARE_NAME,
-        id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-    });
-    const lpsContext = new lps_context_class_1.LpsContext({
-        emitter: emitter ? emitter : 'medecin@yopmail.com',
-        lps,
-    });
-    const bamContext = new bam_context_class_1.BamContext({
-        emitter: emitter ? emitter : 'medecin@yopmail.com',
-    });
-    return new INSiClient({
-        lpsContext,
-        bamContext,
-        overrideSpecialCases,
-    });
-};
 //# sourceMappingURL=insi-client.service.js.map
