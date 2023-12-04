@@ -1,5 +1,4 @@
 import { BamContext } from './bam-context.class';
-import { validate as validateUUID } from 'uuid';
 const defaultUuid = '1f7425e2-b913-415c-adaa-785ee1076a70';
 const defaultDate = '2020-01-01';
 jest.mock('uuid', () => ({

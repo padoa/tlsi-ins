@@ -9,6 +9,7 @@ const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const insi_fetch_ins_models_1 = require("../../models/insi-fetch-ins.models");
 class CorseAnthonyVirtualMode extends BasicVirtualMode_1.default {
 }
+exports.CorseAnthonyVirtualMode = CorseAnthonyVirtualMode;
 CorseAnthonyVirtualMode.insHisto = [
     {
         IdIndividu: {
@@ -33,5 +34,4 @@ CorseAnthonyVirtualMode.fetchRequestFlow = [{
         LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
         firstnameRequest: 'ANTHONY',
     }];
-exports.CorseAnthonyVirtualMode = CorseAnthonyVirtualMode;
 //# sourceMappingURL=CorseAnthonyVirtualMode.js.map

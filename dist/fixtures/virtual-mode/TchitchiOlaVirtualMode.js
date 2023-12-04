@@ -9,6 +9,7 @@ const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const insi_fetch_ins_models_1 = require("../../models/insi-fetch-ins.models");
 class TchitchiOlaVirtualMode extends BasicVirtualMode_1.default {
 }
+exports.TchitchiOlaVirtualMode = TchitchiOlaVirtualMode;
 TchitchiOlaVirtualMode.insHisto = [];
 TchitchiOlaVirtualMode.personDetails = {
     firstName: 'CATARINA',
@@ -29,5 +30,4 @@ TchitchiOlaVirtualMode.fetchRequestFlow = [{
         LibelleCR: insi_fetch_ins_models_1.CRLabels.OK,
         firstnameRequest: 'CATARINA',
     }];
-exports.TchitchiOlaVirtualMode = TchitchiOlaVirtualMode;
 //# sourceMappingURL=TchitchiOlaVirtualMode.js.map

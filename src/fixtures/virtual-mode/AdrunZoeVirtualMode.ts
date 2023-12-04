@@ -1,6 +1,6 @@
 import { Gender } from "../../class/insi-person.class";
 import BasicVirtualMode from "./BasicVirtualMode";
-import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, INSiServiceRequestEnv, INSiServiceRequestStatus, InsHisto } from "../../models/insi-fetch-ins.models";
+import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFormattedResponse, InsHisto } from "../../models/insi-fetch-ins.models";
 
 export class AdrunZoeVirtualMode extends BasicVirtualMode {
   static insHisto: InsHisto[] = [];

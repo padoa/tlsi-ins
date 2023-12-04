@@ -9,6 +9,7 @@ const BasicVirtualMode_1 = __importDefault(require("./BasicVirtualMode"));
 const insi_fetch_ins_models_1 = require("../../models/insi-fetch-ins.models");
 class HouillesPierreVirtualMode extends BasicVirtualMode_1.default {
 }
+exports.HouillesPierreVirtualMode = HouillesPierreVirtualMode;
 HouillesPierreVirtualMode.insHisto = [];
 HouillesPierreVirtualMode.personDetails = {
     firstName: '',
@@ -34,5 +35,4 @@ HouillesPierreVirtualMode.fetchRequestFlow = [{
         codeCR: insi_fetch_ins_models_1.CRCodes.NO_RESULT,
         LibelleCR: insi_fetch_ins_models_1.CRLabels.NO_RESULT,
     }];
-exports.HouillesPierreVirtualMode = HouillesPierreVirtualMode;
 //# sourceMappingURL=HouillesPierreVirtualMode.js.map

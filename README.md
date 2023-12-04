@@ -31,6 +31,73 @@ openssl pkcs12 -info -in certificates/INSI-AUTO/AUTO-certificate.p12
 # subject=/C=FR/ST=Rh\xC3\xB4ne (69)/O=CENTRE DE SANTE RPPS15287/OU=10B0152872/CN=Padoa
 ```
 
+## Script
+#### test certificate
+The script use environment variable by default (TLSI_INS_SOFTWARE_NAME, TLSI_INS_SOFTWARE_VERSION & TLSI_INS_IDAM) but you can use a personalized idam with the parameters of the script.
+To run the script, execute
+
+```sh
+npm run verify-certif -- --certificatePath='certificate path' --passPhrase='certificate passphrase' --isTestCertif=false --idam='idam'
+Options :
+  -h, --help                   print help                              [boolean]
+      --certificatePath        The path to the p12 certificate file to test
+                                                             [string] [required]
+      --passPhrase             The passphrase of the certificate to test
+                                                             [string] [required]
+      --isTestCertif           It must be true if it's a test certificate
+                                                                       [boolean]
+      --idam                   Use a different IDAM than the one in the
+                               environment                              [string]
+```
+
+Exemples of return :
+
+```sh
+Certificate validity : ✅
+---
+✅ Subject's common name = INSI-MANU
+✅ Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"}
+
+TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
+{ CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } }
+
+ALL IS GOOD, YOU CAN USE THE CERTIFICATE
+```
+
+```sh
+Certificate validity : ✅
+---
+✅ Subject's common name = INSI-MANU
+✅ Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"}
+
+TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
+{
+  CR: { CodeCR: '00', LibelleCR: 'OK' },
+  INDIVIDU: {
+    INSACTIF: { IdIndividu: [Object], OID: '0.0.000.0.000.0.0.0' },
+    TIQ: {
+      NomNaissance: 'ADRUN',
+      ListePrenom: 'ZOE',
+      Sexe: 'F',
+      DateNaissance: '1975-12-31',
+      LieuNaissance: '63220'
+    }
+  }
+}
+
+ALL IS GOOD, YOU CAN USE THE CERTIFICATE
+```
+
+```sh
+Certificate validity : ❌
+---
+❌ Subject's common name = BadSSL Client Certificate, it should be INSI-AUTO or INSI-MANU
+❌ Issuer's common name = BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ validity = {"notBefore":"2023-11-29T22:34:03.000Z","notAfter":"2025-11-28T22:34:03.000Z"}
+```
+
 ## Notes
 
 > Pour l’erreur DESIR_560 - Niveau d'accès insuffisant : Si le CN de votre certificat Client est différent INSI-MANU ou INSI-AUTO, le serveur renvoi une erreur DESIR_560 avec le message « Vous ne disposez pas des droits suffisants pour accéder à ce service ». Le CN doit être égale à INSI-MANU ou INSI-AUTO et tous les caractères doivent être en majuscule et le séparateur entre INIS et AUTO est un signe moins -

@@ -50,7 +50,7 @@ class INSiClient {
         return __awaiter(this, void 0, void 0, function* () {
             this._httpClient = new soap_1.HttpClient();
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
-                forceSoap12Headers: true,
+                forceSoap12Headers: true, // use soap v1.2
                 httpClient: this._httpClient,
             });
             this._soapClient.setEndpoint(endpoint);
@@ -67,7 +67,7 @@ class INSiClient {
         return __awaiter(this, void 0, void 0, function* () {
             this._httpClient = new soap_1.HttpClient();
             this._soapClient = yield (0, soap_1.createClientAsync)(this._wsdlUrl, {
-                forceSoap12Headers: true,
+                forceSoap12Headers: true, // use soap v1.2
                 httpClient: this._httpClient,
             });
             this._soapClient.setEndpoint(endpoint);
