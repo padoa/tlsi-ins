@@ -7,6 +7,7 @@ export * from './class/InsCertificateValidator/InsCertificateValidator.class'
 
 export * from './models/insi-fetch-ins.models';
 export * from './models/insi-soap-action.models';
+export * from './class/InsCertificateValidator/InsCertificateValidator.model'
 
 export * from './utils/insi-error';
 export * from './utils/certificates';
