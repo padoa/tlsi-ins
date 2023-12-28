@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsCertificateValidator = void 0;
 const node_forge_1 = require("node-forge");
-const InsCertificateValidator_model_1 = require("./InsCertificateValidator.model");
+const ins_certificate_validator_models_1 = require("../models/ins-certificate-validator.models");
 class InsCertificateValidator {
     static _decryptCertificate(pfx, passPhrase) {
         var _a, _b;
@@ -39,56 +39,56 @@ class InsCertificateValidator {
         const { certificate, error } = this._decryptCertificate(pfx, passPhrase);
         if (error !== null || certificate === null) {
             return {
-                certificateValidity: InsCertificateValidator_model_1.INSCertificateValidity.INVALID,
+                certificateValidity: ins_certificate_validator_models_1.INSCertificateValidity.INVALID,
                 assertions: [],
                 error: { message: error ? error : 'The certificate is null without error message' },
             };
         }
-        let certificateValidity = InsCertificateValidator_model_1.INSCertificateValidity.VALID;
+        let certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.VALID;
         const assertions = [];
         if (certificate.subjectCN !== 'INSI-AUTO' && certificate.subjectCN !== 'INSI-MANU') {
             assertions.push({
-                type: InsCertificateValidator_model_1.AssertionType.SUBJECT_CN,
-                status: InsCertificateValidator_model_1.AssertionStatus.FAIL,
+                type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
+                status: ins_certificate_validator_models_1.AssertionStatus.FAIL,
                 message: `Subject's common name = ${certificate.subjectCN}, it should be INSI-AUTO or INSI-MANU`,
             });
-            certificateValidity = InsCertificateValidator_model_1.INSCertificateValidity.INVALID;
+            certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
         }
         else {
             assertions.push({
-                type: InsCertificateValidator_model_1.AssertionType.SUBJECT_CN,
-                status: InsCertificateValidator_model_1.AssertionStatus.SUCCESS,
+                type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
+                status: ins_certificate_validator_models_1.AssertionStatus.SUCCESS,
                 message: `Subject's common name = ${certificate.subjectCN}`,
             });
         }
         if (certificate.issuerCN !== 'AC IGC-SANTE ELEMENTAIRE ORGANISATIONS' && certificate.issuerCN !== 'TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS') {
             assertions.push({
-                type: InsCertificateValidator_model_1.AssertionType.ISSUER_CN,
-                status: InsCertificateValidator_model_1.AssertionStatus.FAIL,
+                type: ins_certificate_validator_models_1.AssertionType.ISSUER_CN,
+                status: ins_certificate_validator_models_1.AssertionStatus.FAIL,
                 message: `Issuer's common name = ${certificate.issuerCN}, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS`,
             });
-            certificateValidity = InsCertificateValidator_model_1.INSCertificateValidity.INVALID;
+            certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
         }
         else {
             assertions.push({
-                type: InsCertificateValidator_model_1.AssertionType.ISSUER_CN,
-                status: InsCertificateValidator_model_1.AssertionStatus.SUCCESS,
+                type: ins_certificate_validator_models_1.AssertionType.ISSUER_CN,
+                status: ins_certificate_validator_models_1.AssertionStatus.SUCCESS,
                 message: `Issuer's common name = ${certificate.issuerCN}`,
             });
         }
         const now = new Date();
         if (certificate.validity.notBefore > now || certificate.validity.notAfter < now) {
             assertions.push({
-                type: InsCertificateValidator_model_1.AssertionType.VAILIDITY_DATES,
-                status: InsCertificateValidator_model_1.AssertionStatus.FAIL,
+                type: ins_certificate_validator_models_1.AssertionType.VAILIDITY_DATES,
+                status: ins_certificate_validator_models_1.AssertionStatus.FAIL,
                 message: `The certificate expired or is for later use.\ncertificate dates: ${JSON.stringify(certificate.validity)}`,
             });
-            certificateValidity = InsCertificateValidator_model_1.INSCertificateValidity.INVALID;
+            certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
         }
         else {
             assertions.push({
-                type: InsCertificateValidator_model_1.AssertionType.VAILIDITY_DATES,
-                status: InsCertificateValidator_model_1.AssertionStatus.SUCCESS,
+                type: ins_certificate_validator_models_1.AssertionType.VAILIDITY_DATES,
+                status: ins_certificate_validator_models_1.AssertionStatus.SUCCESS,
                 message: `validity = ${JSON.stringify(certificate.validity)}`,
             });
         }
@@ -99,4 +99,4 @@ class InsCertificateValidator {
     }
 }
 exports.InsCertificateValidator = InsCertificateValidator;
-//# sourceMappingURL=InsCertificateValidator.class.js.map
+//# sourceMappingURL=ins-certificate-validator.class.js.map

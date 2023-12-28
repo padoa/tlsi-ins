@@ -1,5 +1,5 @@
 import { util, asn1, pkcs12, pki } from 'node-forge';
-import { IPKCS12Certificate, IINSValidationResponse, INSCertificateValidity, INSValidityAssertion, AssertionType, AssertionStatus } from './InsCertificateValidator.model';
+import { IPKCS12Certificate, IINSValidationResponse, INSCertificateValidity, INSValidityAssertion, AssertionType, AssertionStatus } from '../models/ins-certificate-validator.models';
 
 export class InsCertificateValidator {
   private static _decryptCertificate(pfx: Buffer, passPhrase: string): {certificate: IPKCS12Certificate | null, error: string | null} {

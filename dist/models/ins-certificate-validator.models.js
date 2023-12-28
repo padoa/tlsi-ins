@@ -18,4 +18,4 @@ var AssertionStatus;
     AssertionStatus["SUCCESS"] = "SUCCESS";
     AssertionStatus["FAIL"] = "FAIL";
 })(AssertionStatus || (exports.AssertionStatus = AssertionStatus = {}));
-//# sourceMappingURL=InsCertificateValidator.model.js.map
+//# sourceMappingURL=ins-certificate-validator.models.js.map

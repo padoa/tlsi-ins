@@ -1,7 +1,7 @@
-import { InsCertificateValidator } from './InsCertificateValidator.class';
-import { PASSPHRASE } from '../../models/env';
+import { InsCertificateValidator } from './ins-certificate-validator.class';
+import { PASSPHRASE } from '../models/env';
 import fs from 'fs';
-import { AssertionStatus, AssertionType, INSCertificateValidity } from './InsCertificateValidator.model';
+import { AssertionStatus, AssertionType, INSCertificateValidity } from '../models/ins-certificate-validator.models';
 
 describe('Certificate', () => {
   test('should find an error if the passphrase is false', () => {
