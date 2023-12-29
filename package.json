@@ -7,8 +7,7 @@
   "scripts": {
     "build": "npm run clean:build && tsc",
     "clean": "tsc --build --clean",
-    "clean:build": "npm run rimraf dist",
-    "rimraf": "rimraf",
+    "clean:build": "rimraf dist",
     "test": "jest",
     "verify-certif": "npx tsx ./script/verify-certificate.ts"
   },
