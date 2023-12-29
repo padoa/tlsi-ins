@@ -35,9 +35,9 @@ export interface IPKCS12Certificate {
     issuerCN: string;
     validity: IValidityDates;
 }
-export interface IINSCertificateValidity {
+export interface ICertificateValidityResponse {
     isValid: boolean;
     pcksError?: string;
     pcksAssertions?: INSValidityAssertion[];
-    fetchInsError?: INSiServiceFetchInsRequest;
+    fetchInsRequest?: INSiServiceFetchInsRequest;
 }

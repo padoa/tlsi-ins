@@ -42,9 +42,9 @@ export interface IPKCS12Certificate {
 }
 
 // USED OUTSIDE OF THIS PACKAGE, IN OUR BACKEND
-export interface IINSCertificateValidity {
+export interface ICertificateValidityResponse {
   isValid: boolean;
   pcksError?: string;
   pcksAssertions?: INSValidityAssertion[];
-  fetchInsError?: INSiServiceFetchInsRequest;
+  fetchInsRequest?: INSiServiceFetchInsRequest;
 }
