@@ -41,6 +41,7 @@ export interface IPKCS12Certificate {
   validity: IValidityDates;
 }
 
+// USED OUTSIDE OF THIS PACKAGE, IN OUR BACKEND
 export interface IINSCertificateValidity {
   isValid: boolean;
   pcksError?: string;
