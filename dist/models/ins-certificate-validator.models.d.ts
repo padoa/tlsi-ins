@@ -1,4 +1,3 @@
-import { INSiServiceFetchInsRequest } from './insi-fetch-ins.models';
 export declare enum INSCertificateValidity {
     VALID = "VALID",
     INVALID = "INVALID"
@@ -39,5 +38,5 @@ export interface ICertificateValidityResponse {
     isValid: boolean;
     pcksError?: string;
     pcksAssertions?: INSValidityAssertion[];
-    fetchInsRequest?: INSiServiceFetchInsRequest;
+    insSucceed?: boolean;
 }

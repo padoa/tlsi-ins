@@ -1,5 +1,3 @@
-import { INSiServiceFetchInsRequest } from './insi-fetch-ins.models';
-
 export enum INSCertificateValidity {
   VALID = 'VALID',
   INVALID = 'INVALID',
@@ -41,10 +39,10 @@ export interface IPKCS12Certificate {
   validity: IValidityDates;
 }
 
-// USED OUTSIDE OF THIS PACKAGE, IN OUR BACKEND
+// USED IN OUR API
 export interface ICertificateValidityResponse {
   isValid: boolean;
   pcksError?: string;
   pcksAssertions?: INSValidityAssertion[];
-  fetchInsRequest?: INSiServiceFetchInsRequest;
+  insSucceed?: boolean;
 }
