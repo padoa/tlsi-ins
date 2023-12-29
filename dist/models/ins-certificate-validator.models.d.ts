@@ -36,7 +36,7 @@ export interface IPKCS12Certificate {
 }
 export interface ICertificateValidityResponse {
     isValid: boolean;
-    pcksError?: string;
-    pcksAssertions?: INSValidityAssertion[];
-    insSucceed?: boolean;
+    pkcsError?: string;
+    pkcsAssertions?: INSValidityAssertion[];
+    insCallFailed?: boolean;
 }
