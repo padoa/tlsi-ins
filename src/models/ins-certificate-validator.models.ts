@@ -43,6 +43,6 @@ export interface IPKCS12Certificate {
 export interface ICertificateValidityResponse {
   isValid: boolean;
   pkcsError?: string;
-  pkcsAssertions?: INSValidityAssertion[];
+  pkcsAssertions: INSValidityAssertion[];
   insCallFailed?: boolean;
 }
