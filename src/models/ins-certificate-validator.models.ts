@@ -18,6 +18,7 @@ export enum AssertionStatus {
 export interface INSValidityAssertion {
   type: AssertionType,
   status: AssertionStatus,
+  value?: string,
   message: string,
 }
 

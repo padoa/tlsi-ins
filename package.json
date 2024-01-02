@@ -3,9 +3,9 @@
   "description": "Access the Téléservice Identité Nationale de Santé with a js API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "rm -rf dist && npm run clean && tsc",
     "clean": "tsc --build --clean",
     "test": "jest",
     "verify-certif": "npx tsx ./script/verify-certificate.ts"
