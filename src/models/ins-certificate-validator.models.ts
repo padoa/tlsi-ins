@@ -39,11 +39,3 @@ export interface IPKCS12Certificate {
   issuerCN: string;
   validity: IValidityDates;
 }
-
-// USED IN OUR API
-export interface ICertificateValidityResponse {
-  isValid: boolean;
-  pkcsError?: string;
-  pkcsAssertions: INSValidityAssertion[];
-  insCallFailed?: boolean;
-}
