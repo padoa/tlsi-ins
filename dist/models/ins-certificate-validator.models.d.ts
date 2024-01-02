@@ -15,6 +15,7 @@ export declare enum AssertionStatus {
 export interface INSValidityAssertion {
     type: AssertionType;
     status: AssertionStatus;
+    value?: string;
     message: string;
 }
 export interface IINSValidationResponse {
@@ -37,6 +38,6 @@ export interface IPKCS12Certificate {
 export interface ICertificateValidityResponse {
     isValid: boolean;
     pkcsError?: string;
-    pkcsAssertions?: INSValidityAssertion[];
+    pkcsAssertions: INSValidityAssertion[];
     insCallFailed?: boolean;
 }

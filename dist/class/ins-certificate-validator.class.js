@@ -50,6 +50,7 @@ class InsCertificateValidator {
             assertions.push({
                 type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
                 status: ins_certificate_validator_models_1.AssertionStatus.FAIL,
+                value: certificate.subjectCN,
                 message: `Subject's common name = ${certificate.subjectCN}, it should be INSI-AUTO or INSI-MANU`,
             });
             certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
@@ -58,6 +59,7 @@ class InsCertificateValidator {
             assertions.push({
                 type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
                 status: ins_certificate_validator_models_1.AssertionStatus.SUCCESS,
+                value: certificate.subjectCN,
                 message: `Subject's common name = ${certificate.subjectCN}`,
             });
         }
