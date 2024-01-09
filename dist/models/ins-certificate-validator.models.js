@@ -1,11 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AssertionStatus = exports.AssertionType = exports.INSCertificateValidity = void 0;
+exports.AssertionStatus = exports.AssertionType = exports.ICertificateType = exports.INSCertificateValidity = void 0;
 var INSCertificateValidity;
 (function (INSCertificateValidity) {
     INSCertificateValidity["VALID"] = "VALID";
     INSCertificateValidity["INVALID"] = "INVALID";
 })(INSCertificateValidity || (exports.INSCertificateValidity = INSCertificateValidity = {}));
+var ICertificateType;
+(function (ICertificateType) {
+    ICertificateType["INSI_AUTO"] = "INSI-AUTO";
+    ICertificateType["INSI_MANU"] = "INSI-MANU";
+})(ICertificateType || (exports.ICertificateType = ICertificateType = {}));
 var AssertionType;
 (function (AssertionType) {
     AssertionType["SUBJECT_CN"] = "SUBJECT CN";

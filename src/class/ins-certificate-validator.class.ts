@@ -1,5 +1,13 @@
 import { util, asn1, pkcs12, pki } from 'node-forge';
-import { IPKCS12Certificate, IINSValidationResponse, INSCertificateValidity, INSValidityAssertion, AssertionType, AssertionStatus } from '../models/ins-certificate-validator.models';
+import {
+  IPKCS12Certificate,
+  IINSValidationResponse,
+  INSCertificateValidity,
+  INSValidityAssertion,
+  AssertionType,
+  AssertionStatus,
+  ICertificateType
+} from '../models/ins-certificate-validator.models';
 
 export class InsCertificateValidator {
   private static _decryptCertificate(pfx: Buffer, passPhrase: string): {certificate: IPKCS12Certificate | null, error: string | null} {
@@ -48,19 +56,19 @@ export class InsCertificateValidator {
     let certificateValidity = INSCertificateValidity.VALID;
     const assertions: INSValidityAssertion[] = [];
 
-    if (certificate.subjectCN !== 'INSI-AUTO' && certificate.subjectCN !== 'INSI-MANU') {
+    if (certificate.subjectCN !== ICertificateType.INSI_AUTO && certificate.subjectCN !== ICertificateType.INSI_MANU) {
       assertions.push({
         type: AssertionType.SUBJECT_CN,
         status: AssertionStatus.FAIL,
-        value: certificate.subjectCN,
-        message: `Subject's common name = ${certificate.subjectCN}, it should be INSI-AUTO or INSI-MANU`,
+        certificateType: certificate.subjectCN,
+        message: `Subject's common name = ${certificate.subjectCN}, it should be ${ICertificateType.INSI_AUTO} or ${ICertificateType.INSI_MANU}`,
       });
       certificateValidity = INSCertificateValidity.INVALID;
     } else {
       assertions.push({
         type: AssertionType.SUBJECT_CN,
         status: AssertionStatus.SUCCESS,
-        value: certificate.subjectCN,
+        certificateType: certificate.subjectCN,
         message: `Subject's common name = ${certificate.subjectCN}`,
       });
     }
@@ -85,6 +93,7 @@ export class InsCertificateValidator {
       assertions.push({
         type: AssertionType.VAILIDITY_DATES,
         status: AssertionStatus.FAIL,
+        endDate: certificate.validity.notAfter,
         message: `The certificate expired or is for later use.\ncertificate dates: ${JSON.stringify(certificate.validity)}`,
       });
       certificateValidity = INSCertificateValidity.INVALID;
@@ -92,6 +101,7 @@ export class InsCertificateValidator {
       assertions.push({
         type: AssertionType.VAILIDITY_DATES,
         status: AssertionStatus.SUCCESS,
+        endDate: certificate.validity.notAfter,
         message: `validity = ${JSON.stringify(certificate.validity)}`,
       });
     }

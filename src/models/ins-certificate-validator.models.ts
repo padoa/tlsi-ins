@@ -3,6 +3,10 @@ export enum INSCertificateValidity {
   INVALID = 'INVALID',
 }
 
+export enum ICertificateType {
+  INSI_AUTO = 'INSI-AUTO',
+  INSI_MANU = 'INSI-MANU',
+}
 export enum AssertionType {
   SUBJECT_CN = 'SUBJECT CN',
   ISSUER_CN = 'ISSUER CN',
@@ -18,7 +22,8 @@ export enum AssertionStatus {
 export interface INSValidityAssertion {
   type: AssertionType,
   status: AssertionStatus,
-  value?: string,
+  certificateType?: string,
+  endDate?: Date,
   message: string,
 }
 

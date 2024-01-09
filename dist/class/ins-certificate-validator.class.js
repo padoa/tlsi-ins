@@ -46,12 +46,12 @@ class InsCertificateValidator {
         }
         let certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.VALID;
         const assertions = [];
-        if (certificate.subjectCN !== 'INSI-AUTO' && certificate.subjectCN !== 'INSI-MANU') {
+        if (certificate.subjectCN !== ins_certificate_validator_models_1.ICertificateType.INSI_AUTO && certificate.subjectCN !== ins_certificate_validator_models_1.ICertificateType.INSI_MANU) {
             assertions.push({
                 type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
                 status: ins_certificate_validator_models_1.AssertionStatus.FAIL,
-                value: certificate.subjectCN,
-                message: `Subject's common name = ${certificate.subjectCN}, it should be INSI-AUTO or INSI-MANU`,
+                certificateType: certificate.subjectCN,
+                message: `Subject's common name = ${certificate.subjectCN}, it should be ${ins_certificate_validator_models_1.ICertificateType.INSI_AUTO} or ${ins_certificate_validator_models_1.ICertificateType.INSI_MANU}`,
             });
             certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
         }
@@ -59,7 +59,7 @@ class InsCertificateValidator {
             assertions.push({
                 type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
                 status: ins_certificate_validator_models_1.AssertionStatus.SUCCESS,
-                value: certificate.subjectCN,
+                certificateType: certificate.subjectCN,
                 message: `Subject's common name = ${certificate.subjectCN}`,
             });
         }
@@ -83,6 +83,7 @@ class InsCertificateValidator {
             assertions.push({
                 type: ins_certificate_validator_models_1.AssertionType.VAILIDITY_DATES,
                 status: ins_certificate_validator_models_1.AssertionStatus.FAIL,
+                endDate: certificate.validity.notAfter,
                 message: `The certificate expired or is for later use.\ncertificate dates: ${JSON.stringify(certificate.validity)}`,
             });
             certificateValidity = ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
@@ -91,6 +92,7 @@ class InsCertificateValidator {
             assertions.push({
                 type: ins_certificate_validator_models_1.AssertionType.VAILIDITY_DATES,
                 status: ins_certificate_validator_models_1.AssertionStatus.SUCCESS,
+                endDate: certificate.validity.notAfter,
                 message: `validity = ${JSON.stringify(certificate.validity)}`,
             });
         }
