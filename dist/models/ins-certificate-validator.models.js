@@ -10,6 +10,7 @@ var ICertificateType;
 (function (ICertificateType) {
     ICertificateType["INSI_AUTO"] = "INSI-AUTO";
     ICertificateType["INSI_MANU"] = "INSI-MANU";
+    ICertificateType["OTHER"] = "OTHER";
 })(ICertificateType || (exports.ICertificateType = ICertificateType = {}));
 var AssertionType;
 (function (AssertionType) {

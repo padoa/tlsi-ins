@@ -4,7 +4,8 @@ export declare enum INSCertificateValidity {
 }
 export declare enum ICertificateType {
     INSI_AUTO = "INSI-AUTO",
-    INSI_MANU = "INSI-MANU"
+    INSI_MANU = "INSI-MANU",
+    OTHER = "OTHER"
 }
 export declare enum AssertionType {
     SUBJECT_CN = "SUBJECT CN",
@@ -19,9 +20,11 @@ export declare enum AssertionStatus {
 export interface INSValidityAssertion {
     type: AssertionType;
     status: AssertionStatus;
-    certificateType?: string;
-    endDate?: Date;
     message: string;
+}
+export interface IINSValidationResponseMetadata {
+    certificateType: ICertificateType;
+    endDate: Date;
 }
 export interface IINSValidationResponse {
     certificateValidity: INSCertificateValidity;
@@ -29,6 +32,7 @@ export interface IINSValidationResponse {
     error?: {
         message: string;
     };
+    metadata: IINSValidationResponseMetadata;
 }
 export interface IValidityDates {
     notBefore: Date;
