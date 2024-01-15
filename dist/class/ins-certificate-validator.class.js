@@ -42,31 +42,34 @@ class InsCertificateValidator {
                 certificateValidity: ins_certificate_validator_models_1.INSCertificateValidity.INVALID,
                 assertions: [],
                 error: { message: error ? error : 'The certificate is null without error message' },
-                metadata: { endDate: new Date(0), certificateType: ins_certificate_validator_models_1.ICertificateType.OTHER, },
+                metadata: { endDate: new Date(0), certificateType: ins_certificate_validator_models_1.ICertificateType.OTHER },
             };
         }
         const assertions = [];
-        const isSubjectCnValid = certificate.subjectCN !== ins_certificate_validator_models_1.ICertificateType.INSI_AUTO && certificate.subjectCN !== ins_certificate_validator_models_1.ICertificateType.INSI_MANU;
-        const subjectCnMessage = isSubjectCnValid ? `Subject's common name = ${certificate.subjectCN}, it should be ${ins_certificate_validator_models_1.ICertificateType.INSI_AUTO} or ${ins_certificate_validator_models_1.ICertificateType.INSI_MANU}` : `Subject's common name = ${certificate.subjectCN}`;
-        const isIssuerCnValid = certificate.issuerCN !== 'AC IGC-SANTE ELEMENTAIRE ORGANISATIONS' && certificate.issuerCN !== 'TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS';
-        const issuerCnMessage = isIssuerCnValid ? `Issuer's common name = ${certificate.issuerCN}, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS` : `Issuer's common name = ${certificate.issuerCN}`;
+        const isSubjectCnValid = certificate.subjectCN == (ins_certificate_validator_models_1.ICertificateType.INSI_AUTO || ins_certificate_validator_models_1.ICertificateType.INSI_MANU);
+        const subjectCnFailedMessage = isSubjectCnValid ? '' : `, it should be ${ins_certificate_validator_models_1.ICertificateType.INSI_AUTO} or ${ins_certificate_validator_models_1.ICertificateType.INSI_MANU}`;
+        const subjectCnMessage = `Subject's common name = ${certificate.subjectCN}` + subjectCnFailedMessage;
+        const isIssuerCnValid = certificate.issuerCN == (ins_certificate_validator_models_1.InsIssuerCn.AC_IGC_SANTE || ins_certificate_validator_models_1.InsIssuerCn.TEST_AC_IGC_SANTE);
+        const issuerFailedMessage = isIssuerCnValid ? '' : `, it should be ${ins_certificate_validator_models_1.InsIssuerCn.AC_IGC_SANTE} or ${ins_certificate_validator_models_1.InsIssuerCn.TEST_AC_IGC_SANTE}`;
+        const issuerCnMessage = `Issuer's common name = ${certificate.issuerCN}` + issuerFailedMessage;
         const now = new Date();
-        const isCertificateDateValid = certificate.validity.notBefore > now || certificate.validity.notAfter < now;
-        const certificateDateMessage = isCertificateDateValid ? `The certificate expired or is for later use.\ncertificate dates: ${JSON.stringify(certificate.validity)}` : `validity = ${JSON.stringify(certificate.validity)}`;
-        const getAssertion = ((value) => value ? ins_certificate_validator_models_1.AssertionStatus.SUCCESS : ins_certificate_validator_models_1.AssertionStatus.FAIL);
+        const isCertificateDateValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
+        const certificateExpiredMessage = isCertificateDateValid ? '' : 'The certificate expired or is for later use\n';
+        const certificateDateMessage = certificateExpiredMessage + `certificate dates: ${JSON.stringify(certificate.validity)}`;
+        const getAssertionStatus = ((value) => value ? ins_certificate_validator_models_1.AssertionStatus.SUCCESS : ins_certificate_validator_models_1.AssertionStatus.FAIL);
         assertions.push({
             type: ins_certificate_validator_models_1.AssertionType.SUBJECT_CN,
-            status: getAssertion(isSubjectCnValid),
+            status: getAssertionStatus(isSubjectCnValid),
             message: subjectCnMessage,
         });
         assertions.push({
             type: ins_certificate_validator_models_1.AssertionType.ISSUER_CN,
-            status: getAssertion(isIssuerCnValid),
+            status: getAssertionStatus(isIssuerCnValid),
             message: issuerCnMessage,
         });
         assertions.push({
-            type: ins_certificate_validator_models_1.AssertionType.VAILIDITY_DATES,
-            status: getAssertion(isCertificateDateValid),
+            type: ins_certificate_validator_models_1.AssertionType.VALIDITY_DATES,
+            status: getAssertionStatus(isCertificateDateValid),
             message: certificateDateMessage
         });
         const metadata = {

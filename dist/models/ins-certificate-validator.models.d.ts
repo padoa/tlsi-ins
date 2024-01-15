@@ -7,10 +7,14 @@ export declare enum ICertificateType {
     INSI_MANU = "INSI-MANU",
     OTHER = "OTHER"
 }
+export declare enum InsIssuerCn {
+    AC_IGC_SANTE = "AC IGC-SANTE ELEMENTAIRE ORGANISATIONS",
+    TEST_AC_IGC_SANTE = "TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS"
+}
 export declare enum AssertionType {
     SUBJECT_CN = "SUBJECT CN",
     ISSUER_CN = "ISSUER CN",
-    VAILIDITY_DATES = "VALIDITY DATES",
+    VALIDITY_DATES = "VALIDITY DATES",
     PKCS12_CERTIFICATE = "PKCS12 CERTIFICATE"
 }
 export declare enum AssertionStatus {
