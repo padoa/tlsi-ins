@@ -32,7 +32,7 @@ describe('Certificate', () => {
           message: 'Issuer\'s common name = BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
         }),
         expect.objectContaining({
-          type: AssertionType.VAILIDITY_DATES,
+          type: AssertionType.VALIDITY_DATES,
           status: AssertionStatus.SUCCESS,
         }),
       ]

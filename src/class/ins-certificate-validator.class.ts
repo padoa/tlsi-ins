@@ -1,5 +1,15 @@
 import { util, asn1, pkcs12, pki } from 'node-forge';
-import { IPKCS12Certificate, IINSValidationResponse, INSCertificateValidity, INSValidityAssertion, AssertionType, AssertionStatus } from '../models/ins-certificate-validator.models';
+import {
+  IPKCS12Certificate,
+  IINSValidationResponse,
+  INSCertificateValidity,
+  INSValidityAssertion,
+  AssertionType,
+  AssertionStatus,
+  ICertificateType,
+  IINSValidationResponseMetadata,
+  InsIssuerCn
+} from '../models/ins-certificate-validator.models';
 
 export class InsCertificateValidator {
   private static _decryptCertificate(pfx: Buffer, passPhrase: string): {certificate: IPKCS12Certificate | null, error: string | null} {
@@ -43,62 +53,51 @@ export class InsCertificateValidator {
         certificateValidity: INSCertificateValidity.INVALID,
         assertions: [],
         error: {message: error? error : 'The certificate is null without error message'},
+        metadata: { endDate: new Date(0), certificateType: ICertificateType.OTHER },
       }
     }
-    let certificateValidity = INSCertificateValidity.VALID;
     const assertions: INSValidityAssertion[] = [];
 
-    if (certificate.subjectCN !== 'INSI-AUTO' && certificate.subjectCN !== 'INSI-MANU') {
-      assertions.push({
-        type: AssertionType.SUBJECT_CN,
-        status: AssertionStatus.FAIL,
-        value: certificate.subjectCN,
-        message: `Subject's common name = ${certificate.subjectCN}, it should be INSI-AUTO or INSI-MANU`,
-      });
-      certificateValidity = INSCertificateValidity.INVALID;
-    } else {
-      assertions.push({
-        type: AssertionType.SUBJECT_CN,
-        status: AssertionStatus.SUCCESS,
-        value: certificate.subjectCN,
-        message: `Subject's common name = ${certificate.subjectCN}`,
-      });
-    }
-
-    if (certificate.issuerCN !== 'AC IGC-SANTE ELEMENTAIRE ORGANISATIONS' && certificate.issuerCN !=='TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS') {
-      assertions.push({
-        type: AssertionType.ISSUER_CN,
-        status: AssertionStatus.FAIL,
-        message: `Issuer's common name = ${certificate.issuerCN}, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS`,
-      });
-      certificateValidity = INSCertificateValidity.INVALID;
-    } else {
-      assertions.push({
-        type: AssertionType.ISSUER_CN,
-        status: AssertionStatus.SUCCESS,
-        message: `Issuer's common name = ${certificate.issuerCN}`,
-      });
-    }
+    const isSubjectCnValid = certificate.subjectCN == (ICertificateType.INSI_AUTO || ICertificateType.INSI_MANU); 
+    const subjectCnFailedMessage =  isSubjectCnValid ? '' : `, it should be ${ICertificateType.INSI_AUTO} or ${ICertificateType.INSI_MANU}`
+    const subjectCnMessage = `Subject's common name = ${certificate.subjectCN}` + subjectCnFailedMessage
+    const isIssuerCnValid = certificate.issuerCN == (InsIssuerCn.AC_IGC_SANTE || InsIssuerCn.TEST_AC_IGC_SANTE);
+    const issuerFailedMessage = isIssuerCnValid ? '' : `, it should be ${InsIssuerCn.AC_IGC_SANTE} or ${InsIssuerCn.TEST_AC_IGC_SANTE}`;
+    const issuerCnMessage = `Issuer's common name = ${certificate.issuerCN}` + issuerFailedMessage;
     const now = new Date();
+    const isCertificateDateValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now
+    const certificateExpiredMessage = isCertificateDateValid ? '': 'The certificate expired or is for later use\n'; 
+    const certificateDateMessage = certificateExpiredMessage + `certificate dates: ${JSON.stringify(certificate.validity)}`
+    const getAssertionStatus = ((value: boolean) => value ? AssertionStatus.SUCCESS : AssertionStatus.FAIL);
 
-    if (certificate.validity.notBefore > now || certificate.validity.notAfter < now) {
-      assertions.push({
-        type: AssertionType.VAILIDITY_DATES,
-        status: AssertionStatus.FAIL,
-        message: `The certificate expired or is for later use.\ncertificate dates: ${JSON.stringify(certificate.validity)}`,
-      });
-      certificateValidity = INSCertificateValidity.INVALID;
-    } else {
-      assertions.push({
-        type: AssertionType.VAILIDITY_DATES,
-        status: AssertionStatus.SUCCESS,
-        message: `validity = ${JSON.stringify(certificate.validity)}`,
-      });
+    assertions.push({
+      type: AssertionType.SUBJECT_CN,
+      status: getAssertionStatus(isSubjectCnValid),
+      message: subjectCnMessage,
+    });
+
+    assertions.push({
+      type: AssertionType.ISSUER_CN,
+      status: getAssertionStatus(isIssuerCnValid),
+      message: issuerCnMessage,
+    });
+
+    assertions.push({
+      type: AssertionType.VALIDITY_DATES,
+      status: getAssertionStatus(isCertificateDateValid),
+      message: certificateDateMessage 
+    });
+
+    const metadata: IINSValidationResponseMetadata = {
+      endDate: certificate.validity.notAfter,
+      certificateType: isSubjectCnValid ? certificate.issuerCN as ICertificateType : ICertificateType.OTHER,
     }
 
+    const certificateValidity = assertions.some((assertion) => assertion.status === AssertionStatus.FAIL) ? INSCertificateValidity.VALID : INSCertificateValidity.INVALID;
     return {
       certificateValidity,
       assertions,
+      metadata,
     };
   }
 }
