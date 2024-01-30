@@ -46,10 +46,10 @@ class InsCertificateValidator {
             };
         }
         const assertions = [];
-        const isSubjectCnValid = certificate.subjectCN == (ins_certificate_validator_models_1.ICertificateType.INSI_AUTO || ins_certificate_validator_models_1.ICertificateType.INSI_MANU);
+        const isSubjectCnValid = [ins_certificate_validator_models_1.ICertificateType.INSI_AUTO, ins_certificate_validator_models_1.ICertificateType.INSI_MANU].includes(certificate.subjectCN);
         const subjectCnFailedMessage = isSubjectCnValid ? '' : `, it should be ${ins_certificate_validator_models_1.ICertificateType.INSI_AUTO} or ${ins_certificate_validator_models_1.ICertificateType.INSI_MANU}`;
         const subjectCnMessage = `Subject's common name = ${certificate.subjectCN}` + subjectCnFailedMessage;
-        const isIssuerCnValid = certificate.issuerCN == (ins_certificate_validator_models_1.InsIssuerCn.AC_IGC_SANTE || ins_certificate_validator_models_1.InsIssuerCn.TEST_AC_IGC_SANTE);
+        const isIssuerCnValid = [ins_certificate_validator_models_1.InsIssuerCn.AC_IGC_SANTE, ins_certificate_validator_models_1.InsIssuerCn.TEST_AC_IGC_SANTE].includes(certificate.issuerCN);
         const issuerFailedMessage = isIssuerCnValid ? '' : `, it should be ${ins_certificate_validator_models_1.InsIssuerCn.AC_IGC_SANTE} or ${ins_certificate_validator_models_1.InsIssuerCn.TEST_AC_IGC_SANTE}`;
         const issuerCnMessage = `Issuer's common name = ${certificate.issuerCN}` + issuerFailedMessage;
         const now = new Date();
@@ -70,13 +70,13 @@ class InsCertificateValidator {
         assertions.push({
             type: ins_certificate_validator_models_1.AssertionType.VALIDITY_DATES,
             status: getAssertionStatus(isCertificateDateValid),
-            message: certificateDateMessage
+            message: certificateDateMessage,
         });
         const metadata = {
             endDate: certificate.validity.notAfter,
             certificateType: isSubjectCnValid ? certificate.issuerCN : ins_certificate_validator_models_1.ICertificateType.OTHER,
         };
-        const certificateValidity = assertions.some((assertion) => assertion.status === ins_certificate_validator_models_1.AssertionStatus.FAIL) ? ins_certificate_validator_models_1.INSCertificateValidity.VALID : ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
+        const certificateValidity = assertions.every((assertion) => assertion.status === ins_certificate_validator_models_1.AssertionStatus.SUCCESS) ? ins_certificate_validator_models_1.INSCertificateValidity.VALID : ins_certificate_validator_models_1.INSCertificateValidity.INVALID;
         return {
             certificateValidity,
             assertions,
