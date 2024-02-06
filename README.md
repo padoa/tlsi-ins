@@ -55,11 +55,13 @@ Exemples of return :
 ```sh
 Certificate validity : ✅
 ---
-✅ Subject's common name = INSI-MANU
-✅ Issuer's common name = AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
-✅ validity = {"notBefore":"2023-11-08T15:39:16.000Z","notAfter":"2026-11-08T15:39:16.000Z"}
+✅ Subject's common name: INSI-AUTO
+✅ Issuer's common name: AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ Certificate validity dates:
+	notBefore: 2023-04-06T12:59:06.000Z
+	notAfter: 2026-04-06T12:59:06.000Z
 
-TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
+TEST TO CALL INS SERVER WITH THE CERTIFICATE AND ADRUN ZOE
 { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } }
 
 ALL IS GOOD, YOU CAN USE THE CERTIFICATE
@@ -68,15 +70,17 @@ ALL IS GOOD, YOU CAN USE THE CERTIFICATE
 ```sh
 Certificate validity : ✅
 ---
-✅ Subject's common name = INSI-MANU
-✅ Issuer's common name = TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
-✅ validity = {"notBefore":"2021-12-01T15:18:56.000Z","notAfter":"2024-12-01T15:18:56.000Z"}
+✅ Subject's common name: INSI-AUTO
+✅ Issuer's common name: TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ Certificate validity dates:
+	notBefore: 2021-12-01T15:14:58.000Z
+	notAfter: 2024-12-01T15:14:58.000Z
 
-TEST TO CALL INS SERVER WITH THE CERTIFICATE AND A TEST USER
+TEST TO CALL INS SERVER WITH THE CERTIFICATE AND ADRUN ZOE
 {
   CR: { CodeCR: '00', LibelleCR: 'OK' },
   INDIVIDU: {
-    INSACTIF: { IdIndividu: [Object], OID: '0.0.000.0.000.0.0.0' },
+    INSACTIF: { IdIndividu: [Object], OID: '1.2.250.1.213.1.4.8' },
     TIQ: {
       NomNaissance: 'ADRUN',
       ListePrenom: 'ZOE',
@@ -93,9 +97,19 @@ ALL IS GOOD, YOU CAN USE THE CERTIFICATE
 ```sh
 Certificate validity : ❌
 ---
-❌ Subject's common name = BadSSL Client Certificate, it should be INSI-AUTO or INSI-MANU
-❌ Issuer's common name = BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
-✅ validity = {"notBefore":"2023-11-29T22:34:03.000Z","notAfter":"2025-11-28T22:34:03.000Z"}
+❌ Subject's common name: BadSSL Client Certificate, it should be INSI-AUTO or INSI-MANU
+❌ Issuer's common name: BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS
+✅ Certificate validity dates:
+	notBefore: 2023-11-29T22:34:03.000Z
+	notAfter: 2025-11-28T22:34:03.000Z
+ ```
+
+```sh
+Invalid password certificate
+
+Certificate validity : ❌
+---
+Error message: PKCS#12 MAC could not be verified. Invalid password?
 ```
 
 ## Notes
