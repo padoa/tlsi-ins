@@ -5,9 +5,9 @@ const ins_certificate_validator_models_1 = require("../models/ins-certificate-va
 const ins_assertion_models_1 = require("../models/ins-certificate-validator/ins-assertion.models");
 class InsCertificateAssertionHelper {
     static testCertificateForIns(certificate) {
-        const insAssertions = this.insCertificateAssertions.map((assertionType) => this._validateAssertion(assertionType, certificate));
+        const insAssertions = Object.values(ins_assertion_models_1.InsAssertionType).reduce((insAssertions, type) => (Object.assign(Object.assign({}, insAssertions), { [type]: this._validateAssertion(type, certificate) })), {});
         return {
-            insCertificateValidity: insAssertions.every(({ status }) => status === ins_assertion_models_1.AssertionStatus.SUCCESS) ? ins_certificate_validator_models_1.InsCertificateValidity.VALID : ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
+            insCertificateValidity: Object.values(insAssertions).every(({ status }) => status === ins_assertion_models_1.AssertionStatus.SUCCESS) ? ins_certificate_validator_models_1.InsCertificateValidity.VALID : ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
             insAssertions,
         };
     }
@@ -21,7 +21,6 @@ class InsCertificateAssertionHelper {
                 return this._validateValidityDates(certificate);
             default:
                 return {
-                    type: ins_assertion_models_1.InsAssertionType.UNKNOWN,
                     status: ins_assertion_models_1.AssertionStatus.FAILURE,
                     message: 'Invalid assertion type',
                 };
@@ -30,7 +29,6 @@ class InsCertificateAssertionHelper {
     static _validateSubjectCn(certificate) {
         const isSubjectCnValid = this.insCertificateValidType.includes(certificate.subjectCN);
         return {
-            type: ins_assertion_models_1.InsAssertionType.SUBJECT_CN,
             status: isSubjectCnValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
             message: `Subject's common name: ${certificate.subjectCN}` + (isSubjectCnValid ? '' : `, it should be ${ins_assertion_models_1.InsCertificateSubjectCn.INSI_AUTO} or ${ins_assertion_models_1.InsCertificateSubjectCn.INSI_MANU}`),
         };
@@ -38,7 +36,6 @@ class InsCertificateAssertionHelper {
     static _validateIssuerCn(certificate) {
         const isIssuerCnValid = this.insCertificateValidIssuerCn.includes(certificate.issuerCN);
         return {
-            type: ins_assertion_models_1.InsAssertionType.ISSUER_CN,
             status: isIssuerCnValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
             message: `Issuer's common name: ${certificate.issuerCN}` + (isIssuerCnValid ? '' : `, it should be ${ins_assertion_models_1.InsCertificateIssuerCn.AC_IGC_SANTE} or ${ins_assertion_models_1.InsCertificateIssuerCn.TEST_AC_IGC_SANTE}`),
         };
@@ -47,7 +44,6 @@ class InsCertificateAssertionHelper {
         const now = new Date();
         const isDateValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
         return {
-            type: ins_assertion_models_1.InsAssertionType.VALIDITY_DATES,
             status: isDateValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
             message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (isDateValid ? '' : `, the certificate expired or is for later use`),
         };
@@ -59,5 +55,4 @@ class InsCertificateAssertionHelper {
 exports.InsCertificateAssertionHelper = InsCertificateAssertionHelper;
 InsCertificateAssertionHelper.insCertificateValidIssuerCn = [ins_assertion_models_1.InsCertificateIssuerCn.AC_IGC_SANTE, ins_assertion_models_1.InsCertificateIssuerCn.TEST_AC_IGC_SANTE];
 InsCertificateAssertionHelper.insCertificateValidType = [ins_assertion_models_1.InsCertificateSubjectCn.INSI_AUTO, ins_assertion_models_1.InsCertificateSubjectCn.INSI_MANU];
-InsCertificateAssertionHelper.insCertificateAssertions = [ins_assertion_models_1.InsAssertionType.SUBJECT_CN, ins_assertion_models_1.InsAssertionType.ISSUER_CN, ins_assertion_models_1.InsAssertionType.VALIDITY_DATES];
 //# sourceMappingURL=ins-certificate-assertion.helper.js.map

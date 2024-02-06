@@ -11,12 +11,14 @@ import { PKCS12Certificate } from '../models/ins-certificate-validator/pkcs12-ce
 export class InsCertificateAssertionHelper {
   public static insCertificateValidIssuerCn = [InsCertificateIssuerCn.AC_IGC_SANTE, InsCertificateIssuerCn.TEST_AC_IGC_SANTE];
   public static insCertificateValidType = [InsCertificateSubjectCn.INSI_AUTO, InsCertificateSubjectCn.INSI_MANU];
-  public static insCertificateAssertions = [InsAssertionType.SUBJECT_CN, InsAssertionType.ISSUER_CN, InsAssertionType.VALIDITY_DATES];
 
-  public static testCertificateForIns(certificate: PKCS12Certificate): { insCertificateValidity: InsCertificateValidity, insAssertions: InsAssertionResult[] } {
-    const insAssertions = this.insCertificateAssertions.map((assertionType) => this._validateAssertion(assertionType, certificate));
+  public static testCertificateForIns(certificate: PKCS12Certificate): { insCertificateValidity: InsCertificateValidity, insAssertions: Record<InsAssertionType, InsAssertionResult> } {
+    const insAssertions = Object.values(InsAssertionType).reduce(
+      (insAssertions, type) => ({ ...insAssertions, [type]: this._validateAssertion(type, certificate) }),
+      {} as Record<InsAssertionType, InsAssertionResult>,
+    );
     return {
-      insCertificateValidity: insAssertions.every(({ status }) => status === AssertionStatus.SUCCESS) ? InsCertificateValidity.VALID : InsCertificateValidity.INVALID,
+      insCertificateValidity: Object.values(insAssertions).every(({ status }) => status === AssertionStatus.SUCCESS) ? InsCertificateValidity.VALID : InsCertificateValidity.INVALID,
       insAssertions,
     };
   }
@@ -31,7 +33,6 @@ export class InsCertificateAssertionHelper {
         return this._validateValidityDates(certificate);
       default:
         return {
-          type: InsAssertionType.UNKNOWN,
           status: AssertionStatus.FAILURE,
           message: 'Invalid assertion type',
         };
@@ -41,7 +42,6 @@ export class InsCertificateAssertionHelper {
   public static _validateSubjectCn(certificate: PKCS12Certificate): InsAssertionResult {
     const isSubjectCnValid = this.insCertificateValidType.includes(certificate.subjectCN as InsCertificateSubjectCn);
     return {
-      type: InsAssertionType.SUBJECT_CN,
       status: isSubjectCnValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
       message: `Subject's common name: ${certificate.subjectCN}` + (isSubjectCnValid ? '' : `, it should be ${InsCertificateSubjectCn.INSI_AUTO} or ${InsCertificateSubjectCn.INSI_MANU}`),
     };
@@ -50,7 +50,6 @@ export class InsCertificateAssertionHelper {
   public static _validateIssuerCn(certificate: PKCS12Certificate): InsAssertionResult {
     const isIssuerCnValid = this.insCertificateValidIssuerCn.includes(certificate.issuerCN as InsCertificateIssuerCn);
     return {
-      type: InsAssertionType.ISSUER_CN,
       status: isIssuerCnValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
       message: `Issuer's common name: ${certificate.issuerCN}` + (isIssuerCnValid ? '' : `, it should be ${InsCertificateIssuerCn.AC_IGC_SANTE} or ${InsCertificateIssuerCn.TEST_AC_IGC_SANTE}`),
     };
@@ -60,7 +59,6 @@ export class InsCertificateAssertionHelper {
     const now = new Date();
     const isDateValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
     return {
-      type: InsAssertionType.VALIDITY_DATES,
       status: isDateValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
       message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (isDateValid ? '' : `, the certificate expired or is for later use`),
     }

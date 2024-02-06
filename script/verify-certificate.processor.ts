@@ -6,7 +6,11 @@ import { InsCertificateValidator } from '../src/class/ins-certificate-validator.
 import { InsCertificateValidity } from '../src/models/ins-certificate-validator/ins-certificate-validator.models';
 import { INSiClient } from '../src/insi-client.service';
 import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../src/models/env';
-import { AssertionStatus } from '../src/models/ins-certificate-validator/ins-assertion.models';
+import {
+  AssertionStatus,
+  InsAssertionResult,
+  InsAssertionType,
+} from '../src/models/ins-certificate-validator/ins-assertion.models';
 
 const getClientWithDefinedId = (idam: string): INSiClient => {
   const lps = new LPS({
@@ -45,7 +49,7 @@ export class VerifyCertificateProcessor {
 
     console.log(`Certificate validity : ${insCertificateValidity === InsCertificateValidity.VALID ? '✅' : '❌'}`);
     console.log('---');
-    insAssertions.forEach((assertion) => {
+    Object.values(insAssertions as Record<InsAssertionType, InsAssertionResult>).forEach((assertion) => {
       console.log(`${assertion.status === AssertionStatus.SUCCESS ? '✅' : '❌'} ${assertion.message}`);
     })
     if (insCertificateValidity === InsCertificateValidity.INVALID) { return; }

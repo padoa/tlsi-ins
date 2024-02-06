@@ -57,7 +57,6 @@ export class InsCertificateValidator {
     if (error !== null || certificate === null) {
       return {
         insCertificateValidity: InsCertificateValidity.INVALID,
-        insAssertions: [],
         certificate,
         error: { message: error ?? 'The certificate is null without error message' },
       }

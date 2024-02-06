@@ -9,15 +9,13 @@ export declare enum InsCertificateIssuerCn {
 export declare enum InsAssertionType {
     SUBJECT_CN = "SUBJECT CN",
     ISSUER_CN = "ISSUER CN",
-    VALIDITY_DATES = "VALIDITY DATES",
-    UNKNOWN = "UNKNOWN"
+    VALIDITY_DATES = "VALIDITY DATES"
 }
 export declare enum AssertionStatus {
     SUCCESS = "SUCCESS",
     FAILURE = "FAILURE"
 }
 export interface InsAssertionResult {
-    type: InsAssertionType;
     status: AssertionStatus;
     message: string;
 }

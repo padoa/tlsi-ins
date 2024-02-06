@@ -4,10 +4,9 @@ import { PKCS12Certificate } from '../models/ins-certificate-validator/pkcs12-ce
 export declare class InsCertificateAssertionHelper {
     static insCertificateValidIssuerCn: InsCertificateIssuerCn[];
     static insCertificateValidType: InsCertificateSubjectCn[];
-    static insCertificateAssertions: InsAssertionType[];
     static testCertificateForIns(certificate: PKCS12Certificate): {
         insCertificateValidity: InsCertificateValidity;
-        insAssertions: InsAssertionResult[];
+        insAssertions: Record<InsAssertionType, InsAssertionResult>;
     };
     private static _validateAssertion;
     static _validateSubjectCn(certificate: PKCS12Certificate): InsAssertionResult;

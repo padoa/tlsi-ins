@@ -12,7 +12,6 @@ describe('Certificate', () => {
     expect(response).toEqual({
       insCertificateValidity: InsCertificateValidity.INVALID,
       certificate: null,
-      insAssertions: [],
       error: { message: 'PKCS#12 MAC could not be verified. Invalid password?' },
     });
   });
@@ -32,23 +31,20 @@ describe('Certificate', () => {
           notAfter: new Date('2025-11-28T22:34:03.000Z'),
         },
       },
-      insAssertions: [
-        {
-          type: InsAssertionType.SUBJECT_CN,
+      insAssertions: {
+        [InsAssertionType.SUBJECT_CN]: {
           status: AssertionStatus.FAILURE,
           message: 'Subject\'s common name: BadSSL Client Certificate, it should be INSI-AUTO or INSI-MANU',
         },
-        {
-          type: InsAssertionType.ISSUER_CN,
+        [InsAssertionType.ISSUER_CN]: {
           status: AssertionStatus.FAILURE,
           message: 'Issuer\'s common name: BadSSL Client Root Certificate Authority, it should be AC IGC-SANTE ELEMENTAIRE ORGANISATIONS or TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
         },
-        {
-          type: InsAssertionType.VALIDITY_DATES,
+        [InsAssertionType.VALIDITY_DATES]: {
           status: AssertionStatus.SUCCESS,
           message: 'Certificate validity dates: \n\tnotBefore: 2023-11-29T22:34:03.000Z\n\tnotAfter: 2025-11-28T22:34:03.000Z',
         },
-      ],
+      },
     });
   });
 
@@ -67,23 +63,20 @@ describe('Certificate', () => {
             notBefore: new Date('2021-12-01T15:18:56.000Z'),
           },
         },
-        insAssertions: [
-          {
-            type: InsAssertionType.SUBJECT_CN,
+        insAssertions: {
+          [InsAssertionType.SUBJECT_CN]: {
             status: AssertionStatus.SUCCESS,
             message: 'Subject\'s common name: INSI-MANU',
           },
-          {
-            type: InsAssertionType.ISSUER_CN,
+          [InsAssertionType.ISSUER_CN]: {
             status: AssertionStatus.SUCCESS,
             message: 'Issuer\'s common name: TEST AC IGC-SANTE ELEMENTAIRE ORGANISATIONS',
           },
-          {
-            type: InsAssertionType.VALIDITY_DATES,
+          [InsAssertionType.VALIDITY_DATES]: {
             status: AssertionStatus.SUCCESS,
             message: 'Certificate validity dates: \n\tnotBefore: 2021-12-01T15:18:56.000Z\n\tnotAfter: 2024-12-01T15:18:56.000Z',
           },
-        ],
+        },
       }
     );
   });

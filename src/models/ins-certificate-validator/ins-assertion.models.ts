@@ -12,7 +12,6 @@ export enum InsAssertionType {
   SUBJECT_CN = 'SUBJECT CN',
   ISSUER_CN = 'ISSUER CN',
   VALIDITY_DATES = 'VALIDITY DATES',
-  UNKNOWN = 'UNKNOWN',
 }
 
 export enum AssertionStatus {
@@ -21,7 +20,6 @@ export enum AssertionStatus {
 }
 
 export interface InsAssertionResult {
-  type: InsAssertionType,
   status: AssertionStatus,
   message: string,
 }

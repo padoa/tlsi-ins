@@ -53,7 +53,6 @@ class InsCertificateValidator {
         if (error !== null || certificate === null) {
             return {
                 insCertificateValidity: ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
-                insAssertions: [],
                 certificate,
                 error: { message: error !== null && error !== void 0 ? error : 'The certificate is null without error message' },
             };

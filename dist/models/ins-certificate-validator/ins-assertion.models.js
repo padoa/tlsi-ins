@@ -16,7 +16,6 @@ var InsAssertionType;
     InsAssertionType["SUBJECT_CN"] = "SUBJECT CN";
     InsAssertionType["ISSUER_CN"] = "ISSUER CN";
     InsAssertionType["VALIDITY_DATES"] = "VALIDITY DATES";
-    InsAssertionType["UNKNOWN"] = "UNKNOWN";
 })(InsAssertionType || (exports.InsAssertionType = InsAssertionType = {}));
 var AssertionStatus;
 (function (AssertionStatus) {
