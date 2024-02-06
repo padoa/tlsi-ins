@@ -27,25 +27,25 @@ class InsCertificateAssertionHelper {
         }
     }
     static _validateSubjectCn(certificate) {
-        const isSubjectCnValid = this.insCertificateValidType.includes(certificate.subjectCN);
+        const subjectCnIsValid = this.insCertificateValidType.includes(certificate.subjectCN);
         return {
-            status: isSubjectCnValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
-            message: `Subject's common name: ${certificate.subjectCN}` + (isSubjectCnValid ? '' : `, it should be ${ins_assertion_models_1.InsCertificateSubjectCn.INSI_AUTO} or ${ins_assertion_models_1.InsCertificateSubjectCn.INSI_MANU}`),
+            status: subjectCnIsValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
+            message: `Subject's common name: ${certificate.subjectCN}` + (subjectCnIsValid ? '' : `, it should be ${ins_assertion_models_1.InsCertificateSubjectCn.INSI_AUTO} or ${ins_assertion_models_1.InsCertificateSubjectCn.INSI_MANU}`),
         };
     }
     static _validateIssuerCn(certificate) {
-        const isIssuerCnValid = this.insCertificateValidIssuerCn.includes(certificate.issuerCN);
+        const issuerCnIsValid = this.insCertificateValidIssuerCn.includes(certificate.issuerCN);
         return {
-            status: isIssuerCnValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
-            message: `Issuer's common name: ${certificate.issuerCN}` + (isIssuerCnValid ? '' : `, it should be ${ins_assertion_models_1.InsCertificateIssuerCn.AC_IGC_SANTE} or ${ins_assertion_models_1.InsCertificateIssuerCn.TEST_AC_IGC_SANTE}`),
+            status: issuerCnIsValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
+            message: `Issuer's common name: ${certificate.issuerCN}` + (issuerCnIsValid ? '' : `, it should be ${ins_assertion_models_1.InsCertificateIssuerCn.AC_IGC_SANTE} or ${ins_assertion_models_1.InsCertificateIssuerCn.TEST_AC_IGC_SANTE}`),
         };
     }
     static _validateValidityDates(certificate) {
         const now = new Date();
-        const isDateValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
+        const dateIsValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
         return {
-            status: isDateValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
-            message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (isDateValid ? '' : `, the certificate expired or is for later use`),
+            status: dateIsValid ? ins_assertion_models_1.AssertionStatus.SUCCESS : ins_assertion_models_1.AssertionStatus.FAILURE,
+            message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (dateIsValid ? '' : `, the certificate expired or is for later use`),
         };
     }
     static _getValidityDatesMessage(validity) {

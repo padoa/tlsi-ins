@@ -40,27 +40,27 @@ export class InsCertificateAssertionHelper {
   }
 
   public static _validateSubjectCn(certificate: PKCS12Certificate): InsAssertionResult {
-    const isSubjectCnValid = this.insCertificateValidType.includes(certificate.subjectCN as InsCertificateSubjectCn);
+    const subjectCnIsValid = this.insCertificateValidType.includes(certificate.subjectCN as InsCertificateSubjectCn);
     return {
-      status: isSubjectCnValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
-      message: `Subject's common name: ${certificate.subjectCN}` + (isSubjectCnValid ? '' : `, it should be ${InsCertificateSubjectCn.INSI_AUTO} or ${InsCertificateSubjectCn.INSI_MANU}`),
+      status: subjectCnIsValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
+      message: `Subject's common name: ${certificate.subjectCN}` + (subjectCnIsValid ? '' : `, it should be ${InsCertificateSubjectCn.INSI_AUTO} or ${InsCertificateSubjectCn.INSI_MANU}`),
     };
   }
 
   public static _validateIssuerCn(certificate: PKCS12Certificate): InsAssertionResult {
-    const isIssuerCnValid = this.insCertificateValidIssuerCn.includes(certificate.issuerCN as InsCertificateIssuerCn);
+    const issuerCnIsValid = this.insCertificateValidIssuerCn.includes(certificate.issuerCN as InsCertificateIssuerCn);
     return {
-      status: isIssuerCnValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
-      message: `Issuer's common name: ${certificate.issuerCN}` + (isIssuerCnValid ? '' : `, it should be ${InsCertificateIssuerCn.AC_IGC_SANTE} or ${InsCertificateIssuerCn.TEST_AC_IGC_SANTE}`),
+      status: issuerCnIsValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
+      message: `Issuer's common name: ${certificate.issuerCN}` + (issuerCnIsValid ? '' : `, it should be ${InsCertificateIssuerCn.AC_IGC_SANTE} or ${InsCertificateIssuerCn.TEST_AC_IGC_SANTE}`),
     };
   }
 
   public static _validateValidityDates(certificate: PKCS12Certificate): InsAssertionResult {
     const now = new Date();
-    const isDateValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
+    const dateIsValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
     return {
-      status: isDateValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
-      message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (isDateValid ? '' : `, the certificate expired or is for later use`),
+      status: dateIsValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
+      message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (dateIsValid ? '' : `, the certificate expired or is for later use`),
     }
   }
 

@@ -55,7 +55,7 @@ export class VerifyCertificateProcessor {
     if (insCertificateValidity === InsCertificateValidity.INVALID) { return; }
 
     console.log('\nTEST TO CALL INS SERVER WITH THE CERTIFICATE AND ADRUN ZOE');
-    const insiClient = getClientWithDefinedId(customizedIdam ? customizedIdam : IDAM);
+    const insiClient = getClientWithDefinedId(customizedIdam || IDAM);
     await insiClient.initClientPfx(pfx, passPhrase, endpoint);
     const person = new INSiPerson({
       birthName: 'ADRUN',
