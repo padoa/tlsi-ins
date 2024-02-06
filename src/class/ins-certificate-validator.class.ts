@@ -1,5 +1,6 @@
 import { util, asn1, pkcs12, pki } from 'node-forge';
 import {
+  InsCertificateType,
   InsCertificateValidationResponse,
   InsCertificateValidity,
 } from '../models/ins-certificate-validator/ins-certificate-validator.models';
@@ -57,14 +58,16 @@ export class InsCertificateValidator {
     if (error !== null || certificate === null) {
       return {
         insCertificateValidity: InsCertificateValidity.INVALID,
+        insCertificateType: InsCertificateType.UNKNOWN,
         certificate,
         error: { message: error ?? 'The certificate is null without error message' },
       }
     }
 
-    const { insAssertions, insCertificateValidity } = InsCertificateAssertionHelper.testCertificateForIns(certificate);
+    const { insCertificateValidity, insCertificateType, insAssertions } = InsCertificateAssertionHelper.testCertificateForIns(certificate);
     return {
       insCertificateValidity,
+      insCertificateType,
       certificate,
       insAssertions,
     };

@@ -8,6 +8,7 @@ class InsCertificateAssertionHelper {
         const insAssertions = Object.values(ins_assertion_models_1.InsAssertionType).reduce((insAssertions, type) => (Object.assign(Object.assign({}, insAssertions), { [type]: this._validateAssertion(type, certificate) })), {});
         return {
             insCertificateValidity: Object.values(insAssertions).every(({ status }) => status === ins_assertion_models_1.AssertionStatus.SUCCESS) ? ins_certificate_validator_models_1.InsCertificateValidity.VALID : ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
+            insCertificateType: this._getInsCertificateType(certificate),
             insAssertions,
         };
     }
@@ -50,6 +51,16 @@ class InsCertificateAssertionHelper {
     }
     static _getValidityDatesMessage(validity) {
         return `\n\tnotBefore: ${validity.notBefore.toISOString()}\n\tnotAfter: ${validity.notAfter.toISOString()}`;
+    }
+    static _getInsCertificateType(certificate) {
+        switch (certificate.subjectCN) {
+            case ins_assertion_models_1.InsCertificateSubjectCn.INSI_AUTO:
+                return ins_certificate_validator_models_1.InsCertificateType.INSI_AUTO;
+            case ins_assertion_models_1.InsCertificateSubjectCn.INSI_MANU:
+                return ins_certificate_validator_models_1.InsCertificateType.INSI_MANU;
+            default:
+                return ins_certificate_validator_models_1.InsCertificateType.UNKNOWN;
+        }
     }
 }
 exports.InsCertificateAssertionHelper = InsCertificateAssertionHelper;

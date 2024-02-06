@@ -1,7 +1,10 @@
 import { InsCertificateValidator } from './ins-certificate-validator.class';
 import { PASSPHRASE } from '../models/env';
 import fs from 'fs';
-import { InsCertificateValidity } from '../models/ins-certificate-validator/ins-certificate-validator.models';
+import {
+  InsCertificateType,
+  InsCertificateValidity,
+} from '../models/ins-certificate-validator/ins-certificate-validator.models';
 import { AssertionStatus, InsAssertionType } from '../models/ins-certificate-validator/ins-assertion.models';
 
 describe('Certificate', () => {
@@ -11,6 +14,7 @@ describe('Certificate', () => {
 
     expect(response).toEqual({
       insCertificateValidity: InsCertificateValidity.INVALID,
+      insCertificateType: InsCertificateType.UNKNOWN,
       certificate: null,
       error: { message: 'PKCS#12 MAC could not be verified. Invalid password?' },
     });
@@ -22,6 +26,7 @@ describe('Certificate', () => {
 
     expect(response).toEqual({
       insCertificateValidity: InsCertificateValidity.INVALID,
+      insCertificateType: InsCertificateType.UNKNOWN,
       certificate: {
         base64: expect.any(String),
         subjectCN: 'BadSSL Client Certificate',
@@ -54,6 +59,7 @@ describe('Certificate', () => {
     expect(response).toEqual(
       {
         insCertificateValidity: InsCertificateValidity.VALID,
+        insCertificateType: InsCertificateType.INSI_MANU,
         certificate: {
           base64: expect.any(String),
           subjectCN: 'INSI-MANU',

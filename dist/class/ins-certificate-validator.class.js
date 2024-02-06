@@ -53,13 +53,15 @@ class InsCertificateValidator {
         if (error !== null || certificate === null) {
             return {
                 insCertificateValidity: ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
+                insCertificateType: ins_certificate_validator_models_1.InsCertificateType.UNKNOWN,
                 certificate,
                 error: { message: error !== null && error !== void 0 ? error : 'The certificate is null without error message' },
             };
         }
-        const { insAssertions, insCertificateValidity } = ins_certificate_assertion_helper_1.InsCertificateAssertionHelper.testCertificateForIns(certificate);
+        const { insCertificateValidity, insCertificateType, insAssertions } = ins_certificate_assertion_helper_1.InsCertificateAssertionHelper.testCertificateForIns(certificate);
         return {
             insCertificateValidity,
+            insCertificateType,
             certificate,
             insAssertions,
         };
