@@ -5,7 +5,6 @@ export declare class InsCertificateAssertionHelper {
     static insCertificateValidIssuerCn: InsCertificateIssuerCn[];
     static insCertificateValidType: InsCertificateSubjectCn[];
     static testCertificateForIns(certificate: PKCS12Certificate): TestCertificateForInsResponse;
-    private static _validateAssertion;
     private static _validateSubjectCn;
     private static _validateIssuerCn;
     private static _validateValidityDates;

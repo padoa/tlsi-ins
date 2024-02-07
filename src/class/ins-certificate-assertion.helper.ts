@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   InsCertificateType,
   InsCertificateValidity,
@@ -17,31 +18,17 @@ export class InsCertificateAssertionHelper {
   public static insCertificateValidType = [InsCertificateSubjectCn.INSI_AUTO, InsCertificateSubjectCn.INSI_MANU];
 
   public static testCertificateForIns(certificate: PKCS12Certificate): TestCertificateForInsResponse {
-    const insAssertions = Object.values(InsAssertionType).reduce(
-      (insAssertions, type) => ({ ...insAssertions, [type]: this._validateAssertion(type, certificate) }),
-      {} as Record<InsAssertionType, InsAssertionResult>,
-    );
+    const insAssertions: Record<InsAssertionType, InsAssertionResult> = {
+      [InsAssertionType.SUBJECT_CN]: this._validateSubjectCn(certificate),
+      [InsAssertionType.ISSUER_CN]: this._validateIssuerCn(certificate),
+      [InsAssertionType.VALIDITY_DATES]: this._validateValidityDates(certificate),
+    }
+
     return {
-      insCertificateValidity: Object.values(insAssertions).every(({ status }) => status === AssertionStatus.SUCCESS) ? InsCertificateValidity.VALID : InsCertificateValidity.INVALID,
+      insCertificateValidity: _.every(insAssertions, ({ status }) => status === AssertionStatus.SUCCESS) ? InsCertificateValidity.VALID : InsCertificateValidity.INVALID,
       insCertificateType: this._getInsCertificateType(certificate),
       insAssertions,
     };
-  }
-
-  private static _validateAssertion(type: InsAssertionType, certificate: PKCS12Certificate): InsAssertionResult {
-    switch (type) {
-      case InsAssertionType.SUBJECT_CN:
-        return this._validateSubjectCn(certificate);
-      case InsAssertionType.ISSUER_CN:
-        return this._validateIssuerCn(certificate);
-      case InsAssertionType.VALIDITY_DATES:
-        return this._validateValidityDates(certificate);
-      default:
-        return {
-          status: AssertionStatus.FAILURE,
-          message: 'Invalid assertion type',
-        };
-    }
   }
 
   private static _validateSubjectCn(certificate: PKCS12Certificate): InsAssertionResult {
