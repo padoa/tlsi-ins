@@ -1,11 +1,12 @@
 import { util, asn1, pkcs12, pki } from 'node-forge';
+import _ from 'lodash';
 import {
-  InsCertificateType,
-  InsCertificateValidationResponse,
+  CheckInsCertificateResult, InsCertificateType,
   InsCertificateValidity,
 } from '../models/ins-certificate-validator/ins-certificate-validator.models';
-import { PKCS12Certificate } from '../models/ins-certificate-validator/pkcs12-certificate.models';
+import { OpenPKCS12Response, PKCS12Certificate } from '../models/ins-certificate-validator/pkcs12-certificate.models';
 import { InsCertificateAssertionHelper } from './ins-certificate-assertion.helper';
+import { AssertionStatus } from '../models/ins-certificate-validator/ins-assertion.models';
 
 export class InsCertificateValidator {
   /**
@@ -14,7 +15,7 @@ export class InsCertificateValidator {
    * @param  {string} passphrase the passphrase used to decipher the certificate
    * @returns {PKCS12Certificate | null} the certificate information or null if the passphrase is invalid
    */
-  private static _openPKCS12Certificate(pfx: Buffer, passphrase: string): { certificate: PKCS12Certificate | null, error: string | null } {
+  private static _openPKCS12Certificate(pfx: Buffer, passphrase: string): OpenPKCS12Response {
     const pfxB64 = pfx.toString('base64');
     const p12Der = util.decode64(pfxB64);
     const p12Asn1 = asn1.fromDer(p12Der);
@@ -53,23 +54,33 @@ export class InsCertificateValidator {
    * @param  {string} passphrase the passphrase used to decipher the certificate
    * @returns {InsCertificateValidationResponse} the ins validation response
    * */
-  public static validatePKCS12(pfx: Buffer, passphrase: string): InsCertificateValidationResponse {
+  public static validatePKCS12(pfx: Buffer, passphrase: string): CheckInsCertificateResult {
     const { certificate, error } = this._openPKCS12Certificate(pfx, passphrase);
-    if (error !== null || certificate === null) {
+    if (error !== null) {
       return {
         insCertificateValidity: InsCertificateValidity.INVALID,
-        insCertificateType: InsCertificateType.UNKNOWN,
+        insCertificateType: null,
         certificate,
-        error: { message: error ?? 'The certificate is null without error message' },
+        error: { message: error },
       }
     }
 
-    const { insCertificateValidity, insCertificateType, insAssertions } = InsCertificateAssertionHelper.testCertificateForIns(certificate);
+    const assertionResult = InsCertificateAssertionHelper.checkInsAssertionForCertificate(certificate);
+    const certificateHasPassedAssertion = _.every(assertionResult, ({ status }) => status === AssertionStatus.SUCCESS);
+    if (!certificateHasPassedAssertion) {
+      return {
+        insCertificateValidity: InsCertificateValidity.INVALID,
+        insCertificateType: null,
+        insAssertions: assertionResult,
+        certificate,
+      };
+    }
+
     return {
-      insCertificateValidity,
-      insCertificateType,
+      insCertificateValidity: InsCertificateValidity.VALID,
+      insCertificateType: certificate.subjectCN as InsCertificateType,
+      insAssertions: assertionResult,
       certificate,
-      insAssertions,
     };
   }
 }

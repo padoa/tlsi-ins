@@ -10,6 +10,5 @@ var InsCertificateType;
 (function (InsCertificateType) {
     InsCertificateType["INSI_AUTO"] = "INSI-AUTO";
     InsCertificateType["INSI_MANU"] = "INSI-MANU";
-    InsCertificateType["UNKNOWN"] = "UNKNOWN";
 })(InsCertificateType || (exports.InsCertificateType = InsCertificateType = {}));
 //# sourceMappingURL=ins-certificate-validator.models.js.map

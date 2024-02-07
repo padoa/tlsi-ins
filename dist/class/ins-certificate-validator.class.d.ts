@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { InsCertificateValidationResponse } from '../models/ins-certificate-validator/ins-certificate-validator.models';
+import { CheckInsCertificateResult } from '../models/ins-certificate-validator/ins-certificate-validator.models';
 export declare class InsCertificateValidator {
     /**
      * Open the certificate with passphrase
@@ -14,5 +14,5 @@ export declare class InsCertificateValidator {
      * @param  {string} passphrase the passphrase used to decipher the certificate
      * @returns {InsCertificateValidationResponse} the ins validation response
      * */
-    static validatePKCS12(pfx: Buffer, passphrase: string): InsCertificateValidationResponse;
+    static validatePKCS12(pfx: Buffer, passphrase: string): CheckInsCertificateResult;
 }

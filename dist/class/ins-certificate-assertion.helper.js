@@ -1,23 +1,13 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsCertificateAssertionHelper = void 0;
-const lodash_1 = __importDefault(require("lodash"));
-const ins_certificate_validator_models_1 = require("../models/ins-certificate-validator/ins-certificate-validator.models");
 const ins_assertion_models_1 = require("../models/ins-certificate-validator/ins-assertion.models");
 class InsCertificateAssertionHelper {
-    static testCertificateForIns(certificate) {
-        const insAssertions = {
+    static checkInsAssertionForCertificate(certificate) {
+        return {
             [ins_assertion_models_1.InsAssertionType.SUBJECT_CN]: this._validateSubjectCn(certificate),
             [ins_assertion_models_1.InsAssertionType.ISSUER_CN]: this._validateIssuerCn(certificate),
             [ins_assertion_models_1.InsAssertionType.VALIDITY_DATES]: this._validateValidityDates(certificate),
-        };
-        return {
-            insCertificateValidity: lodash_1.default.every(insAssertions, ({ status }) => status === ins_assertion_models_1.AssertionStatus.SUCCESS) ? ins_certificate_validator_models_1.InsCertificateValidity.VALID : ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
-            insCertificateType: this._getInsCertificateType(certificate),
-            insAssertions,
         };
     }
     static _validateSubjectCn(certificate) {
@@ -44,16 +34,6 @@ class InsCertificateAssertionHelper {
     }
     static _getValidityDatesMessage(validity) {
         return `\n\tnotBefore: ${validity.notBefore.toISOString()}\n\tnotAfter: ${validity.notAfter.toISOString()}`;
-    }
-    static _getInsCertificateType(certificate) {
-        switch (certificate.subjectCN) {
-            case ins_assertion_models_1.InsCertificateSubjectCn.INSI_AUTO:
-                return ins_certificate_validator_models_1.InsCertificateType.INSI_AUTO;
-            case ins_assertion_models_1.InsCertificateSubjectCn.INSI_MANU:
-                return ins_certificate_validator_models_1.InsCertificateType.INSI_MANU;
-            default:
-                return ins_certificate_validator_models_1.InsCertificateType.UNKNOWN;
-        }
     }
 }
 exports.InsCertificateAssertionHelper = InsCertificateAssertionHelper;

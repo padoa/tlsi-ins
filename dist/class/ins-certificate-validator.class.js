@@ -1,9 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsCertificateValidator = void 0;
 const node_forge_1 = require("node-forge");
+const lodash_1 = __importDefault(require("lodash"));
 const ins_certificate_validator_models_1 = require("../models/ins-certificate-validator/ins-certificate-validator.models");
 const ins_certificate_assertion_helper_1 = require("./ins-certificate-assertion.helper");
+const ins_assertion_models_1 = require("../models/ins-certificate-validator/ins-assertion.models");
 class InsCertificateValidator {
     /**
      * Open the certificate with passphrase
@@ -50,20 +55,29 @@ class InsCertificateValidator {
      * */
     static validatePKCS12(pfx, passphrase) {
         const { certificate, error } = this._openPKCS12Certificate(pfx, passphrase);
-        if (error !== null || certificate === null) {
+        if (error !== null) {
             return {
                 insCertificateValidity: ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
-                insCertificateType: ins_certificate_validator_models_1.InsCertificateType.UNKNOWN,
+                insCertificateType: null,
                 certificate,
-                error: { message: error !== null && error !== void 0 ? error : 'The certificate is null without error message' },
+                error: { message: error },
             };
         }
-        const { insCertificateValidity, insCertificateType, insAssertions } = ins_certificate_assertion_helper_1.InsCertificateAssertionHelper.testCertificateForIns(certificate);
+        const assertionResult = ins_certificate_assertion_helper_1.InsCertificateAssertionHelper.checkInsAssertionForCertificate(certificate);
+        const certificateHasPassedAssertion = lodash_1.default.every(assertionResult, ({ status }) => status === ins_assertion_models_1.AssertionStatus.SUCCESS);
+        if (!certificateHasPassedAssertion) {
+            return {
+                insCertificateValidity: ins_certificate_validator_models_1.InsCertificateValidity.INVALID,
+                insCertificateType: null,
+                insAssertions: assertionResult,
+                certificate,
+            };
+        }
         return {
-            insCertificateValidity,
-            insCertificateType,
+            insCertificateValidity: ins_certificate_validator_models_1.InsCertificateValidity.VALID,
+            insCertificateType: certificate.subjectCN,
+            insAssertions: assertionResult,
             certificate,
-            insAssertions,
         };
     }
 }

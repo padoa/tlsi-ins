@@ -14,7 +14,7 @@ describe('Certificate', () => {
 
     expect(response).toEqual({
       insCertificateValidity: InsCertificateValidity.INVALID,
-      insCertificateType: InsCertificateType.UNKNOWN,
+      insCertificateType: null,
       certificate: null,
       error: { message: 'PKCS#12 MAC could not be verified. Invalid password?' },
     });
@@ -26,7 +26,7 @@ describe('Certificate', () => {
 
     expect(response).toEqual({
       insCertificateValidity: InsCertificateValidity.INVALID,
-      insCertificateType: InsCertificateType.UNKNOWN,
+      insCertificateType: null,
       certificate: {
         base64: expect.any(String),
         subjectCN: 'BadSSL Client Certificate',

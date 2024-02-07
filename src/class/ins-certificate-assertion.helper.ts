@@ -1,9 +1,3 @@
-import _ from 'lodash';
-import {
-  InsCertificateType,
-  InsCertificateValidity,
-  TestCertificateForInsResponse,
-} from '../models/ins-certificate-validator/ins-certificate-validator.models';
 import {
   AssertionStatus,
   InsAssertionResult,
@@ -17,18 +11,12 @@ export class InsCertificateAssertionHelper {
   public static insCertificateValidIssuerCn = [InsCertificateIssuerCn.AC_IGC_SANTE, InsCertificateIssuerCn.TEST_AC_IGC_SANTE];
   public static insCertificateValidType = [InsCertificateSubjectCn.INSI_AUTO, InsCertificateSubjectCn.INSI_MANU];
 
-  public static testCertificateForIns(certificate: PKCS12Certificate): TestCertificateForInsResponse {
-    const insAssertions: Record<InsAssertionType, InsAssertionResult> = {
+  public static checkInsAssertionForCertificate(certificate: PKCS12Certificate): Record<InsAssertionType, InsAssertionResult> {
+    return  {
       [InsAssertionType.SUBJECT_CN]: this._validateSubjectCn(certificate),
       [InsAssertionType.ISSUER_CN]: this._validateIssuerCn(certificate),
       [InsAssertionType.VALIDITY_DATES]: this._validateValidityDates(certificate),
     }
-
-    return {
-      insCertificateValidity: _.every(insAssertions, ({ status }) => status === AssertionStatus.SUCCESS) ? InsCertificateValidity.VALID : InsCertificateValidity.INVALID,
-      insCertificateType: this._getInsCertificateType(certificate),
-      insAssertions,
-    };
   }
 
   private static _validateSubjectCn(certificate: PKCS12Certificate): InsAssertionResult {
@@ -58,16 +46,5 @@ export class InsCertificateAssertionHelper {
 
   private static _getValidityDatesMessage(validity: { notBefore: Date; notAfter: Date }): string {
     return `\n\tnotBefore: ${validity.notBefore.toISOString()}\n\tnotAfter: ${validity.notAfter.toISOString()}`;
-  }
-
-  private static _getInsCertificateType(certificate: PKCS12Certificate): InsCertificateType {
-    switch (certificate.subjectCN) {
-      case InsCertificateSubjectCn.INSI_AUTO:
-        return InsCertificateType.INSI_AUTO;
-      case InsCertificateSubjectCn.INSI_MANU:
-        return InsCertificateType.INSI_MANU;
-      default:
-        return InsCertificateType.UNKNOWN;
-    }
   }
 }

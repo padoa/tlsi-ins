@@ -6,20 +6,25 @@ export declare enum InsCertificateValidity {
 }
 export declare enum InsCertificateType {
     INSI_AUTO = "INSI-AUTO",
-    INSI_MANU = "INSI-MANU",
-    UNKNOWN = "UNKNOWN"
+    INSI_MANU = "INSI-MANU"
 }
-export interface TestCertificateForInsResponse {
-    insCertificateValidity: InsCertificateValidity;
-    insCertificateType: InsCertificateType;
-    insAssertions: Record<InsAssertionType, InsAssertionResult>;
-}
-export interface InsCertificateValidationResponse {
-    insCertificateValidity: InsCertificateValidity;
-    insCertificateType: InsCertificateType;
-    certificate: PKCS12Certificate | null;
-    insAssertions?: Record<InsAssertionType, InsAssertionResult>;
-    error?: {
+export type CheckInsCertificateResult = InvalidInsCertificateResult | ValidInsCertificateResult;
+export type InvalidInsCertificateResult = {
+    insCertificateValidity: InsCertificateValidity.INVALID;
+    insCertificateType: null;
+    certificate: null;
+    error: {
         message: string;
     };
-}
+} | {
+    insCertificateValidity: InsCertificateValidity.INVALID;
+    insCertificateType: null;
+    insAssertions: Record<InsAssertionType, InsAssertionResult>;
+    certificate: PKCS12Certificate;
+};
+export type ValidInsCertificateResult = {
+    insCertificateValidity: InsCertificateValidity.VALID;
+    insCertificateType: InsCertificateType;
+    insAssertions: Record<InsAssertionType, InsAssertionResult>;
+    certificate: PKCS12Certificate;
+};
