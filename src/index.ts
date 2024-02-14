@@ -7,7 +7,9 @@ export * from './class/ins-certificate-validator.class'
 
 export * from './models/insi-fetch-ins.models';
 export * from './models/insi-soap-action.models';
-export * from './models/ins-certificate-validator.models'
+export * from './models/ins-certificate-validator/ins-certificate-validator.models';
+export * from './models/ins-certificate-validator/pkcs12-certificate.models';
+export * from './models/ins-certificate-validator/ins-assertion.models';
 
 export * from './utils/insi-error';
 export * from './utils/certificates';

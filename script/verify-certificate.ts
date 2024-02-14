@@ -31,7 +31,7 @@ const run = async (): Promise<void> => {
 
   const endpoint = isTestCertif ? 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps' : 'https://services-ps-tlsm.ameli.fr/lps';
   const pfx = fs.readFileSync(certificatePath)
-  VerifyCertificateProcessor.verifyCertificate(pfx, passPhrase, endpoint, customizedIdam);
+  await VerifyCertificateProcessor.verifyCertificate(pfx, passPhrase, endpoint, customizedIdam);
 }
 
 run().catch((e) => {
