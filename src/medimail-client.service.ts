@@ -36,19 +36,24 @@ type IncompleteMessage = MinimalMessage & {
   nil?: string | null;
 };
 
-type FormattedResponse<T> = {
+type MSSSoapResult = {
+  return: {
+    $value: string;
+  };
+};
+
+type FormattedResponse = {
   status: 'SUCCESS' | 'ERROR';
   request: {
     id: string;
     xml: string;
   };
   response: {
-    formatted: T;
+    formatted: MSSSoapResult;
     xml: string;
     error: Error | null;
   };
 };
-}
 
 export class MedimailClient {
   private readonly _wsdlUrl: string = path.resolve(
@@ -84,7 +89,7 @@ export class MedimailClient {
    * @param name Name of the person to greet
    * @returns complete once we get the first successful response
    */
-  public async hello(name: string): Promise<any> {
+  public async hello(name: string) {
     // const payload = JSON.stringify({ name }); // SOAP-ENV:Client: Bad Request
     const payload = { name };
     return this._call(MedimailActions.HELLO, payload);
@@ -96,7 +101,7 @@ export class MedimailClient {
    * @param message The message to send
    * @returns complete once we get the first successful response
    */
-  public async send(message: IncompleteMessage): Promise<any> {
+  public async send(message: IncompleteMessage) {
     // const payload = JSON.stringify({ name }); // SOAP-ENV:Client: Bad Request
     const payload = {
       ...message,
@@ -104,13 +109,16 @@ export class MedimailClient {
     return this._call(MedimailActions.SEND, payload);
   }
 
-  private async _call<T>(action: MedimailActions, soapBody: T): Promise<FormattedResponse<T>> {
-    return new Promise<any>((resolve, reject) => {
+  private async _call<T>(
+    action: MedimailActions,
+    soapBody: T
+  ): Promise<FormattedResponse> {
+    return new Promise<FormattedResponse>((resolve, reject) => {
       this._soapClient[action](
         soapBody,
         (
           err: ISoapError,
-          result: any,
+          result: MSSSoapResult,
           rawResponse: string,
           // soapHeader: any,
           rawRequest: string
@@ -118,12 +126,12 @@ export class MedimailClient {
           if (err) {
             reject(err);
           }
-          const error = MedimailClient.extractErrorIfPresent(result);
-          if (error) {
-            reject(error);
+          const errorString = MedimailClient.extractErrorIfPresent(result);
+          if (errorString) {
+            reject(new Error(errorString));
           }
 
-          const formattedResponse: FormattedResponse<T> = {
+          const formattedResponse: FormattedResponse = {
             status: 'SUCCESS',
             request: {
               id: 'requestId',
@@ -141,7 +149,7 @@ export class MedimailClient {
     });
   }
 
-  public static extractErrorIfPresent(result: any): Error | null {
+  public static extractErrorIfPresent(result: MSSSoapResult): string | null {
     /**
      * {
       attributes: { 'env:encodingStyle': 'http://www.w3.org/2003/05/soap-encoding' },
@@ -160,7 +168,7 @@ export class MedimailClient {
       const errorXml = result.return.$value;
       const errorMatch = errorXml.match(/<error id="\d+">(.+)<\/error>/);
       if (errorMatch) {
-        return new Error(errorMatch[1]);
+        return errorMatch[1];
       }
     }
     return null;
