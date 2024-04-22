@@ -4,7 +4,9 @@ import fs from 'fs';
 import { ISoapError } from 'soap/lib/client';
 
 describe('Medimail Client', () => {
-  const pfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate.p12');
+  const pfx = fs.readFileSync(
+    'certificates/INSI-AUTO/AUTO-certificate-fake.p12'
+  );
 
   test('should be make a first call to the hello API', async () => {
     const medimailClient = new MedimailClient();

@@ -9,6 +9,45 @@ import { ISoapError } from 'soap/lib/client';
 
 export enum MedimailActions {
   HELLO = 'hello',
+  SEND = 'send',
+}
+
+type Attachment = {
+  name: string;
+  content: string;
+};
+type MinimalMessage = {
+  acount: string;
+  signatories: string;
+  recipients: string;
+  title: string;
+  message: string;
+  attachments: [Attachment, Attachment, Attachment, Attachment, Attachment];
+};
+
+type IncompleteMessage = MinimalMessage & {
+  loinc?: string | null;
+  replyTo?: string | null;
+  inReplyTo?: string | null;
+  mailReferences?: string | null;
+  accuseReception?: string | null;
+  ins?: string | null;
+  codecda?: string | null;
+  nil?: string | null;
+};
+
+type FormattedResponse<T> = {
+  status: 'SUCCESS' | 'ERROR';
+  request: {
+    id: string;
+    xml: string;
+  };
+  response: {
+    formatted: T;
+    xml: string;
+    error: Error | null;
+  };
+};
 }
 
 export class MedimailClient {
@@ -39,13 +78,33 @@ export class MedimailClient {
     );
   }
 
+  /**
+   * Test the api with a simple hello.
+   *
+   * @param name Name of the person to greet
+   * @returns complete once we get the first successful response
+   */
   public async hello(name: string): Promise<any> {
     // const payload = JSON.stringify({ name }); // SOAP-ENV:Client: Bad Request
     const payload = { name };
     return this._call(MedimailActions.HELLO, payload);
   }
 
-  private async _call(action: MedimailActions, soapBody: any): Promise<any> {
+  /**
+   * Send a message to the Medimail API.
+   *
+   * @param message The message to send
+   * @returns complete once we get the first successful response
+   */
+  public async send(message: IncompleteMessage): Promise<any> {
+    // const payload = JSON.stringify({ name }); // SOAP-ENV:Client: Bad Request
+    const payload = {
+      ...message,
+    };
+    return this._call(MedimailActions.SEND, payload);
+  }
+
+  private async _call<T>(action: MedimailActions, soapBody: T): Promise<FormattedResponse<T>> {
     return new Promise<any>((resolve, reject) => {
       this._soapClient[action](
         soapBody,
@@ -53,7 +112,7 @@ export class MedimailClient {
           err: ISoapError,
           result: any,
           rawResponse: string,
-          soapHeader: any,
+          // soapHeader: any,
           rawRequest: string
         ) => {
           if (err) {
@@ -64,7 +123,7 @@ export class MedimailClient {
             reject(error);
           }
 
-          resolve({
+          const formattedResponse: FormattedResponse<T> = {
             status: 'SUCCESS',
             request: {
               id: 'requestId',
@@ -75,7 +134,8 @@ export class MedimailClient {
               xml: rawResponse,
               error: null,
             },
-          });
+          };
+          resolve(formattedResponse);
         }
       );
     });
