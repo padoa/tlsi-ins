@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { EmitterHelper } from './emitter.helper';
-import { PASSPHRASE } from '../models/env';
+import { PASSPHRASE } from '../models/env.ins';
 import { assertionPs } from '../fixtures/assertionPsSecurity.fixture';
 
 describe('# Emitter Helper', () => {
@@ -35,6 +35,6 @@ describe('# Emitter Helper', () => {
   test('should throw error when getting emitter from assertionPs that doesnt exist', () => {
     expect(() => {
       EmitterHelper.getEmitterFromAssertionPs('');
-    }).toThrowError(`Failed to get Emitter from assertion`);
+    }).toThrowError('Failed to get Emitter from assertion');
   });
 });

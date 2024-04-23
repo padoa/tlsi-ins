@@ -1,0 +1,20 @@
+name: Run Tests
+on: [push]
+env:
+  TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
+  TLSI_INS_IDAM: ${{ secrets.TLSI_INS_IDAM }}
+  TLSI_INS_SOFTWARE_NAME: ${{ secrets.TLSI_INS_SOFTWARE_NAME }}
+  TLSI_INS_SOFTWARE_VERSION: ${{ secrets.TLSI_INS_SOFTWARE_VERSION }}
+jobs:
+  tests:
+    environment: development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+      - run: npm install
+      - run: npm test src/test/insi-client.test.ts src/test/insi-virtual-mode.test.ts

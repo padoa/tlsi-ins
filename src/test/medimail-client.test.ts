@@ -1,4 +1,4 @@
-import { MML_CERTIFICATE_PASSPHRASE, PASSPHRASE } from '../models/env';
+import { MML_CERTIFICATE_PASSPHRASE, PASSPHRASE } from '../models/env.medimail';
 import { MedimailClient } from '../medimail-client.service';
 import fs from 'fs';
 
