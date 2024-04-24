@@ -28,11 +28,3 @@ export const { TLSI_INS_SOFTWARE_VERSION } = process.env;
 if (!TLSI_INS_SOFTWARE_VERSION)
   throw new Error('Please provide a TLSI_INS_SOFTWARE_VERSION env variable');
 export const SOFTWARE_VERSION: string = TLSI_INS_SOFTWARE_VERSION as string;
-
-const { MEDIMAIL_CERTIFICATE_PASSPHRASE } = process.env;
-if (!MEDIMAIL_CERTIFICATE_PASSPHRASE)
-  throw new Error(
-    'Please provide a MEDIMAIL_CERTIFICATE_PASSPHRASE env variable'
-  );
-export const MML_CERTIFICATE_PASSPHRASE: string =
-  MEDIMAIL_CERTIFICATE_PASSPHRASE as string;

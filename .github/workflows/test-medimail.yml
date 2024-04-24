@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Medimail Tests
 on: [push]
 env:
   MEDIMAIL_CERTIFICATE_PASSPHRASE: ${{ secrets.MEDIMAIL_CERTIFICATE_PASSPHRASE }}

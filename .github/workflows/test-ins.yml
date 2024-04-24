@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run INS Tests
 on: [push]
 env:
   TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
