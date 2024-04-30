@@ -15,4 +15,4 @@ jobs:
           node-version: '21'
           cache: 'npm'
       - run: npm install
-      - run: npm test src/test/medimail-client.test.ts
+      - run: npm test src/medimail/test/medimail-client.test.ts

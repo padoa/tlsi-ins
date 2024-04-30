@@ -17,4 +17,4 @@ jobs:
           node-version: '14'
           cache: 'npm'
       - run: npm install
-      - run: npm test src/test/insi-client.test.ts src/test/insi-virtual-mode.test.ts
+      - run: npm test src/ins/test/insi-client.test.ts src/ins/test/insi-virtual-mode.test.ts
