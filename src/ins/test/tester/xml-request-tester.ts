@@ -1,5 +1,6 @@
-import { INSiPersonArgs } from "src/class/insi-person.class";
-import { INSiServiceFormattedResponse, InsHisto } from "src/models/insi-fetch-ins.models";
+import { INSiPersonArgs } from 'src/ins/class/insi-person.class';
+
+import { INSiServiceFormattedResponse, InsHisto } from 'src/ins/models/insi-fetch-ins.models';
 
 export const getXmlRequestTest = ({ idam, version, name, emitter, person, requestId, date }: { idam: string; version: string; name: string; emitter: string; person: INSiPersonArgs; requestId: string; date: string }): string => {
   return [
@@ -44,8 +45,8 @@ export const getNoIdentityXmlResponseTest = (): string => {
     '<S:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\">',
     '<RESULTAT xmlns:ns3=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns2=\"http://www.cnamts.fr/INSiRecSans\" xmlns=\"http://www.cnamts.fr/INSiResultat\">',
     '<CR>',
-    `<CodeCR>01</CodeCR>`,
-    `<LibelleCR>Aucune identite trouvee</LibelleCR>`,
+    '<CodeCR>01</CodeCR>',
+    '<LibelleCR>Aucune identite trouvee</LibelleCR>',
     '</CR>',
     '</RESULTAT>',
     '</S:Body>',
@@ -78,8 +79,8 @@ export const getValidXmlResponseTest = (personDetails: INSiServiceFormattedRespo
     '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
     '<RESULTAT xmlns="http://www.cnamts.fr/INSiResultat" xmlns:ns0="http://www.cnamts.fr/INSiRecVit" xmlns:ns1="http://www.cnamts.fr/INSiRecSans">',
     '<CR>',
-    `<CodeCR>00</CodeCR>`,
-    `<LibelleCR>OK</LibelleCR>`,
+    '<CodeCR>00</CodeCR>',
+    '<LibelleCR>OK</LibelleCR>',
     '</CR>',
     '<INDIVIDU>',
     '<INSACTIF>',
