@@ -1,31 +1,31 @@
-"use strict";
+'use strict';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator['throw'](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+    return (mod && mod.__esModule) ? mod : { 'default': mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.INSiClient = exports.INSi_mTLS_TEST_URL = exports.INSi_CPX_TEST_URL = void 0;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const soap_1 = require("soap");
-const uuid_1 = require("uuid");
-const certificates_1 = require("./utils/certificates");
-const insi_soap_action_models_1 = require("./models/insi-soap-action.models");
-const insi_fetch_ins_models_1 = require("./models/insi-fetch-ins.models");
-const insi_error_1 = require("./utils/insi-error");
-const insi_helper_1 = require("./utils/insi-helper");
-const assertionPsSecurity_class_1 = require("./class/assertionPsSecurity.class");
-const insi_fetch_ins_special_cases_models_1 = require("./models/insi-fetch-ins-special-cases.models");
-const virtual_mode_helper_1 = require("./fixtures/virtual-mode/virtual-mode.helper");
-const lodash_1 = __importDefault(require("lodash"));
+const fs_1 = __importDefault(require('fs'));
+const path_1 = __importDefault(require('path'));
+const soap_1 = require('soap');
+const uuid_1 = require('uuid');
+const certificates_1 = require('./utils/certificates');
+const insi_soap_action_models_1 = require('./models/insi-soap-action.models');
+const insi_fetch_ins_models_1 = require('./models/insi-fetch-ins.models');
+const insi_error_1 = require('./utils/insi-error');
+const insi_helper_1 = require('./utils/insi-helper');
+const assertionPsSecurity_class_1 = require('./class/assertionPsSecurity.class');
+const insi_fetch_ins_special_cases_models_1 = require('./models/insi-fetch-ins-special-cases.models');
+const virtual_mode_helper_1 = require('./fixtures/virtual-mode/virtual-mode.helper');
+const lodash_1 = __importDefault(require('lodash'));
 exports.INSi_CPX_TEST_URL = 'https://qualiflps.services-ps.ameli.fr:443/lps';
 exports.INSi_mTLS_TEST_URL = 'https://qualiflps-services-ps-tlsm.ameli.fr:443/lps';
 /**
@@ -203,8 +203,8 @@ class INSiClient {
         this._soapClient.setSecurity(new soap_1.ClientSSLSecurityPFX(pfx, {
             passphrase,
             ca: (0, certificates_1.combineCertAsPem)([
-                path_1.default.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
-                path_1.default.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
+                path_1.default.resolve(__dirname, '../../certificates/ca/ACR-EL.cer'),
+                path_1.default.resolve(__dirname, '../../certificates/ca/ACI-EL-ORG.cer'),
             ]),
         }));
     }

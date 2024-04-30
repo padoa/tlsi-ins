@@ -294,7 +294,7 @@ describe('INSi Client', () => {
       });
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const cr01XmlResponse = fs.readFileSync(
-        'src/fixtures/REP_CR01.xml',
+        'src/ins/fixtures/REP_CR01.xml',
         'utf-8'
       );
 
@@ -338,7 +338,7 @@ describe('INSi Client', () => {
       });
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const cr01XmlResponse = fs.readFileSync(
-        'src/fixtures/REP_CR01.xml',
+        'src/ins/fixtures/REP_CR01.xml',
         'utf-8'
       );
 

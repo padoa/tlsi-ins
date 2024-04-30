@@ -129,10 +129,6 @@ export class MedimailClient {
     this._soapClient.setSecurity(
       new ClientSSLSecurityPFX(pfx, {
         passphrase,
-        // ca: combineCertAsPem([
-        //   path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
-        //   path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
-        // ]),
       })
     );
   }
