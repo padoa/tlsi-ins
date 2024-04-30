@@ -40,7 +40,7 @@ export class InsCertificateAssertionHelper {
     const dateIsValid = certificate.validity.notBefore < now && certificate.validity.notAfter > now;
     return {
       status: dateIsValid ? AssertionStatus.SUCCESS : AssertionStatus.FAILURE,
-      message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (dateIsValid ? '' : `, the certificate expired or is for later use`),
+      message: `Certificate validity dates: ${this._getValidityDatesMessage(certificate.validity)}` + (dateIsValid ? '' : ', the certificate expired or is for later use'),
     }
   }
 

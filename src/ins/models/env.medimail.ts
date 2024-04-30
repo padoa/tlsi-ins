@@ -21,3 +21,17 @@ if (!MEDIMAIL_CERTIFICATE_PASSPHRASE)
   );
 export const MML_CERTIFICATE_PASSPHRASE: string =
   MEDIMAIL_CERTIFICATE_PASSPHRASE as string;
+
+const { MEDIMAIL_ACCOUNT_EMAIL } = process.env;
+if (!MEDIMAIL_ACCOUNT_EMAIL)
+  throw new Error(
+    'Please provide a MEDIMAIL_ACCOUNT_EMAIL env variable'
+  );
+export const MML_ACCOUNT_EMAIL: string = MEDIMAIL_ACCOUNT_EMAIL as string;
+
+const { MEDIMAIL_TEST_RECIPIENT_EMAIL } = process.env;
+if (!MEDIMAIL_TEST_RECIPIENT_EMAIL)
+  throw new Error(
+    'Please provide a MEDIMAIL_TEST_RECIPIENT_EMAIL env variable'
+  );
+export const MML_TEST_RECIPIENT_EMAIL: string = MEDIMAIL_TEST_RECIPIENT_EMAIL as string;
