@@ -40,38 +40,39 @@ describe('Medimail Client', () => {
 
   test('should make a call to the hello API when using the correct certificate', async () => {
     const medimailClient = new MedimailClient();
-    const expectedReturn = [
-      '<?xml version="1.0" encoding="UTF-8"?>',
-      '<hello>',
-      '  <status>ok</status>',
-      '  <hello>1</hello>',
-      '</hello>',
-    ].join('\n');
+    const expectedReturn = {
+      hello: {
+        status: 'ok',
+        hello: '1',
+      }
+    }
     await medimailClient.init(mmlPfx, MML_CERTIFICATE_PASSPHRASE, MML_ACCOUNT_EMAIL);
 
     const reply = await medimailClient.hello(MML_ACCOUNT_EMAIL);
-    expect(reply.status).toBe('SUCCESS');
-    expect(reply.response.formatted.return.$value).toBe(expectedReturn);
+    expect(reply).toMatchObject(expectedReturn);
   });
 
   test('should be able to send mail through the  API', async () => {
     const medimailClient = new MedimailClient();
     await medimailClient.init(mmlPfx, MML_CERTIFICATE_PASSPHRASE, MML_ACCOUNT_EMAIL);
 
-    const reply = await medimailClient.send({ title: mailTitle, message: mailMessage, signatories: [MML_TEST_RECIPIENT_EMAIL],
+    const reply = await medimailClient.send({
+      title: mailTitle, message: mailMessage, signatories: [MML_TEST_RECIPIENT_EMAIL],
       attachments: {
         attachment1: {
           name: 'test.pdf',
           content: fs.readFileSync(path.resolve(__dirname, './attachments/testfile.pdf')).toString('base64')
         }
       }
-     });
-    sentEmailRef = reply.refs.mss as string;
+    });
+    sentEmailRef = reply.webisend.refs.mss as string;
 
     const expectedResponse = {
-      status: 'sent',
-      author: MML_ACCOUNT_EMAIL,
-      signatories: MML_TEST_RECIPIENT_EMAIL,
+      webisend: {
+        status: 'sent',
+        author: MML_ACCOUNT_EMAIL,
+        signatories: MML_TEST_RECIPIENT_EMAIL,
+      }
     };
 
     expect(reply).toMatchObject(expectedResponse);
@@ -84,13 +85,15 @@ describe('Medimail Client', () => {
     const reply = await medimailClient.open(sentEmailRef);
 
     const expectedResponse = {
-      status: 'open',
-      content: mailMessage,
-      title: mailTitle,
-      call: MML_ACCOUNT_EMAIL,
-      signatories: {
-        signatory: {
-          email: MML_TEST_RECIPIENT_EMAIL,
+      webiopen: {
+        status: 'open',
+        content: mailMessage,
+        title: mailTitle,
+        call: MML_ACCOUNT_EMAIL,
+        signatories: {
+          signatory: {
+            email: MML_TEST_RECIPIENT_EMAIL,
+          }
         }
       },
     };

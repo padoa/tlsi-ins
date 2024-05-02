@@ -39,17 +39,10 @@ type MSSSoapResult = {
   };
 };
 
-type FormattedResponse = {
-  status: 'SUCCESS' | 'ERROR';
-  request: {
-    id: string;
-    xml: string;
-  };
-  response: {
-    formatted: MSSSoapResult;
-    xml: string;
-    error: Error | null;
-  };
+type FormattedMSSResponse = {
+  formatted: MSSSoapResult;
+  xml: string;
+  error: Error | null;
 };
 
 type SendMessageOptions = {
@@ -60,15 +53,24 @@ type SendMessageOptions = {
   attachments?: SendAttachments;
 };
 
+type HelloResult = {
+  hello: {
+    status: string;
+    hello: string;
+  };
+};
+
 type SendResult = {
-  status: string,
-  author: string,
-  signatories: string,
-  ignore: null,
-  title: string,
-  refs: {
-    mss: string[] | string
-  },
+  webisend: {
+    status: string,
+    author: string,
+    signatories: string,
+    ignore: null,
+    title: string,
+    refs: {
+      mss: string[] | string
+    },
+  }
 }
 
 type Signatory = {
@@ -84,25 +86,27 @@ type Recipient = {
 }
 
 type OpenResult = {
-  status: string,
-  call: string,
-  author: {
-    firstname: string,
-    lastname: string,
-    email: string,
-  },
-  begindate: string,
-  enddate: string | null,
-  signatories: Signatory[],
-  recipients: Recipient[],
-  title: string,
-  content: string,
-  nbattachments: string,
-  attachments: Attachment[],
-  'message-id': string,
-  inReplyTo: string | null,
-  references: string | null,
-  replyTo: string,
+  webiopen: {
+    status: string,
+    call: string,
+    author: {
+      firstname: string,
+      lastname: string,
+      email: string,
+    },
+    begindate: string,
+    enddate: string | null,
+    signatories: Signatory[],
+    recipients: Recipient[],
+    title: string,
+    content: string,
+    nbattachments: string,
+    attachments: Attachment[],
+    'message-id': string,
+    inReplyTo: string | null,
+    references: string | null,
+    replyTo: string,
+  }
 }
 
 export class MedimailClient {
@@ -139,9 +143,10 @@ export class MedimailClient {
    * @param name Name of the person to greet
    * @returns complete once we get the first successful response
    */
-  public async hello(name: string) {
+  public async hello(name: string): Promise<HelloResult> {
     const payload = { name };
-    return this._call(MedimailActions.HELLO, payload);
+    const reply = await this._call(MedimailActions.HELLO, payload);
+    return this._wsdl.xmlToObject(reply.formatted.return.$value);
   }
 
   /**
@@ -151,7 +156,7 @@ export class MedimailClient {
    * @returns complete once we get the first successful response
    */
   public async send(options: SendMessageOptions): Promise<SendResult> {
-    const { title, message, signatories, recipients,attachments } = options;
+    const { title, message, signatories, recipients, attachments } = options;
     const joinedSignatories = signatories.join(';');
     const joinedRecipients = recipients?.join(';');
     const payload = {
@@ -163,7 +168,7 @@ export class MedimailClient {
       attachments,
     };
     const reply = await this._call(MedimailActions.SEND, payload);
-    return this._wsdl.xmlToObject(reply.response.formatted.sendResult.$value).webisend;
+    return this._wsdl.xmlToObject(reply.formatted.sendResult.$value);
   }
 
   /**
@@ -178,22 +183,20 @@ export class MedimailClient {
       acount: this._acount,
     };
     const reply = await this._call(MedimailActions.OPEN, payload);
-    return this._wsdl.xmlToObject(reply.response.formatted.openReturn.$value).webiopen
+    return this._wsdl.xmlToObject(reply.formatted.openReturn.$value)
   }
 
   private async _call<T>(
     action: MedimailActions,
     soapBody: T
-  ): Promise<FormattedResponse> {
-    return new Promise<FormattedResponse>((resolve, reject) => {
+  ): Promise<FormattedMSSResponse> {
+    return new Promise<FormattedMSSResponse>((resolve, reject) => {
       this._soapClient[action](
         soapBody,
         (
           err: ISoapError,
           result: MSSSoapResult,
           rawResponse: string,
-          // soapHeader: any,
-          rawRequest: string
         ) => {
           if (err) {
             reject(err);
@@ -203,17 +206,10 @@ export class MedimailClient {
             reject(new Error(errorString));
           }
 
-          const formattedResponse: FormattedResponse = {
-            status: 'SUCCESS',
-            request: {
-              id: 'requestId',
-              xml: rawRequest,
-            },
-            response: {
-              formatted: result,
-              xml: rawResponse,
-              error: null,
-            },
+          const formattedResponse: FormattedMSSResponse = {
+            formatted: result,
+            xml: rawResponse,
+            error: null,
           };
           resolve(formattedResponse);
         }

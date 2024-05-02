@@ -203,8 +203,8 @@ class INSiClient {
         this._soapClient.setSecurity(new soap_1.ClientSSLSecurityPFX(pfx, {
             passphrase,
             ca: (0, certificates_1.combineCertAsPem)([
-                path_1.default.resolve(__dirname, '../../certificates/ca/ACR-EL.cer'),
-                path_1.default.resolve(__dirname, '../../certificates/ca/ACI-EL-ORG.cer'),
+                path_1.default.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
+                path_1.default.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
             ]),
         }));
     }
