@@ -8,10 +8,13 @@ import {
 import { ISoapError } from 'soap/lib/client';
 import { WSDL } from 'soap';
 
+const formatDateToDatetime = (date: Date): string => date.toISOString().slice(0, 19);
+
 export enum MedimailActions {
   HELLO = 'hello',
   SEND = 'send',
   OPEN = 'open',
+  CHECKBOX = 'checkbox',
 }
 
 type Attachment = {
@@ -35,6 +38,9 @@ type MSSSoapResult = {
     $value: string;
   };
   openReturn: {
+    $value: string;
+  };
+  checkboxReturn: {
     $value: string;
   };
 };
@@ -109,6 +115,37 @@ type OpenResult = {
   }
 }
 
+type CheckboxMessage = {
+  ref: string,
+  author: Recipient,
+  dtcreate: string,
+  signatories: Signatory[],
+  recipients: null,
+  title: string,
+}
+
+
+type CheckboxReturn = {
+  webicheckbox: {
+    status: string,
+    user: string,
+    begindate: string,
+    enddate: string,
+    inputs: {
+      kvp: CheckboxMessage[]
+    },
+    outputs: {
+      kvp: CheckboxMessage[]
+    },
+  }
+}
+
+export enum CheckboxType {
+  ALL_MESSAGES = 1,
+  RECEIVED_MESSAGES = 2,
+  SENT_MESSAGES = 3,
+}
+
 export class MedimailClient {
   private readonly _wsdlUrl: string = path.resolve(
     __dirname,
@@ -169,6 +206,25 @@ export class MedimailClient {
     };
     const reply = await this._call(MedimailActions.SEND, payload);
     return this._wsdl.xmlToObject(reply.formatted.sendResult.$value);
+  }
+
+  /**
+   * Checks received and sent email through the Medimail API.
+   *
+   * @param type The type of data to get (1 = all, 2 = only received, 3 = only sent)
+   * @param begindate The date to start the search
+   * @param enddate The date to end the search
+   * @returns complete once we get the first successful response
+   */
+  public async checkbox(type: CheckboxType, begindate: Date, enddate: Date = new Date()): Promise<CheckboxReturn> {
+    const payload = {
+      acount: this._acount,
+      type,
+      begindate: formatDateToDatetime(begindate),
+      ...(enddate ? { enddate: formatDateToDatetime(enddate) } : {}),
+    };
+    const reply = await this._call(MedimailActions.CHECKBOX, payload);
+    return this._wsdl.xmlToObject(reply.formatted.checkboxReturn.$value);
   }
 
   /**
