@@ -7,7 +7,7 @@ import {
 } from 'soap';
 import { ISoapError } from 'soap/lib/client';
 import { WSDL } from 'soap';
-import { CheckboxReturn, CheckboxType, FormattedMSSResponse, HelloResult, MSSSoapResult, MedimailActions, OpenResult, SendMessageOptions, SendResult } from 'src/medimail/models/medimail.types';
+import { CheckboxReturn, CheckboxType, FormattedMSSResponse, HelloResult, MSSSoapResult, MedimailActions, OpenResult, SendMessageOptions, SendResult } from './models/medimail.types';
 
 const formatDateToDatetime = (date: Date): string => date.toISOString().slice(0, 19);
 

@@ -35,7 +35,7 @@ describe('Medimail Client', () => {
     await medimailClient.init(failingMmlPfx, MML_CERTIFICATE_PASSPHRASE, MML_ACCOUNT_EMAIL);
 
     expect(async () => {
-      await medimailClient.hello('banana');
+      await medimailClient.hello(MML_ACCOUNT_EMAIL);
     }).rejects.toThrow(expecterErrorMessage);
   });
 
