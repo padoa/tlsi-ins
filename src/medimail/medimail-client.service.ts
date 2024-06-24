@@ -53,9 +53,14 @@ export class MedimailClient {
   }
 
   /**
-   * Send a message to the Medimail API.
+   * Send a message through the Medimail API.
    *
-   * @param message The message to send
+   * @param options options of the message to send
+   * @param options.title title of the message to send
+   * @param options.message text body of the message to send
+   * @param options.signatories main recipients of the message to send
+   * @param options.recipients recipients for information of the message to send
+   * @param options.attachments files to attach to the message to send, max size 5 
    * @returns complete once we get the first successful response
    */
   public async send(options: SendMessageOptions): Promise<SendResult> {

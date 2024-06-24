@@ -1,7 +1,8 @@
 import * as path from 'path';
 import fs from 'fs';
 import { MML_CERTIFICATE_PASSPHRASE, PASSPHRASE, MML_ACCOUNT_EMAIL, MML_TEST_RECIPIENT_EMAIL } from '../models/env.medimail';
-import { CheckboxType, MedimailClient } from '../medimail-client.service';
+import {  CheckboxType } from '../models/medimail.types';
+import {  MedimailClient } from '../medimail-client.service';
 
 describe('Medimail Client', () => {
   let sentEmailRef: string;
