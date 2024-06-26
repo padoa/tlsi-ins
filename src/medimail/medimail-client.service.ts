@@ -41,10 +41,10 @@ export class MedimailClient {
   }
 
   /**
-   * Test the api with a simple hello.
+   * Test the api with a simple hello, the specified name should be the email of the connected user
    *
-   * @param name Name of the person to greet
-   * @returns complete once we get the first successful response
+   * @param name Name of the user to greet
+   * @returns Promise<HelloResult>
    */
   public async hello(name: string): Promise<HelloResult> {
     const payload = { name };
@@ -58,10 +58,10 @@ export class MedimailClient {
    * @param options options of the message to send
    * @param options.title title of the message to send
    * @param options.message text body of the message to send
-   * @param options.signatories main recipients of the message to send
+   * @param options.signatories main recipients of the message to send (what we would usually call 'recipient')
    * @param options.recipients recipients for information of the message to send
    * @param options.attachments files to attach to the message to send, max size 5 
-   * @returns complete once we get the first successful response
+   * @returns Promise<SendResult>
    */
   public async send(options: SendMessageOptions): Promise<SendResult> {
     const { title, message, signatories, recipients, attachments } = options;
@@ -80,12 +80,12 @@ export class MedimailClient {
   }
 
   /**
-   * Checks received and sent email through the Medimail API.
+   * Opens the Medimail mailbox of the user, and returns the list of messages sent, received or both.
    *
    * @param type The type of data to get (1 = all, 2 = only received, 3 = only sent)
    * @param begindate The date to start the search
    * @param enddate The date to end the search
-   * @returns complete once we get the first successful response
+   * @returns Promise<CheckboxReturn>
    */
   public async checkbox(type: CheckboxType, begindate: Date, enddate: Date = new Date()): Promise<CheckboxReturn> {
     const payload = {
@@ -101,8 +101,8 @@ export class MedimailClient {
   /**
    * Open a message to the Medimail API.
    *
-   * @param ref The reference of the message to send
-   * @returns complete once we get the first successful response
+   * @param ref The reference (id) of the message to open
+   * @returns Promise<OpenResult>
    */
   public async open(ref: string): Promise<OpenResult> {
     const payload = {
@@ -128,7 +128,7 @@ export class MedimailClient {
           if (err) {
             reject(err);
           }
-          const errorString = MedimailClient.extractErrorIfPresent(result);
+          const errorString = this._extractErrorIfPresent(result);
           if (errorString) {
             reject(new Error(errorString));
           }
@@ -144,21 +144,7 @@ export class MedimailClient {
     });
   }
 
-  public static extractErrorIfPresent(result: MSSSoapResult): string | null {
-    /**
-     * {
-      attributes: { 'env:encodingStyle': 'http://www.w3.org/2003/05/soap-encoding' },
-      result: 'return',
-      return: {
-        attributes: { 'xsi:type': 'xsd:string' },
-        '$value': '<?xml version="1.0" encoding="UTF-8"?>\n' +
-          '<hello>\n' +
-          '  <status>error</status>\n' +
-          '  <error id="0">Client SOAP certificat inconnu (CN=INSI-AUTO,OU=10B0152872,O=CENTRE DE SANTE RPPS15287,ST=Rhône (69),C=FR)</error>\n' +
-          '</hello>'
-      }
-    }
-     */
+  private _extractErrorIfPresent(result: MSSSoapResult): string | null {
     if (result && result.return && result.return.$value) {
       const errorXml = result.return.$value;
       const errorMatch = errorXml.match(/<error id="\d+">(.+)<\/error>/);
