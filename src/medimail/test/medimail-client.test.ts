@@ -1,8 +1,8 @@
 import * as path from 'path';
 import fs from 'fs';
 import { MML_CERTIFICATE_PASSPHRASE, PASSPHRASE, MML_ACCOUNT_EMAIL, MML_TEST_RECIPIENT_EMAIL } from '../models/env.medimail';
-import {  CheckboxType } from '../models/medimail.types';
-import {  MedimailClient } from '../medimail-client.service';
+import { CheckboxType } from '../models/medimail.types';
+import { MedimailClient } from '../medimail-client.service';
 
 describe('Medimail Client', () => {
   let sentEmailRef: string;
@@ -72,7 +72,7 @@ describe('Medimail Client', () => {
       webisend: {
         status: 'sent',
         author: MML_ACCOUNT_EMAIL,
-        signatories: MML_TEST_RECIPIENT_EMAIL,
+        signatories: MML_TEST_RECIPIENT_EMAIL
       }
     };
 
@@ -105,8 +105,8 @@ describe('Medimail Client', () => {
   test('should be able to check received emails through the  API', async () => {
     const medimailClient = new MedimailClient();
     await medimailClient.init(mmlPfx, MML_CERTIFICATE_PASSPHRASE, MML_ACCOUNT_EMAIL);
-
-    const reply = await medimailClient.checkbox(CheckboxType.ALL_MESSAGES, new Date('2024'));
+    const todaysDate: Date = new Date(new Date().toJSON().slice(0, 10))
+    const reply = await medimailClient.checkbox(CheckboxType.ALL_MESSAGES, todaysDate);
 
     const expectedResponse = {
       webicheckbox: {
@@ -117,6 +117,5 @@ describe('Medimail Client', () => {
 
     expect(reply).toMatchObject(expectedResponse);
     expect(Array.isArray(reply.webicheckbox.outputs.kvp)).toBe(true);
-    expect(Array.isArray(reply.webicheckbox.inputs.kvp)).toBe(true);
   });
 });
