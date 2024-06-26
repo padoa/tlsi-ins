@@ -105,7 +105,7 @@ describe('Medimail Client', () => {
   test('should be able to check received emails through the  API', async () => {
     const medimailClient = new MedimailClient();
     await medimailClient.init(mmlPfx, MML_CERTIFICATE_PASSPHRASE, MML_ACCOUNT_EMAIL);
-    const todaysDate: Date = new Date(new Date().toJSON().slice(0, 10))
+    const todaysDate: Date = new Date(new Date().setHours(0, 0, 0, 0))
     const reply = await medimailClient.checkbox(CheckboxType.ALL_MESSAGES, todaysDate);
 
     const expectedResponse = {
