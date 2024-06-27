@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run INS Tests
 on: [push]
 env:
   TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
@@ -17,4 +17,4 @@ jobs:
           node-version: '14'
           cache: 'npm'
       - run: npm install
-      - run: npm test
+      - run: npm test src/ins/test/insi-client.test.ts src/ins/test/insi-virtual-mode.test.ts

@@ -1,5 +1,10 @@
 import { LPS } from '../class/lps.class';
-import { IDAM, PASSPHRASE, SOFTWARE_NAME, SOFTWARE_VERSION } from '../models/env';
+import {
+  IDAM,
+  PASSPHRASE,
+  SOFTWARE_NAME,
+  SOFTWARE_VERSION,
+} from '../models/env.ins';
 import { LpsContext, LpsContextSoapHeader } from '../class/lps-context.class';
 import { BamContext, BamContextSoapHeader } from '../class/bam-context.class';
 import { INSiClient } from '../insi-client.service';
@@ -11,7 +16,11 @@ import {
   defaultDate,
 } from '../fixtures/insi-client.fixture';
 import fs from 'fs';
-import { CRCodes, CRLabels, INSiServiceRequestStatus } from '../models/insi-fetch-ins.models';
+import {
+  CRCodes,
+  CRLabels,
+  INSiServiceRequestStatus,
+} from '../models/insi-fetch-ins.models';
 import { getAdrtroisDominiqueXmlRequest } from '../fixtures/persons/adrtrois-dominique.fixture';
 import {
   getTchitchiCatarinaResponse,
@@ -54,7 +63,7 @@ jest.mock('../class/bam-context.class', () => ({
 }));
 
 jest.mock('../class/lps-context.class', () => ({
-  LpsContext: jest.fn((config: { emitter: string, lps: LPS }) => ({
+  LpsContext: jest.fn((config: { emitter: string; lps: LPS }) => ({
     getSoapHeaderAsJson: (): LpsContextSoapHeader => {
       const soapHeader = {
         ContexteLPS: {
@@ -121,7 +130,9 @@ describe('INSi Client', () => {
         gender: Gender.Female,
         dateOfBirth: '1997-02-26',
       });
-      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow('fetchIns ERROR: you must init client security first');
+      await expect(async () => insiClient.fetchIns(person)).rejects.toThrow(
+        'fetchIns ERROR: you must init client security first'
+      );
     });
 
     test('should be able to initClient without throwing error', async () => {
@@ -156,7 +167,9 @@ describe('INSi Client', () => {
 
     test('should throw an INSi error if the pfx is not a correct pfx file', async () => {
       const client = getClientWithDefinedId();
-      const fakePfx = fs.readFileSync('certificates/INSI-AUTO/AUTO-certificate-fake.p12');
+      const fakePfx = fs.readFileSync(
+        'certificates/INSI-AUTO/AUTO-certificate-fake.p12'
+      );
       await client.initClientPfx(fakePfx, PASSPHRASE);
       const person = new INSiPerson({
         birthName: 'ADRTROIS',
@@ -165,7 +178,9 @@ describe('INSi Client', () => {
         dateOfBirth: '1997-02-26',
       });
 
-      await expect(async () => client.fetchIns(person)).rejects.toThrow('Le fichier pfx fourni n\'est pas un fichier pfx valid');
+      await expect(async () => client.fetchIns(person)).rejects.toThrow(
+        "Le fichier pfx fourni n'est pas un fichier pfx valid"
+      );
     });
 
     test('should throw an INSi error if the Passe phrase is not a correct', async () => {
@@ -178,7 +193,9 @@ describe('INSi Client', () => {
         dateOfBirth: '1997-02-26',
       });
 
-      await expect(async () => client.fetchIns(person)).rejects.toThrow('La passe phrase n\'est pas correct');
+      await expect(async () => client.fetchIns(person)).rejects.toThrow(
+        "La passe phrase n'est pas correct"
+      );
     });
 
     test('should have a failed request if the software is not allowed', async () => {
@@ -187,7 +204,10 @@ describe('INSi Client', () => {
       const version = SOFTWARE_VERSION;
       const name = SOFTWARE_NAME;
       const lps = new LPS({ idam, version, name, id: lpsId });
-      const lpsContext = new LpsContext({ emitter: 'medecin@yopmail.com', lps });
+      const lpsContext = new LpsContext({
+        emitter: 'medecin@yopmail.com',
+        lps,
+      });
       const bamContext = new BamContext({ emitter: 'medecin@yopmail.com' });
       const client = new INSiClient({ lpsContext, bamContext });
       await client.initClientPfx(pfx, PASSPHRASE);
@@ -203,24 +223,26 @@ describe('INSi Client', () => {
       const fetchInsResult = await client.fetchIns(person, { requestId });
       expect(fetchInsResult).toEqual({
         successRequest: null,
-        failedRequests: [{
-          status: INSiServiceRequestStatus.FAIL,
-          request: {
-            id: requestId,
-            xml: getAdrtroisDominiqueXmlRequest({ idam, version, name }),
-          },
-          response: {
-            formatted: null,
-            json: null,
-            xml: fakeIdamXmlResponse,
-            error: {
-              siramCode: 'siram_100',
-              text: 'L\'accès par ce progiciel au service n\'est pas autorisé. Contactez l\'éditeur du progiciel ou votre responsable informatique.',
-              desirCode: 'desir_550',
-              error: 'Numéro d\'autorisation du logiciel inconnu.',
+        failedRequests: [
+          {
+            status: INSiServiceRequestStatus.FAIL,
+            request: {
+              id: requestId,
+              xml: getAdrtroisDominiqueXmlRequest({ idam, version, name }),
+            },
+            response: {
+              formatted: null,
+              json: null,
+              xml: fakeIdamXmlResponse,
+              error: {
+                siramCode: 'siram_100',
+                text: "L'accès par ce progiciel au service n'est pas autorisé. Contactez l'éditeur du progiciel ou votre responsable informatique.",
+                desirCode: 'desir_550',
+                error: "Numéro d'autorisation du logiciel inconnu.",
+              },
             },
           },
-        }],
+        ],
       });
     });
   });
@@ -240,24 +262,26 @@ describe('INSi Client', () => {
 
       expect(fetchInsResult).toEqual({
         successRequest: null,
-        failedRequests: [{
-          status: INSiServiceRequestStatus.SUCCESS,
-          request: {
-            id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
-            xml: getDeVinciLeonardoXmlRequest(padoaConf),
-          },
-          response: {
-            error: null,
-            formatted: null,
-            json: {
-              CR: {
-                CodeCR: CRCodes.MULTIPLE_MATCHES,
-                LibelleCR: CRLabels.MULTIPLE_MATCHES,
-              },
+        failedRequests: [
+          {
+            status: INSiServiceRequestStatus.SUCCESS,
+            request: {
+              id: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+              xml: getDeVinciLeonardoXmlRequest(padoaConf),
             },
-            xml: getCR02XmlResponse(),
+            response: {
+              error: null,
+              formatted: null,
+              json: {
+                CR: {
+                  CodeCR: CRCodes.MULTIPLE_MATCHES,
+                  LibelleCR: CRLabels.MULTIPLE_MATCHES,
+                },
+              },
+              xml: getCR02XmlResponse(),
+            },
           },
-        }],
+        ],
       });
     });
 
@@ -269,7 +293,10 @@ describe('INSi Client', () => {
         dateOfBirth: '1936-06-21',
       });
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
-      const cr01XmlResponse = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+      const cr01XmlResponse = fs.readFileSync(
+        'src/ins/fixtures/REP_CR01.xml',
+        'utf-8'
+      );
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId });
 
@@ -282,19 +309,23 @@ describe('INSi Client', () => {
           },
           response: getTchitchiCatarinaResponse(),
         },
-        failedRequests: [{
-          status: INSiServiceRequestStatus.SUCCESS,
-          request: {
-            id: requestId,
-            xml: getTchitchiOlaXmlRequest(padoaConf),
+        failedRequests: [
+          {
+            status: INSiServiceRequestStatus.SUCCESS,
+            request: {
+              id: requestId,
+              xml: getTchitchiOlaXmlRequest(padoaConf),
+            },
+            response: {
+              formatted: null,
+              json: {
+                CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' },
+              },
+              xml: cr01XmlResponse,
+              error: null,
+            },
           },
-          response: {
-            formatted: null,
-            json: { CR: { CodeCR: '01', LibelleCR: 'Aucune identite trouvee' } },
-            xml: cr01XmlResponse,
-            error: null,
-          },
-        }],
+        ],
       });
     });
 
@@ -306,7 +337,10 @@ describe('INSi Client', () => {
         dateOfBirth: '1993-01-27',
       });
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
-      const cr01XmlResponse = fs.readFileSync('src/fixtures/REP_CR01.xml', 'utf-8');
+      const cr01XmlResponse = fs.readFileSync(
+        'src/ins/fixtures/REP_CR01.xml',
+        'utf-8'
+      );
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId });
 
@@ -330,7 +364,10 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE' }),
+          xml: getCNDAValidationXmlRequest({
+            ...defaultExpectedResponseForHouilles,
+            firstName: 'PIERRE',
+          }),
         },
         response: CR01Response,
       };
@@ -338,7 +375,10 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PAUL' }),
+          xml: getCNDAValidationXmlRequest({
+            ...defaultExpectedResponseForHouilles,
+            firstName: 'PAUL',
+          }),
         },
         response: CR01Response,
       };
@@ -346,7 +386,10 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'JACQUES' }),
+          xml: getCNDAValidationXmlRequest({
+            ...defaultExpectedResponseForHouilles,
+            firstName: 'JACQUES',
+          }),
         },
         response: CR01Response,
       };
@@ -354,14 +397,22 @@ describe('INSi Client', () => {
         status: INSiServiceRequestStatus.SUCCESS,
         request: {
           id: requestId,
-          xml: getCNDAValidationXmlRequest({ ...defaultExpectedResponseForHouilles, firstName: 'PIERRE PAUL JACQUES' }),
+          xml: getCNDAValidationXmlRequest({
+            ...defaultExpectedResponseForHouilles,
+            firstName: 'PIERRE PAUL JACQUES',
+          }),
         },
         response: CR01Response,
       };
 
       expect(fetchInsResult).toEqual({
         successRequest: null,
-        failedRequests: [pierreFetchRequest, paulFetchRequest, jaquesFetchRequest, allNamesFetchRequest],
+        failedRequests: [
+          pierreFetchRequest,
+          paulFetchRequest,
+          jaquesFetchRequest,
+          allNamesFetchRequest,
+        ],
       });
     });
 
@@ -405,7 +456,9 @@ describe('INSi Client', () => {
         dateOfBirth: '2009-07-14',
       });
 
-      const fetchInsResult = await client.fetchIns(person, { requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f' });
+      const fetchInsResult = await client.fetchIns(person, {
+        requestId: 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f',
+      });
 
       expect(fetchInsResult).toEqual({
         successRequest: {
@@ -447,41 +500,44 @@ describe('INSi Client', () => {
 
       expect(fetchInsResult).toEqual({
         successRequest: null,
-        failedRequests: [{
-          status: INSiServiceRequestStatus.SUCCESS,
-          request: {
-            id: requestId,
-            xml: getDeVinciLeonardoXmlRequest(padoaConf),
-          },
-          response: {
-            error: null,
-            formatted: null,
-            json: {
-              CR: {
-                CodeCR: CRCodes.MULTIPLE_MATCHES,
-                LibelleCR: CRLabels.MULTIPLE_MATCHES,
+        failedRequests: [
+          {
+            status: INSiServiceRequestStatus.SUCCESS,
+            request: {
+              id: requestId,
+              xml: getDeVinciLeonardoXmlRequest(padoaConf),
+            },
+            response: {
+              error: null,
+              formatted: null,
+              json: {
+                CR: {
+                  CodeCR: CRCodes.MULTIPLE_MATCHES,
+                  LibelleCR: CRLabels.MULTIPLE_MATCHES,
+                },
               },
+              xml: getCR02XmlResponse(),
             },
-            xml: getCR02XmlResponse(),
           },
-        }, {
-          status: INSiServiceRequestStatus.FAIL,
-          request: {
-            id: requestId,
-            xml: dicaprioDevinciXmlRequest,
-          },
-          response: {
-            error: {
-              desirCode: 'desir_1020',
-              error: 'Le service appelé est temporairement indisponible',
-              siramCode: undefined,
-              text: undefined,
+          {
+            status: INSiServiceRequestStatus.FAIL,
+            request: {
+              id: requestId,
+              xml: dicaprioDevinciXmlRequest,
             },
-            formatted: null,
-            json: null,
-            xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:env="http://www.w3.org/2003/05/soap-envelope"><soap:Fault><soap:Code><soap:Value>soap:Sender</soap:Value><soap:Subcode><soap:Value>soap:siram_40</soap:Value></soap:Subcode></soap:Code><soap:Reason><soap:Text xml:lang="fr">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</soap:Text></soap:Reason><soap:Detail><siram:Erreur code="desir_1020" severite="fatale" messageID="uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f" xmlns:siram="urn:siram">Le service appelé est temporairement indisponible</siram:Erreur></soap:Detail></soap:Fault></env:Body></soap:Envelope>',
+            response: {
+              error: {
+                desirCode: 'desir_1020',
+                error: 'Le service appelé est temporairement indisponible',
+                siramCode: undefined,
+                text: undefined,
+              },
+              formatted: null,
+              json: null,
+              xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:env="http://www.w3.org/2003/05/soap-envelope"><soap:Fault><soap:Code><soap:Value>soap:Sender</soap:Value><soap:Subcode><soap:Value>soap:siram_40</soap:Value></soap:Subcode></soap:Code><soap:Reason><soap:Text xml:lang="fr">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</soap:Text></soap:Reason><soap:Detail><siram:Erreur code="desir_1020" severite="fatale" messageID="uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f" xmlns:siram="urn:siram">Le service appelé est temporairement indisponible</siram:Erreur></soap:Detail></soap:Fault></env:Body></soap:Envelope>',
+            },
           },
-        }],
+        ],
       });
     });
   });

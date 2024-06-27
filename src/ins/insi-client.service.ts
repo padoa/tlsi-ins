@@ -205,8 +205,8 @@ export class INSiClient {
     this._soapClient.setSecurity(new ClientSSLSecurityPFX(pfx, {
       passphrase,
       ca: combineCertAsPem([
-        path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
-        path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
+        path.resolve(__dirname, '../../certificates/ca/ACR-EL.cer'),
+        path.resolve(__dirname, '../../certificates/ca/ACI-EL-ORG.cer'),
       ]),
     }))
   }
@@ -214,8 +214,8 @@ export class INSiClient {
   private _setAssertionPsSecurity(assertionPs: string): void {
     this._soapClient.setSecurity(new AssertionPsSecurityClass(assertionPs, {
       ca: combineCertAsPem([
-        path.resolve(__dirname, '../certificates/ca/ACR-EL.cer'),
-        path.resolve(__dirname, '../certificates/ca/ACI-EL-ORG.cer'),
+        path.resolve(__dirname, '../../certificates/ca/ACR-EL.cer'),
+        path.resolve(__dirname, '../../certificates/ca/ACI-EL-ORG.cer'),
       ]),
     }));
   }

@@ -5,7 +5,7 @@ import { LPS } from '../src/class/lps.class';
 import { InsCertificateValidator } from '../src/class/ins-certificate-validator.class';
 import { InsCertificateValidity } from '../src/models/ins-certificate-validator/ins-certificate-validator.models';
 import { INSiClient } from '../src/insi-client.service';
-import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../src/models/env';
+import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../src/models/env.ins';
 import {
   AssertionStatus,
   InsAssertionResult,
@@ -37,8 +37,14 @@ const getClientWithDefinedId = (idam: string): INSiClient => {
 };
 
 export class VerifyCertificateProcessor {
-  public static async verifyCertificate (pfx: Buffer, passPhrase: string, endpoint: string, customizedIdam?: string): Promise<void> {
-    const { insCertificateValidity, insAssertions, error } = InsCertificateValidator.validatePKCS12(pfx, passPhrase);
+  public static async verifyCertificate(
+    pfx: Buffer,
+    passPhrase: string,
+    endpoint: string,
+    customizedIdam?: string
+  ): Promise<void> {
+    const { insCertificateValidity, insAssertions, error } =
+      InsCertificateValidator.validatePKCS12(pfx, passPhrase);
 
     if (error) {
       console.log('Certificate validity : ❌');
@@ -47,12 +53,24 @@ export class VerifyCertificateProcessor {
       return;
     }
 
-    console.log(`Certificate validity : ${insCertificateValidity === InsCertificateValidity.VALID ? '✅' : '❌'}`);
+    console.log(
+      `Certificate validity : ${
+        insCertificateValidity === InsCertificateValidity.VALID ? '✅' : '❌'
+      }`
+    );
     console.log('---');
-    Object.values(insAssertions as Record<InsAssertionType, InsAssertionResult>).forEach((assertion) => {
-      console.log(`${assertion.status === AssertionStatus.SUCCESS ? '✅' : '❌'} ${assertion.message}`);
-    })
-    if (insCertificateValidity === InsCertificateValidity.INVALID) { return; }
+    Object.values(
+      insAssertions as Record<InsAssertionType, InsAssertionResult>
+    ).forEach((assertion) => {
+      console.log(
+        `${assertion.status === AssertionStatus.SUCCESS ? '✅' : '❌'} ${
+          assertion.message
+        }`
+      );
+    });
+    if (insCertificateValidity === InsCertificateValidity.INVALID) {
+      return;
+    }
 
     console.log('\nTEST TO CALL INS SERVER WITH THE CERTIFICATE AND ADRUN ZOE');
     const insiClient = getClientWithDefinedId(customizedIdam || IDAM);
@@ -63,13 +81,26 @@ export class VerifyCertificateProcessor {
       gender: Gender.Female,
       dateOfBirth: '1975-12-31',
     });
-    const fetchInsResult = await insiClient.fetchIns(person, { virtualModeEnabled: false });
+    const fetchInsResult = await insiClient.fetchIns(person, {
+      virtualModeEnabled: false,
+    });
 
-    if (fetchInsResult.successRequest?.status!=='SUCCESS' && fetchInsResult.failedRequests[0]?.status!=='SUCCESS') {
-      const errorMessage = fetchInsResult.successRequest ? fetchInsResult.successRequest : fetchInsResult.failedRequests[0];
-      throw new Error(`Unable to make a valid INS call. Error message:\n${JSON.stringify(errorMessage)}`);
+    if (
+      fetchInsResult.successRequest?.status !== 'SUCCESS' &&
+      fetchInsResult.failedRequests[0]?.status !== 'SUCCESS'
+    ) {
+      const errorMessage = fetchInsResult.successRequest
+        ? fetchInsResult.successRequest
+        : fetchInsResult.failedRequests[0];
+      throw new Error(
+        `Unable to make a valid INS call. Error message:\n${JSON.stringify(
+          errorMessage
+        )}`
+      );
     }
-    const responseMessage = fetchInsResult.successRequest ? fetchInsResult.successRequest : fetchInsResult.failedRequests[0];
+    const responseMessage = fetchInsResult.successRequest
+      ? fetchInsResult.successRequest
+      : fetchInsResult.failedRequests[0];
     console.log(responseMessage.response.json);
     console.log('\nALL IS GOOD, YOU CAN USE THE CERTIFICATE\n');
   }

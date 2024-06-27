@@ -1,13 +1,13 @@
-import { INSiPersonArgs } from "src/class/insi-person.class";
-import { AdrunZoeVirtualMode } from "./AdrunZoeVirtualMode"
-import { TchitchiOlaVirtualMode } from "./TchitchiOlaVirtualMode";
-import { INSITestingUser, INSiServiceFetchInsRequest, INSiServiceRequestEnv } from "../../models/insi-fetch-ins.models";
-import { HouillesPierreVirtualMode } from "./HouillesPierreVirtualMode";
-import { CorseAnthonyVirtualMode } from "./CorseAnthonyVirtualMode";
-import { EcetinsiPierreAlainVirtualMode } from "./EcetinsiPierreAlainVirtualMode";
-import { HermanGatienVirtualMode } from "./HermanGatienVirtualMode";
-import { NessiMichelangeloVirtualMode } from "./NessiMichelangeloVirtualMode";
-import BasicVirtualMode from "./BasicVirtualMode";
+import { INSiPersonArgs } from 'src/ins/class/insi-person.class';
+import { AdrunZoeVirtualMode } from './AdrunZoeVirtualMode'
+import { TchitchiOlaVirtualMode } from './TchitchiOlaVirtualMode';
+import { INSITestingUser, INSiServiceFetchInsRequest, INSiServiceRequestEnv } from '../../models/insi-fetch-ins.models';
+import { HouillesPierreVirtualMode } from './HouillesPierreVirtualMode';
+import { CorseAnthonyVirtualMode } from './CorseAnthonyVirtualMode';
+import { EcetinsiPierreAlainVirtualMode } from './EcetinsiPierreAlainVirtualMode';
+import { HermanGatienVirtualMode } from './HermanGatienVirtualMode';
+import { NessiMichelangeloVirtualMode } from './NessiMichelangeloVirtualMode';
+import BasicVirtualMode from './BasicVirtualMode';
 
 export const getPersonMockedRequest = (person: INSiPersonArgs, clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
   const formattedName = `${person.birthName} ${person.firstName}`.toLowerCase();

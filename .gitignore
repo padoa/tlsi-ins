@@ -8,6 +8,8 @@
 !certificates/INSI-AUTO/AUTO-certificate-fake.p12
 !certificates/INSI-MANU/MANU-certificate.p12
 !certificates/bad-ssl/badssl.com-client.p12
+!certificates/mss/padoa-group-environnement-dev.22-04-2024-12-16-14.p12
+!certificates/mss/updated-padoa-group-environnement-dev.22-04-2024-12-16-14.p12
 
 # Taken from https://github.com/microsoft/TypeScript-Node-Starter/blob/master/.gitignore
 lib-cov

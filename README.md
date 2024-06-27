@@ -29,10 +29,23 @@ To show certificate info you can use:
 openssl pkcs12 -info -in certificates/INSI-AUTO/AUTO-certificate.p12
 # Make sure to have the CN of your first certificate be INSI-MANU or INSI-AUTO or you might run into DESIR_560
 # subject=/C=FR/ST=Rh\xC3\xB4ne (69)/O=CENTRE DE SANTE RPPS15287/OU=10B0152872/CN=Padoa
+
+$ openssl pkcs12 -info -in certificates/mss/padoa-group-environnement-dev.22-04-2024-12-16-14.p12
+Enter Import Password:
+MAC Iteration 2048
+MAC verified OK
+PKCS7 Encrypted data: pbeWithSHA1And40BitRC2-CBC, Iteration 2048
+Certificate bag
+Bag Attributes
+    localKeyID: 13 04 AA 0C F6 41 0E 04 D3 A8 A9 4E E7 0E A4 BA 7E F9 6D 08
+subject=/C=FR/ST=FRANCE/L=TOULOUSE/O=MIPIH/OU=MEDIMAIL/CN=padoa.aodap-dev.fr
+issuer=/C=FR/ST=FRANCE/L=TOULOUSE/O=MIPIH/OU=MEDIMAIL/CN=medimail.mipih.fr/emailAddress=medimail@mipih.fr
 ```
 
 ## Script
+
 #### test certificate
+
 The script use environment variable by default (TLSI_INS_SOFTWARE_NAME, TLSI_INS_SOFTWARE_VERSION & TLSI_INS_IDAM) but you can use a personalized idam with the parameters of the script.
 To run the script, execute
 
@@ -102,7 +115,7 @@ Certificate validity : ❌
 ✅ Certificate validity dates:
 	notBefore: 2023-11-29T22:34:03.000Z
 	notAfter: 2025-11-28T22:34:03.000Z
- ```
+```
 
 ```sh
 Invalid password certificate
