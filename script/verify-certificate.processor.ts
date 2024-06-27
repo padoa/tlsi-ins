@@ -1,16 +1,17 @@
-import { BamContext } from '../src/class/bam-context.class';
-import { Gender, INSiPerson } from '../src/class/insi-person.class';
-import { LpsContext } from '../src/class/lps-context.class';
-import { LPS } from '../src/class/lps.class';
-import { InsCertificateValidator } from '../src/class/ins-certificate-validator.class';
-import { InsCertificateValidity } from '../src/models/ins-certificate-validator/ins-certificate-validator.models';
-import { INSiClient } from '../src/insi-client.service';
-import { IDAM, SOFTWARE_NAME, SOFTWARE_VERSION } from '../src/models/env.ins';
 import {
   AssertionStatus,
+  BamContext,
+  Gender,
   InsAssertionResult,
   InsAssertionType,
-} from '../src/models/ins-certificate-validator/ins-assertion.models';
+  InsCertificateValidator,
+  InsCertificateValidity,
+  INSiClient,
+  INSiPerson,
+  LPS,
+  LpsContext
+} from '../src';
+import {IDAM, SOFTWARE_NAME, SOFTWARE_VERSION} from '../src/ins/models/env.ins';
 
 const getClientWithDefinedId = (idam: string): INSiClient => {
   const lps = new LPS({

@@ -1,4 +1,4 @@
-import { PKCS12Certificate } from './pkcs12-certificate.models';
+import { PKCS12Certificate } from '../../../globals/models/pkcs12-certificate.models';
 import { InsAssertionResult, InsAssertionType, InsCertificateSubjectCn } from './ins-assertion.models';
 
 export enum InsCertificateValidity {

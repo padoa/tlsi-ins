@@ -5,7 +5,7 @@ import {
   InsCertificateIssuerCn,
   InsCertificateSubjectCn,
 } from '../models/ins-certificate-validator/ins-assertion.models';
-import { PKCS12Certificate } from '../models/ins-certificate-validator/pkcs12-certificate.models';
+import { PKCS12Certificate } from '../../globals/models/pkcs12-certificate.models';
 
 export class InsCertificateAssertionHelper {
   public static insCertificateValidIssuerCn = [InsCertificateIssuerCn.AC_IGC_SANTE, InsCertificateIssuerCn.TEST_AC_IGC_SANTE];
