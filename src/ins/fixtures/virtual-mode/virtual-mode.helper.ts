@@ -7,6 +7,7 @@ import { CorseAnthonyVirtualMode } from './CorseAnthonyVirtualMode';
 import { EcetinsiPierreAlainVirtualMode } from './EcetinsiPierreAlainVirtualMode';
 import { HermanGatienVirtualMode } from './HermanGatienVirtualMode';
 import { NessiMichelangeloVirtualMode } from './NessiMichelangeloVirtualMode';
+import { VandermondeArianaVirtualMode } from './VandermondeArianaVirtualMode';
 import BasicVirtualMode from './BasicVirtualMode';
 
 export const getPersonMockedRequest = (person: INSiPersonArgs, clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] => {
@@ -33,6 +34,9 @@ export const getPersonMockedRequest = (person: INSiPersonArgs, clientConfig: INS
             break;
         case INSITestingUser.NESSIMICHELANGELO:
             fetchRequests = NessiMichelangeloVirtualMode.getBuiltResponse(clientConfig);
+            break;
+        case INSITestingUser.VANDERMONDE:
+            fetchRequests = VandermondeArianaVirtualMode.getServiceDownResponse(clientConfig);
             break;
         default:
             fetchRequests = BasicVirtualMode.getBuiltNotImplementedResponse(clientConfig, person);

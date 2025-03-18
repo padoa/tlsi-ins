@@ -55,6 +55,7 @@ export enum INSITestingUser {
   HOUILLES = 'houilles pierre',
   NESSIMICHELANGELO = 'nessi michelangelo',
   TCHITCHI = 'tchitchi ola catarina bella',
+  VANDERMONDE = 'vandermonde ariana',
 }
 
 export interface InsHisto {
@@ -115,6 +116,11 @@ export interface INSiServiceFormattedResponse {
   placeOfBirthCode?: string;
   registrationNumber?: string;
   oid?: string;
+}
+
+export interface INSiMockedErrorResponse {
+  firstnameRequest: string,
+  error: INSiServiceError,
 }
 
 export interface INSiServiceRequestEnv {

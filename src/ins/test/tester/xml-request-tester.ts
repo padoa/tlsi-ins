@@ -54,6 +54,30 @@ export const getNoIdentityXmlResponseTest = (): string => {
   ].join('');
 };
 
+export const getServiceUnavailableXmlResponse = (): string => {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>\n',
+    '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+    '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+    '<S:Fault xmlns:ns4="http://schemas.xmlsoap.org/soap/envelope/">',
+    '<S:Code>',
+    '<S:Value>S:Receiver</S:Value>',
+    '<S:Subcode>',
+    '<S:Value>S:siram_40</S:Value>',
+    '</S:Subcode>',
+    '</S:Code>',
+    '<S:Reason>',
+    `<S:Text xml:lang="en">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.</S:Text>`,
+    '</S:Reason>',
+    '<S:Detail>',
+    `<siram:Erreur severite="fatal" code="insi_102" xmlns:siram="urn:siram">L'appel au service de recherche avec les traits d'identité renvoie une erreur technique.</siram:Erreur>`,
+    '</S:Detail>',
+    '</S:Fault>',
+    '</env:Body>',
+    '</soap:Envelope>',
+  ].join('');
+};
+
 const getXmlInsHisto = (insHisto: InsHisto[]): string => {
   return insHisto.map((insHisto: InsHisto) => {
     return [

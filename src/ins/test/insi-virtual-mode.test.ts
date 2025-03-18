@@ -1,6 +1,6 @@
 import { INSiClient } from '../insi-client.service';
 import { Gender, INSiPerson } from '../class/insi-person.class';
-import { getNoIdentityXmlResponseTest, getValidXmlResponseTest, getXmlRequestTest } from './tester/xml-request-tester';
+import { getNoIdentityXmlResponseTest, getServiceUnavailableXmlResponse, getValidXmlResponseTest, getXmlRequestTest } from './tester/xml-request-tester';
 import { INSiServiceFormattedResponse } from '../models/insi-fetch-ins.models';
 import { BamContext } from '../class/bam-context.class';
 import { LpsContext } from '../class/lps-context.class';
@@ -640,5 +640,37 @@ describe('INSi Client - virtualMode', () => {
       });
     });
 
+    test('should get correct response for Vandermonde Ariana', async () => {
+      const requestId = 'b3d188ab-8bc5-4e75-b217-a0ecf58a6953';
+      const person = new INSiPerson({
+        birthName: 'VANDERMONDE',
+        firstName: 'ARIANA',
+        gender: Gender.Female,
+        dateOfBirth: '1995-06-17',
+      });
+
+      const fetchInsResult = await insiClient.fetchIns(person, { requestId, virtualModeEnabled: true });
+      expect(fetchInsResult).toEqual({
+        successRequest: null,
+        failedRequests: [{
+          'status': 'FAIL',
+          'request': {
+            'id': expect.any(String),
+            'xml': getXmlRequestTest({ ...clientConfig, person: { firstName: 'ARIANA', birthName: 'VANDERMONDE', dateOfBirth: '1995-06-17', gender: Gender.Female }, requestId, date: nowDate })
+          },
+          'response': {
+            formatted: null,
+            json: null,
+            xml: getServiceUnavailableXmlResponse(),
+            error: {
+              text:"Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.",
+              error:"L'appel au service de recherche avec les traits d'identité renvoie une erreur technique.",
+              desirCode:'insi_102',
+              siramCode:'siram_40'
+            }
+          }
+        }],
+      });
+    });
   });
 });

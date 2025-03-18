@@ -1,11 +1,13 @@
-import _ from "lodash";
-import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequestEnv, INSiServiceJsonResponse, INSiServiceResponse } from "../../models/insi-fetch-ins.models";
+import _ from 'lodash';
+import { CRCodes, CRLabels, INSiMockedResponse, INSiServiceFetchInsRequest, INSiServiceFormattedResponse, InsHisto, INSiServiceRequestStatus, INSiServiceRequestEnv, INSiServiceJsonResponse, INSiServiceResponse, INSiMockedErrorResponse } from '../../models/insi-fetch-ins.models';
 import { Gender, INSiPersonArgs } from '../../class/insi-person.class';
 
 export default class BasicVirtualMode {
   static insHisto: InsHisto[] = [];
   static personDetails: INSiServiceFormattedResponse;
   static fetchRequestFlow: INSiMockedResponse[];
+  static fetchErrorRequest: INSiMockedErrorResponse[];
+
 
   public static getBuiltResponse(clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
     return this.fetchRequestFlow.map((response: INSiMockedResponse): INSiServiceFetchInsRequest => {
@@ -37,6 +39,24 @@ export default class BasicVirtualMode {
         LibelleCR: CRLabels.NO_RESULT
       } as INSiMockedResponse),
     }];
+  }
+
+  public static getServiceDownResponse(clientConfig: INSiServiceRequestEnv): INSiServiceFetchInsRequest[] {
+    return this.fetchErrorRequest.map((response: INSiMockedErrorResponse): INSiServiceFetchInsRequest => {
+      return {
+        status: INSiServiceRequestStatus.FAIL,
+        request: {
+          id: clientConfig.requestId as string,
+          xml: this._getXmlRequest({
+            birthName: this.personDetails.birthName,
+            firstName: response.firstnameRequest,
+            gender: this.personDetails.gender,
+            dateOfBirth: this.personDetails.dateOfBirth,
+          }, clientConfig)
+        },
+        response: this._buildJsonErrorResponse(),
+      }
+    });
   }
 
   private static _getXmlRequest(
@@ -79,7 +99,7 @@ export default class BasicVirtualMode {
 
   private static _getXmlInsHisto(): string {
     if (_.isNil(this.insHisto) || this.insHisto.length === 0) {
-      return "";
+      return '';
     }
     return this.insHisto.map((insHisto: InsHisto) => {
       return [
@@ -104,8 +124,8 @@ export default class BasicVirtualMode {
       '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
       '<RESULTAT xmlns="http://www.cnamts.fr/INSiResultat" xmlns:ns0="http://www.cnamts.fr/INSiRecVit" xmlns:ns1="http://www.cnamts.fr/INSiRecSans">',
       '<CR>',
-      `<CodeCR>00</CodeCR>`,
-      `<LibelleCR>OK</LibelleCR>`,
+      '<CodeCR>00</CodeCR>',
+      '<LibelleCR>OK</LibelleCR>',
       '</CR>',
       '<INDIVIDU>',
       '<INSACTIF>',
@@ -128,7 +148,7 @@ export default class BasicVirtualMode {
       '</env:Body>',
       '</soap:Envelope>',
     ].join('');
-  };
+  }
 
   private static _getNoIdentityXmlResponse(): string {
     return [
@@ -137,14 +157,38 @@ export default class BasicVirtualMode {
       '<S:Body xmlns:S=\"http://www.w3.org/2003/05/soap-envelope\">',
       '<RESULTAT xmlns:ns3=\"http://www.cnamts.fr/INSiRecVit\" xmlns:ns2=\"http://www.cnamts.fr/INSiRecSans\" xmlns=\"http://www.cnamts.fr/INSiResultat\">',
       '<CR>',
-      `<CodeCR>01</CodeCR>`,
-      `<LibelleCR>Aucune identite trouvee</LibelleCR>`,
+      '<CodeCR>01</CodeCR>',
+      '<LibelleCR>Aucune identite trouvee</LibelleCR>',
       '</CR>',
       '</RESULTAT>',
       '</S:Body>',
       '</soap:Envelope>',
     ].join('');
-  };
+  }
+
+  private static _getServiceUnavailableXmlResponse(): string {
+    return [
+      '<?xml version="1.0" encoding="UTF-8"?>\n',
+      '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">',
+      '<env:Body xmlns:S="http://www.w3.org/2003/05/soap-envelope" xmlns:env="http://www.w3.org/2003/05/soap-envelope">',
+      '<S:Fault xmlns:ns4="http://schemas.xmlsoap.org/soap/envelope/">',
+      '<S:Code>',
+      '<S:Value>S:Receiver</S:Value>',
+      '<S:Subcode>',
+      '<S:Value>S:siram_40</S:Value>',
+      '</S:Subcode>',
+      '</S:Code>',
+      '<S:Reason>',
+      '<S:Text xml:lang="en">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</S:Text>',
+      '</S:Reason>',
+      '<S:Detail>',
+      '<siram:Erreur severite="fatal" code="insi_102" xmlns:siram="urn:siram">L\'appel au service de recherche avec les traits d\'identité renvoie une erreur technique.</siram:Erreur>',
+      '</S:Detail>',
+      '</S:Fault>',
+      '</env:Body>',
+      '</soap:Envelope>',
+    ].join('');
+  }
 
   private static _buildJsonResponse(response: INSiMockedResponse): INSiServiceResponse {
     const numIdentifiant = this.personDetails?.registrationNumber?.slice(0, -2);
@@ -195,8 +239,22 @@ export default class BasicVirtualMode {
         break;
 
       default:
-        throw new Error("CR code unvalid !");
+        throw new Error('CR code unvalid !');
         break;
+    }
+  }
+
+  private static _buildJsonErrorResponse(): INSiServiceResponse {
+    return {
+      formatted: null,
+      json: null,
+      xml: this._getServiceUnavailableXmlResponse(),
+      error: {
+          text:"Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l'éditeur du progiciel ou votre responsable informatique.",
+          error:"L'appel au service de recherche avec les traits d'identité renvoie une erreur technique.",
+          desirCode:'insi_102',
+          siramCode:'siram_40'
+      }
     }
   }
 }

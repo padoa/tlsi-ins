@@ -3,7 +3,7 @@
   "description": "Access the Téléservice Identité Nationale de Santé & Medimail MSSanté API with a js API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "scripts": {
     "build": "rm -rf dist && npm run clean && tsc",
     "clean": "tsc --build --clean",
