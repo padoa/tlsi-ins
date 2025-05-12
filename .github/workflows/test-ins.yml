@@ -15,6 +15,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
       - run: npm install
       - run: npm test src/ins/test/insi-client.test.ts src/ins/test/insi-virtual-mode.test.ts
