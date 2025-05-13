@@ -31,12 +31,13 @@ describe('Medimail Client', () => {
   test('should fail to make a first call to the hello API with the old certificate', async () => {
     const medimailClient = new MedimailClient();
     const expecterErrorMessage = 'unsupported';
+    const expecterErrorMessage2 = 'Unsupported PKCS12 PFX data';
 
     await medimailClient.init(failingMmlPfx, MML_CERTIFICATE_PASSPHRASE, MML_ACCOUNT_EMAIL);
 
     expect(async () => {
       await medimailClient.hello(MML_ACCOUNT_EMAIL);
-    }).rejects.toThrow(expecterErrorMessage);
+    }).rejects.toThrow(new RegExp(`${expecterErrorMessage}|${expecterErrorMessage2}`));
   });
 
   test('should make a call to the hello API when using the correct certificate', async () => {
