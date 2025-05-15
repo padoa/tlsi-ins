@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "version": "5.0.1",
   "scripts": {
-    "build": "rm -rf dist && npm run clean && tsc",
+    "build": "rm -rf dist && npm run clean && tsc && mkdir -p dist/wsdl && cp -r src/wsdl/* dist/wsdl/",
     "clean": "tsc --build --clean",
     "test": "jest",
     "verify-certif": "npx tsx ./script/verify-certificate.ts"
