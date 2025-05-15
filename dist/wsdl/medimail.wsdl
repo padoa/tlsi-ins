@@ -1,0 +1,256 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:tns="urn:medimailservicewsdl"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="urn:medimailservicewsdl">
+
+	<types>
+		<xsd:schema targetNamespace="urn:medimailservicewsdl">
+            <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+			<xsd:complexType name="attachment">
+				<xsd:sequence>
+					<xsd:element type="xsd:string" name="name"></xsd:element>
+					<xsd:element type="xsd:string" name="content"></xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="attachments">
+				<xsd:sequence>
+					<xsd:element type="tns:attachment" name="attachment1"></xsd:element>
+					<xsd:element type="tns:attachment" name="attachment2"></xsd:element>
+					<xsd:element type="tns:attachment" name="attachment3"></xsd:element>
+					<xsd:element type="tns:attachment" name="attachment4"></xsd:element>
+					<xsd:element type="tns:attachment" name="attachment5"></xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</types>
+
+	<message name="helloRequest">
+        <part name="name" type="xsd:string"/>
+    </message>
+
+    <message name="helloResponse">
+        <part name="return" type="xsd:string"/>
+    </message>
+
+	<message name="annuaire">
+		<part name="acount" type="xsd:string"></part>
+		<part name="search" type="xsd:string"></part>
+	</message>
+	<message name="annuaireResponse">
+		<part name="annaireReturn" type="xsd:string"></part>
+	</message>
+
+	<message name="open">
+		<part name="acount" type="xsd:string"></part>
+		<part name="ref" type="xsd:string"></part>
+	</message>
+	<message name="openResponse">
+		<part name="openReturn" type="xsd:string"></part>
+	</message>
+
+	<message name="opendebug">
+		<part name="ref" type="xsd:string"></part>
+	</message>
+	<message name="opendebugResponse">
+		<part name="openReturn" type="xsd:string"></part>
+	</message>
+
+	<message name="send">
+		<part name="acount" type="xsd:string"></part>
+		<part name="signatories" type="xsd:string"></part>
+		<part name="recipients" type="xsd:string"></part>
+		<part name="title" type="xsd:string"></part>
+		<part name="message" type="xsd:string"></part>
+		<part name="attachments" type="tns:attachments"></part>
+		<part name="loinc" xsi:nil="true" type="xsd:string"></part>
+		<part name="replyTo" xsi:nil="true" type="xsd:string"></part>
+		<part name="inReplyTo" xsi:nil="true" type="xsd:string"></part>
+		<part name="mailReferences" xsi:nil="true" type="xsd:string"></part>
+		<part name="accuseReception" xsi:nil="true" type="xsd:string"></part>
+        <part name="ins" xsi:nil="true" type="xsd:string"></part>
+        <part name="codecda" xsi:nil="true" type="xsd:string"></part>
+        <part name="nil" xsi:nil="true" type="xsd:string"></part>
+	</message>
+	<message name="sendResponse">
+		<part name="sendResult" type="xsd:string"></part>
+	</message>
+
+	<message name="checkbox">
+		<part name="acount" type="xsd:string"></part>
+		<part name="type" type="xsd:int"></part>
+		<part name="begindate" type="xsd:dateTime"></part>
+		<part name="enddate" type="xsd:dateTime"></part>
+	</message>
+	<message name="checkboxResponse">
+		<part name="checkboxReturn" type="xsd:string"></part>
+	</message>
+
+        <message name="control">
+		<part name="account" type="xsd:string"></part>
+	</message>
+	<message name="controlResponse">
+		<part name="controlResult" type="xsd:string"></part>
+	</message>
+
+	<message name="webicron">
+		<part name="acount" type="xsd:string"></part>
+		<part name="signatories" type="xsd:string"></part>
+		<part name="recipients" type="xsd:string"></part>
+		<part name="title" type="xsd:string"></part>
+		<part name="message" type="xsd:string"></part>
+		<part name="file" type="xsd:string"></part>
+	</message>
+	<message name="webicronResponse">
+		<part name="webicronReturn" type="xsd:string"></part>
+	</message>
+
+	<portType name="WebServicesPortType">
+		<operation name="hello">
+            <documentation>Hello World</documentation>
+            <input message="tns:helloRequest"/>
+            <output message="tns:helloResponse"/>
+        </operation>
+		<operation name="annuaire">
+			<documentation>Effectue une recherche dans l'annuaire</documentation>
+			<input message="tns:annuaire"></input>
+			<output message="tns:annuaireResponse"></output>
+		</operation>
+		<operation name="open">
+			<documentation>Ouverture d'une enveloppe</documentation>
+			<input message="tns:open"></input>
+			<output message="tns:openResponse"></output>
+		</operation>
+		<operation name="opendebug">
+			<input message="tns:opendebug"></input>
+			<output message="tns:opendebugResponse"></output>
+		</operation>
+		<operation name="send">
+			<documentation>Envoi d'une enveloppe</documentation>
+			<input message="tns:send"></input>
+			<output message="tns:sendResponse"></output>
+		</operation>
+		<operation name="checkbox">
+			<documentation>Surveillance d'un compte</documentation>
+			<input message="tns:checkbox"></input>
+			<output message="tns:checkboxResponse"></output>
+		</operation>
+		<operation name="webicron">
+			<documentation>Enregistrement d'une enveloppe en attente</documentation>
+			<input message="tns:webicron"></input>
+			<output message="tns:webicronResponse"></output>
+		</operation>
+		<operation name="control">
+			<documentation>Contrle existance compte</documentation>
+			<input message="tns:control"></input>
+			<output message="tns:controlResponse"></output>
+		</operation>
+	</portType>
+
+	<binding name="WebServicesBinding" type="tns:WebServicesPortType">
+		<soap:binding style="rpc"
+			transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
+		<operation name="hello">
+            <soap:operation soapAction="urn:arnleadservicewsdl#hello" style="rpc"/>
+
+            <input>
+                <soap:body use="encoded" namespace="urn:hellowsdl"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </input>
+
+            <output>
+                <soap:body use="encoded" namespace="urn:hellowsdl"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </output>
+        </operation>
+		<operation name="annuaire">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+		<operation name="open">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+		<operation name="opendebug">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+		<operation name="send">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+		<operation name="checkbox">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+		<operation name="webicron">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+		<operation name="control">
+			<soap:operation soapAction="urn:WebServicesAction"></soap:operation>
+			<input>
+				<soap:body namespace="urn:medimail" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</input>
+			<output>
+				<soap:body namespace="https://medimail.mipih.fr/wsdl/medimail.php" use="encoded"
+					encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"></soap:body>
+			</output>
+		</operation>
+	</binding>
+	<service name="medimailService">
+		<port name="WebServicesPort" binding="tns:WebServicesBinding">
+			<soap:address location="https://medimail.mipih.fr/wsdl_mss"></soap:address>
+		</port>
+	</service>
+</definitions>

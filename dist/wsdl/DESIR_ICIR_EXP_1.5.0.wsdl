@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Parametres de ce template WSDL ESPOIR (balises a remplacer dans tout le document WSDL) :
+	- [domaine] : nom du domaine fonctionnel de l'application exposant le service
+	- [codeApplicatif] : Code applicatif du service au format cnam : ex : JK, BIMR etc..
+	- [ServiceMetierCourt] : le service metier court. Ex. : AAT
+	- [ServiceMetierLong] : le service metier long. Ex. : ServiceAvisArretTravail
+	- [versionMajeure] : version majeure du service au format suivant : ex : 0, 1, 2 etc..
+	- [versionMineure] : version mineure du service au format suivant : ex : 0, 1, 2 etc..
+	- [nomOperation1] : le nom d'une operation. Pour definir d'autres operations, il faut dupliquer ce premier template.
+	- [Documentation succincte du service] : doc. du present document WSDL
+	- [Documentation succincte sur le contrat de service expose] : doc. du service expose (balise wsdl:service).
+-->
+<wsdl:definitions name="ServiceIdentiteCertifiee-v1"
+	targetNamespace="http://www.cnamts.fr/webservice"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:tns="http://www.cnamts.fr/webservice"
+	xmlns:insi="http://www.cnamts.fr/ServiceIdentiteCertifiee/v1"
+	xmlns:wsaw="http://www.w3.org/2006/02/addressing/wsdl"
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:insi_recsans_ins="http://www.cnamts.fr/INSiRecSans"
+    xmlns:insi_recvit_ins="http://www.cnamts.fr/INSiRecVit"
+   	xmlns:insi_resultat_ins="http://www.cnamts.fr/INSiResultat"
+   	xmlns:wsa="http://www.w3.org/2005/08/addressing"
+   	xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+   	xmlns:ctxbam="urn:siram:bam:ctxbam"
+   	xmlns:ctxlps="urn:siram:lps:ctxlps"
+	xmlns:siram="urn:siram"
+   	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    jaxb:extensionBindingPrefixes="xjc"
+    jaxb:version="1.0">
+
+	<wsdl:documentation>service de recherche et de vérification de l’Identifiant National de Santé (INS)</wsdl:documentation>
+	<wsdl:types>
+		<xs:schema>
+			<!-- Import de l'ensemble des schemas XSD utiles au service, Conformément à la règle PWS-WSDL-0320 -->
+			<xs:import namespace="http://www.cnamts.fr/INSiRecSans" schemaLocation="xsd/ServiceIdentiteCertifiee/INSi_RECSANS_INS.xsd" />
+			<xs:import namespace="http://www.cnamts.fr/INSiRecVit" schemaLocation="xsd/ServiceIdentiteCertifiee/INSi_RECVITALE_INS.xsd" />
+			<xs:import namespace="http://www.cnamts.fr/INSiResultat" schemaLocation="xsd/ServiceIdentiteCertifiee/INSi_RESULTAT_INS.xsd" />
+			<xs:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" schemaLocation="xsd/WSSE/Security.xsd"/>
+			<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+			<xs:import namespace="urn:siram:lps:ctxlps" schemaLocation="xsd/CTX/ROOT_ctxlps_CTXLPS_V01_00.xsd"/>
+			<xs:import namespace="urn:siram:bam:ctxbam" schemaLocation="xsd/CTX/ROOT_ctxbam_CTXBAM_V01_02.xsd"/>
+			<xs:import namespace="urn:siram" schemaLocation="xsd/schema_faultSOAP_V01_01.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+
+	<!-- Declaration des formats des messages -->
+	<!-- Message de requete -->
+	<wsdl:message name="rechercherInsAvecCarteVitale">
+		<wsdl:part name="rechercherInsAvecCarteVitale" element="insi_recvit_ins:RECVITALE"/>
+		<wsdl:part name="NO1_Security" element="wsse:Security"/>
+		<wsdl:part name="NO1_ContexteLPS" element="ctxlps:ContexteLPS"/>
+		<wsdl:part name="NO1_MessageID" element="wsa:MessageID"/>
+		<wsdl:part name="NO1_ContexteBAM" element="ctxbam:ContexteBAM"/>
+	</wsdl:message>
+
+	<!-- Message de reponse -->
+	<wsdl:message name="rechercherInsAvecCarteVitaleResponse">
+		<wsdl:part name="rechercherInsAvecCarteVitaleResponse" element="insi_resultat_ins:RESULTAT"/>
+	</wsdl:message>
+
+		<!-- Message de requete -->
+	<wsdl:message name="rechercherInsAvecTraitsIdentite">
+		<wsdl:part name="rechercherInsAvecTraitsIdentite" element="insi_recsans_ins:RECSANSVITALE"/>
+		<wsdl:part name="NO1_Security" element="wsse:Security"/>
+		<wsdl:part name="NO1_ContexteLPS" element="ctxlps:ContexteLPS"/>
+		<wsdl:part name="NO1_MessageID" element="wsa:MessageID"/>
+		<wsdl:part name="NO1_ContexteBAM" element="ctxbam:ContexteBAM"/>
+	</wsdl:message>
+
+	<!-- Message de reponse -->
+	<wsdl:message name="rechercherInsAvecTraitsIdentiteResponse">
+		<wsdl:part name="rechercherInsAvecTraitsIdentiteResponse" element="insi_resultat_ins:RESULTAT"/>
+	</wsdl:message>
+
+	<!-- Message de l'erreur -->
+	<wsdl:message name="Erreur">
+		<wsdl:part name="Erreur" element="siram:Erreur"/>
+	</wsdl:message>
+
+
+	<!-- Declaration d'un seul portType : un seul web service est expose
+	 Par contre, celui-ci peut definir plusieurs operations. Ici, nous en illustrons une seule a dupliquer -->
+	<wsdl:portType name="ICIRService">
+		<wsdl:operation name="rechercherInsAvecCarteVitale">
+			<!-- Adressage de l'action a mener pour cette operation -->
+			<wsdl:input name="rechercherInsAvecCarteVitale" message="tns:rechercherInsAvecCarteVitale" wsaw:Action="urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecCarteVitale"/>
+			<!-- Attention, pour le message de reponse, la balise wsaw est identique a celle presente pour le message de requete -->
+			<wsdl:output name="rechercherInsAvecCarteVitaleResponse" message="tns:rechercherInsAvecCarteVitaleResponse" wsaw:Action="urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecCarteVitaleResponse"/>
+			<!-- Message erreur-->
+			<wsdl:fault name="Erreur" message="tns:Erreur"/>
+		</wsdl:operation>
+		<wsdl:operation name="rechercherInsAvecTraitsIdentite">
+			<!-- Adressage de l'action a mener pour cette operation -->
+			<wsdl:input name="rechercherInsAvecTraitsIdentite" message="tns:rechercherInsAvecTraitsIdentite" wsaw:Action="urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecTraitsIdentite"/>
+			<!-- Attention, pour le message de reponse, la balise wsaw est identique a celle presente pour le message de requete -->
+			<wsdl:output name="rechercherInsAvecTraitsIdentiteResponse" message="tns:rechercherInsAvecTraitsIdentiteResponse" wsaw:Action="urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecTraitsIdentiteResponse"/>
+			<!-- Message erreur-->
+			<wsdl:fault name="Erreur" message="tns:Erreur"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<!-- Declaration des operations associees au port unique -->
+	<wsdl:binding name="ICIRServiceBinding" type="tns:ICIRService">
+		<!-- Le protocole est obligatoirement http avec soap en mode "document" -->
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="rechercherInsAvecCarteVitale">
+			<!-- La balise soap12:operation doit contenir la version de l'operation -->
+			<soap12:operation soapAction="urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecCarteVitale"/>
+			<!-- Les messages de requete et de reponse ne doivent pas etre encodes use="literal" -->
+			<wsdl:input name="rechercherInsAvecCarteVitale">
+				<!-- Attention, la balise soap:body Ne doit PAS contenir d'attribut message -->
+				<soap12:body parts="rechercherInsAvecCarteVitale" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecCarteVitale" part="NO1_Security" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecCarteVitale" part="NO1_ContexteLPS" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecCarteVitale" part="NO1_MessageID" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecCarteVitale" part="NO1_ContexteBAM" use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="rechercherInsAvecCarteVitaleResponse">
+				<soap12:body parts="rechercherInsAvecCarteVitaleResponse" use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="Erreur">
+				<soap12:fault name="Erreur" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="rechercherInsAvecTraitsIdentite">
+			<!-- La balise soap12:operation doit contenir la version de l'operation -->
+			<soap12:operation soapAction="urn:ServiceIdentiteCertifiee:1.0.0:rechercherInsAvecTraitsIdentite"/>
+			<!-- Les messages de requete et de reponse ne doivent pas etre encodes use="literal" -->
+			<wsdl:input name="rechercherInsAvecTraitsIdentite">
+				<!-- Attention, la balise soap:body Ne doit PAS contenir d'attribut message -->
+				<soap12:body parts="rechercherInsAvecTraitsIdentite" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecTraitsIdentite" part="NO1_Security" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecTraitsIdentite" part="NO1_ContexteLPS" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecTraitsIdentite" part="NO1_MessageID" use="literal"/>
+				<soap12:header message="tns:rechercherInsAvecTraitsIdentite" part="NO1_ContexteBAM" use="literal"/>
+				</wsdl:input>
+			<wsdl:output name="rechercherInsAvecTraitsIdentiteResponse">
+				<soap12:body parts="rechercherInsAvecTraitsIdentiteResponse" use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="Erreur">
+				<soap12:fault name="Erreur" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<!-- Declaration du service, Attention, un seul service doit etre expose par document WSDL. -->
+	<wsdl:service name="ICIR-v1">
+		<wsdl:documentation>service de recherche et de vérification de l’Identifiant National de Santé (INS)</wsdl:documentation>
+		<wsdl:port name="ICIRService" binding="tns:ICIRServiceBinding">
+			<soap12:address location="https://qualiflps-services-ps-tlsm.ameli.fr:443/lps"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

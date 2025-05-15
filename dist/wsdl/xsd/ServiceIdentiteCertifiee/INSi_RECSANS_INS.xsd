@@ -1,0 +1,52 @@
+<?xml version='1.0'?>
+<xsd:schema version="00.01" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.cnamts.fr/INSiRecSans" xmlns="http://www.cnamts.fr/INSiRecSans" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:annotation>
+    <xsd:appinfo><![CDATA[Status=Travail]]></xsd:appinfo>
+  </xsd:annotation>
+  <xsd:element name="RECSANSVITALE" type="TraitsDIdentite">
+  </xsd:element>
+  <xsd:simpleType name="DateLunaire">
+    <xsd:restriction base="xsd:string">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="CodSexe">
+    <xsd:restriction base="xsd:string">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="CLE">
+    <xsd:restriction base="xsd:string">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="COG">
+    <xsd:restriction base="xsd:string">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="NIR">
+    <xsd:restriction base="xsd:string">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="TraitsDIdentite" abstract="false" mixed="false">
+    <xsd:sequence>
+      <xsd:element name="NomNaissance" type="xsd:string" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+      <xsd:element name="Prenom" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+      </xsd:element>
+      <xsd:element name="Sexe" type="CodSexe" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+      <xsd:element name="DateNaissance" type="DateLunaire" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+      <xsd:element name="LieuNaissance" type="COG" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Matricule" abstract="false" mixed="false">
+    <xsd:sequence>
+      <xsd:element name="NumIdentifiant" type="NIR" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+      <xsd:element name="Cle" type="CLE" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+      <xsd:element name="TypeMatricule" type="xsd:string" minOccurs="0" maxOccurs="1">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
