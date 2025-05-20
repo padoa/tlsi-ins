@@ -478,66 +478,25 @@ describe('INSi Client', () => {
       });
     });
 
-    test.skip('should throw an INSi error if the person does not exist that stop the loop', async () => {
+    test('should return CRO1 (no result) if the person does not exist', async () => {
       const requestId = 'b3549edd-4ae9-472a-b26f-fd2fb4ef397f';
       const person = new INSiPerson({
         birthName: 'DE VINCI',
-        firstName: 'LEONARDO DICAPRIO BUFFALO',
+        firstName: 'LEONARDODINO DICAPRIO BUFFALO',
         gender: Gender.Male,
         dateOfBirth: '2014-02-01',
       });
 
       const fetchInsResult = await insiClient.fetchIns(person, { requestId });
-      const dicaprioDevinciXmlRequest = getCNDAValidationXmlRequest({
-        idam: IDAM,
-        version: SOFTWARE_VERSION,
-        name: SOFTWARE_NAME,
-        birthName: 'DE VINCI',
-        firstName: 'DICAPRIO',
-        gender: Gender.Male,
-        dateOfBirth: '2014-02-01',
-      });
-
-      expect(fetchInsResult).toEqual({
-        successRequest: null,
-        failedRequests: [
-          {
-            status: INSiServiceRequestStatus.SUCCESS,
-            request: {
-              id: requestId,
-              xml: getDeVinciLeonardoXmlRequest(padoaConf),
-            },
-            response: {
-              error: null,
-              formatted: null,
-              json: {
-                CR: {
-                  CodeCR: CRCodes.MULTIPLE_MATCHES,
-                  LibelleCR: CRLabels.MULTIPLE_MATCHES,
-                },
-              },
-              xml: getCR02XmlResponse(),
-            },
-          },
-          {
-            status: INSiServiceRequestStatus.FAIL,
-            request: {
-              id: requestId,
-              xml: dicaprioDevinciXmlRequest,
-            },
-            response: {
-              error: {
-                desirCode: 'desir_1020',
-                error: 'Le service appelé est temporairement indisponible',
-                siramCode: undefined,
-                text: undefined,
-              },
-              formatted: null,
-              json: null,
-              xml: '<?xml version="1.0" encoding="UTF-8"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"><env:Body xmlns:env="http://www.w3.org/2003/05/soap-envelope"><soap:Fault><soap:Code><soap:Value>soap:Sender</soap:Value><soap:Subcode><soap:Value>soap:siram_40</soap:Value></soap:Subcode></soap:Code><soap:Reason><soap:Text xml:lang="fr">Le service est temporairement inaccessible. Veuillez renouveler votre demande ultérieurement. Si le problème persiste, contactez l\'éditeur du progiciel ou votre responsable informatique.</soap:Text></soap:Reason><soap:Detail><siram:Erreur code="desir_1020" severite="fatale" messageID="uuid:b3549edd-4ae9-472a-b26f-fd2fb4ef397f" xmlns:siram="urn:siram">Le service appelé est temporairement indisponible</siram:Erreur></soap:Detail></soap:Fault></env:Body></soap:Envelope>',
-            },
-          },
-        ],
+      
+      expect(fetchInsResult.successRequest).toBeNull();
+      expect(fetchInsResult.failedRequests).toHaveLength(4);
+      
+      fetchInsResult.failedRequests.forEach(request => {
+        expect(request.status).toBe(INSiServiceRequestStatus.SUCCESS);
+        expect(request.response.json).not.toBeNull();
+        expect(request.response.json?.CR.CodeCR).toBe(CRCodes.NO_RESULT);
+        expect(request.response.json?.CR.LibelleCR).toBe(CRLabels.NO_RESULT);
       });
     });
   });
