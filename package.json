@@ -3,7 +3,7 @@
   "description": "Access the Téléservice Identité Nationale de Santé & Medimail MSSanté API with a js API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "scripts": {
     "build": "rm -rf dist && npm run clean && tsc && mkdir -p dist/wsdl && cp -r src/wsdl/* dist/wsdl/",
     "clean": "tsc --build --clean",
@@ -34,8 +34,8 @@
   "homepage": "https://github.com/padoa/tlsi-ins",
   "dependencies": {
     "dotenv": "^16.0.3",
-    "lodash": "^4.17.21",
-    "node-forge": "^1.2.0",
+    "lodash": "^4.18.0",
+    "node-forge": "^1.3.2",
     "soap": "^1.1.11",
     "uuid": "^9.0.0",
     "xml-crypto": "^2.1.6"
