@@ -4,6 +4,9 @@ import { MML_CERTIFICATE_PASSPHRASE, PASSPHRASE, MML_ACCOUNT_EMAIL, MML_TEST_REC
 import { CheckboxType } from '../models/medimail.types';
 import { MedimailClient } from '../medimail-client.service';
 
+/**
+ * Package Medimail is not used in the project anymore
+ * */
 describe('Medimail Client', () => {
   let sentEmailRef: string;
   const mailTitle = 'Salut à toi';
