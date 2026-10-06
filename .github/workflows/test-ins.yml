@@ -1,5 +1,9 @@
 name: Run INS Tests
 on: [push]
+
+permissions:
+  contents: read
+
 env:
   TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
   TLSI_INS_IDAM: ${{ secrets.TLSI_INS_IDAM }}

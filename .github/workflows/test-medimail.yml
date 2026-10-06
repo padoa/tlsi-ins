@@ -1,5 +1,9 @@
 name: Run Medimail Tests
 on: [push]
+
+permissions:
+  contents: read
+
 env:
   TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
   MEDIMAIL_CERTIFICATE_PASSPHRASE: ${{ secrets.MEDIMAIL_CERTIFICATE_PASSPHRASE }}
