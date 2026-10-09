@@ -4,15 +4,15 @@ on: [push]
 permissions:
   contents: read
 
-env:
-  TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
-  MEDIMAIL_CERTIFICATE_PASSPHRASE: ${{ secrets.MEDIMAIL_CERTIFICATE_PASSPHRASE }}
-  MEDIMAIL_ACCOUNT_EMAIL: ${{ secrets.MEDIMAIL_ACCOUNT_EMAIL }}
-  MEDIMAIL_TEST_RECIPIENT_EMAIL: ${{ secrets.MEDIMAIL_TEST_RECIPIENT_EMAIL }}
 jobs:
   tests:
     environment: development
     runs-on: ubuntu-latest
+    env:
+      TLSI_INS_CERTIFICATE_PASSPHRASE: ${{ secrets.TLSI_INS_CERTIFICATE_PASSPHRASE }}
+      MEDIMAIL_CERTIFICATE_PASSPHRASE: ${{ secrets.MEDIMAIL_CERTIFICATE_PASSPHRASE }}
+      MEDIMAIL_ACCOUNT_EMAIL: ${{ secrets.MEDIMAIL_ACCOUNT_EMAIL }}
+      MEDIMAIL_TEST_RECIPIENT_EMAIL: ${{ secrets.MEDIMAIL_TEST_RECIPIENT_EMAIL }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
